@@ -15,10 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+         User::updateOrCreate(
+            ['email' => 'admin@goodmorninglb.com'],
+            [
+                'email' => 'admin@goodmorninglb.com',
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+            ]
+        );
+
 
         $this->call([
             CategorySeeder::class,

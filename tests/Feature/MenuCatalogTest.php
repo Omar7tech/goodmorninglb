@@ -29,15 +29,48 @@ it('links products to their category and deletes them with it', function () {
     expect(Product::find($product->id))->toBeNull();
 });
 
-it('seeds an ordered menu', function () {
+it('seeds the real menu in order', function () {
     $this->seed([CategorySeeder::class, ProductSeeder::class]);
 
-    expect(Category::count())->toBe(8)
-        ->and(Category::pluck('sort_order')->all())->toBe(range(0, 7));
+    expect(Category::orderBy('sort_order')->pluck('title')->first())->toBe('Cocktails')
+        ->and(Category::orderBy('sort_order')->pluck('title')->last())->toBe('Sweets')
+        ->and(Category::count())->toBe(13)
+        ->and(Product::count())->toBe(114)
+        ->and(Product::where('is_featured', true)->orderBy('title')->pluck('title')->all())->toBe([
+            'Choco Avoca', 'Crispy Cup', 'Special Mix', 'Strawberry Dubai Cup', "Sultan L'Avoca",
+        ])
+        ->and(Product::whereNull('slug')->exists())->toBeFalse();
 
-    Category::with('products')->get()->each(function (Category $category): void {
-        expect($category->products->count())->toBeGreaterThanOrEqual(4)
-            ->and($category->products->pluck('slug')->filter()->count())
-            ->toBe($category->products->count());
-    });
+    $crepeYourWay = Category::where('title', 'Crepe Your Way')->sole();
+
+    expect($crepeYourWay->addons)->toHaveCount(15)
+        ->and($crepeYourWay->products()->orderBy('sort_order')->pluck('title')->all())
+        ->toBe(['Pistachio Crepe', 'Nutella Crepe', 'Lotus Crepe', 'Crepe dough']);
+});
+
+it('seeds every product with a price or a list of sizes', function () {
+    $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+    expect(Product::where('title', 'Orange Juice')->sole()->variants)->toBe([
+        ['name' => 'S', 'price' => 2.5],
+        ['name' => 'M', 'price' => 3.11],
+        ['name' => 'L', 'price' => 3.5],
+        ['name' => 'XL', 'price' => 5.3],
+        ['name' => '1 Liter', 'price' => 6.6],
+        ['name' => '1.5 Liter', 'price' => 9.4],
+    ]);
+
+    $unpriced = Product::all()
+        ->filter(fn (Product $product): bool => (float) $product->price === 0.0 && empty($product->variants))
+        ->pluck('title');
+
+    expect($unpriced)->toBeEmpty();
+});
+
+it('can be seeded twice without duplicating the menu', function () {
+    $this->seed([CategorySeeder::class, ProductSeeder::class]);
+    $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+    expect(Category::count())->toBe(13)
+        ->and(Product::count())->toBe(114);
 });
