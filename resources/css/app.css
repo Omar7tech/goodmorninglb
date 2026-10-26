@@ -14,7 +14,8 @@
 
 @theme static {
     --color-cream: #faf3de;
-    --color-sage: #78896c;
+    /* The green of "Morning" in the logo. */
+    --color-sage: #719067;
     /* The red of "Good" in the logo. */
     --color-berry: #b64945;
 
