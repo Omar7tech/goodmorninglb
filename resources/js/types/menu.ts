@@ -11,7 +11,7 @@ export type CategoryLayout = 'grid' | 'rows' | 'mosaic' | 'tickets';
 export type ProductCardStyle = 'row' | 'card' | 'minimal';
 
 /** Mirrors `App\Enums\VariantStyle` — how a product's sizes are offered. */
-export type VariantStyle = 'cards' | 'chips' | 'rows';
+export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 
 export type Pricing = {
     display: PriceDisplay;

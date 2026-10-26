@@ -14,25 +14,28 @@ use Filament\Support\Icons\Heroicon;
  */
 enum VariantStyle: string implements HasIcon, HasLabel
 {
-    case Cards = 'cards';
-    case Chips = 'chips';
     case Rows = 'rows';
+    case Chips = 'chips';
+    case Segmented = 'segmented';
+    case Bubbles = 'bubbles';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::Cards => 'Cards',
-            self::Chips => 'Chips',
             self::Rows => 'Rows',
+            self::Chips => 'Chips',
+            self::Segmented => 'Segmented bar',
+            self::Bubbles => 'Bubbles',
         };
     }
 
     public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::Cards => Heroicon::OutlinedSquares2x2,
-            self::Chips => Heroicon::OutlinedTag,
             self::Rows => Heroicon::OutlinedQueueList,
+            self::Chips => Heroicon::OutlinedTag,
+            self::Segmented => Heroicon::OutlinedViewColumns,
+            self::Bubbles => Heroicon::OutlinedEllipsisHorizontalCircle,
         };
     }
 
@@ -43,9 +46,10 @@ enum VariantStyle: string implements HasIcon, HasLabel
     public function getDescription(): string
     {
         return match ($this) {
-            self::Cards => 'Boxed options two to a row, each with a tick and its price under the name. The roomiest, and the surest to read.',
-            self::Chips => 'Small pills on one line each, name and price together, the chosen one filled solid. Compact, and wraps to as many sizes as there are.',
             self::Rows => 'A full-width row per size, name on the left and price hard right, ruled between. Best when the names are long or there are many of them.',
+            self::Chips => 'Small pills on one line each, name and price together, the chosen one filled solid. Compact, and wraps to as many sizes as there are.',
+            self::Segmented => 'One bar split into equal parts, the size over its price in each, the chosen part filled. The most compact, and reads like a switch.',
+            self::Bubbles => 'A round bubble per size with the price under it, like cup sizes at the counter. The chosen bubble fills and grows a little.',
         };
     }
 }

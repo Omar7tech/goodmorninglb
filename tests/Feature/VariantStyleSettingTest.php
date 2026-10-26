@@ -5,11 +5,11 @@ use App\Models\Category;
 use App\Models\Product;
 use Inertia\Testing\AssertableInertia;
 
-it('shares the cards style by default', function (): void {
+it('shares the rows style by default', function (): void {
     $this->get(route('menu.dine-in'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
-            ->where('variantStyle', VariantStyle::Cards->value)
+            ->where('variantStyle', VariantStyle::Rows->value)
         );
 });
 

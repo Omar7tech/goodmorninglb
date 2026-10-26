@@ -37,7 +37,7 @@ return new class extends SettingsMigration
         // How the menu is drawn.
         $this->migrator->add('general.category_layout', CategoryLayout::Grid->value);
         $this->migrator->add('general.product_card_style', ProductCardStyle::Row->value);
-        $this->migrator->add('general.variant_style', VariantStyle::Cards->value);
+        $this->migrator->add('general.variant_style', VariantStyle::Rows->value);
         // Off by default: CK Tipsy and the product names are both written to
         // be read as typed, and the old site never shouted either.
         $this->migrator->add('general.uppercase_category_titles', false);

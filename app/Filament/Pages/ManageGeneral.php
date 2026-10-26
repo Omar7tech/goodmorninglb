@@ -287,7 +287,7 @@ class ManageGeneral extends SettingsPage
                                                     $style->value => $style->getDescription(),
                                                 ])
                                                 ->all())
-                                            ->default(VariantStyle::Cards->value)
+                                            ->default(VariantStyle::Rows->value)
                                             ->required(),
                                     ]),
 

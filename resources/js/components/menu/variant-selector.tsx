@@ -42,7 +42,7 @@ export function VariantSelector({
     const pricing = usePricing();
     const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
     const style: VariantStyle =
-        usePage().props.variantStyle ?? ('cards' as const);
+        usePage().props.variantStyle ?? ('rows' as const);
 
     /** Selects an option and keeps the roving focus on it. */
     const move = (index: number): void => {
@@ -84,9 +84,13 @@ export function VariantSelector({
 
     /** The shell each style lays its options out in. */
     const group = {
-        cards: 'flex flex-wrap gap-2',
-        chips: 'flex flex-wrap gap-1.5',
         rows: 'flex flex-col overflow-hidden rounded-2xl bg-primary/5',
+        chips: 'flex flex-wrap gap-1.5',
+        // Equal parts that wrap onto a second line rather than squeezing a
+        // name like "1.5 Liter" into a sliver when a juice comes in six sizes.
+        segmented:
+            'grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-1 rounded-2xl bg-primary/10 p-1',
+        bubbles: 'flex flex-wrap gap-x-2.5 gap-y-2',
     }[style];
 
     return (
@@ -126,14 +130,6 @@ export function VariantSelector({
                             optionClasses(style, selected, index),
                         )}
                     >
-                        {style === 'cards' && (
-                            <CardOption
-                                name={variant.name}
-                                now={now}
-                                was={was}
-                                selected={selected}
-                            />
-                        )}
                         {style === 'chips' && (
                             <ChipOption
                                 name={variant.name}
@@ -144,6 +140,22 @@ export function VariantSelector({
                         )}
                         {style === 'rows' && (
                             <RowOption
+                                name={variant.name}
+                                now={now}
+                                was={was}
+                                selected={selected}
+                            />
+                        )}
+                        {style === 'segmented' && (
+                            <SegmentOption
+                                name={variant.name}
+                                now={now}
+                                was={was}
+                                selected={selected}
+                            />
+                        )}
+                        {style === 'bubbles' && (
+                            <BubbleOption
                                 name={variant.name}
                                 now={now}
                                 was={was}
@@ -182,13 +194,18 @@ function optionClasses(
         );
     }
 
-    return cn(
-        'flex min-w-32 flex-1 basis-[calc(50%-0.25rem)] items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left',
-        'transition-colors duration-200 ease-out',
-        selected
-            ? 'bg-primary/10 ring-2 ring-primary'
-            : 'bg-primary/5 hover:bg-primary/10',
-    );
+    if (style === 'segmented') {
+        return cn(
+            'flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-center transition-colors duration-200 ease-out',
+            selected
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-primary hover:bg-primary/10',
+        );
+    }
+
+    // Bubbles: the button is the bubble and its price together, so the ring
+    // a keyboard draws goes round both rather than round the circle alone.
+    return 'group/bubble flex flex-col items-center gap-1 rounded-2xl p-0.5';
 }
 
 /** The tick that marks the chosen option in the styles roomy enough for one. */
@@ -233,40 +250,6 @@ type OptionProps = {
     selected: boolean;
 };
 
-/** Boxed, with a tick and the price under the name. The roomiest reading. */
-function CardOption({ name, now, was = null, selected }: OptionProps) {
-    return (
-        <>
-            <Tick selected={selected} />
-
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span
-                    className={cn(
-                        'text-sm leading-snug tracking-wide break-words uppercase',
-                        selected
-                            ? 'font-semibold text-primary'
-                            : 'text-primary/70',
-                    )}
-                >
-                    {name}
-                </span>
-
-                <span className="flex flex-wrap items-baseline gap-x-1.5 text-[0.8rem] leading-none">
-                    <span
-                        className={cn(
-                            'font-semibold tabular-nums',
-                            selected ? 'text-primary' : 'text-primary/60',
-                        )}
-                    >
-                        {now}
-                    </span>
-                    <Was was={was} />
-                </span>
-            </span>
-        </>
-    );
-}
-
 /** Name and price on one line, the chosen one filled solid. */
 function ChipOption({ name, now, was = null, selected }: OptionProps) {
     return (
@@ -310,6 +293,62 @@ function RowOption({ name, now, was = null, selected }: OptionProps) {
                 >
                     {now}
                 </span>
+            </span>
+        </>
+    );
+}
+
+/** One part of the bar: the size, with its price under it. */
+function SegmentOption({ name, now, was = null, selected }: OptionProps) {
+    return (
+        <>
+            <span className="max-w-full truncate text-xs font-semibold">
+                {name}
+            </span>
+            <span className="flex items-baseline gap-1 text-[0.7rem] leading-none tabular-nums">
+                <span className={cn(!selected && 'opacity-75')}>{now}</span>
+                <Was
+                    was={was}
+                    className={cn(selected && 'text-primary-foreground/60')}
+                />
+            </span>
+        </>
+    );
+}
+
+/**
+ * A round bubble with the size in it and the price under it, like the cup
+ * sizes on a counter. A long name ("1.5 Liter") stretches the bubble into a
+ * pill rather than spilling out of it.
+ */
+function BubbleOption({ name, now, was = null, selected }: OptionProps) {
+    return (
+        <>
+            <span
+                className={cn(
+                    'flex h-11 min-w-11 items-center justify-center rounded-full px-3 text-xs font-semibold whitespace-nowrap',
+                    // `scale` named on its own: Tailwind v4 sets it as its own
+                    // property, so a list naming `transform` animates nothing.
+                    'transition-[background-color,color,scale] duration-200 ease-out motion-reduce:transition-colors',
+                    selected
+                        ? 'scale-105 bg-primary text-primary-foreground shadow-sm motion-reduce:scale-100'
+                        : 'bg-primary/10 text-primary group-hover/bubble:bg-primary/20',
+                )}
+            >
+                {name}
+            </span>
+
+            <span className="flex flex-col items-center text-[0.7rem] leading-tight tabular-nums">
+                <span
+                    className={cn(
+                        selected
+                            ? 'font-semibold text-primary'
+                            : 'text-muted-foreground',
+                    )}
+                >
+                    {now}
+                </span>
+                <Was was={was} />
             </span>
         </>
     );
