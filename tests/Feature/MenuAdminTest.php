@@ -77,8 +77,8 @@ it('creates a product sold in sizes', function (): void {
     expect($product->category->is($category))->toBeTrue()
         ->and($product->is_new)->toBeTrue()
         ->and($product->variants)->toBe([
-            ['name' => 'S', 'price' => 2.5],
-            ['name' => 'M', 'price' => 3.11],
+            ['name' => 'S', 'price' => 2.5, 'discount_price' => null],
+            ['name' => 'M', 'price' => 3.11, 'discount_price' => null],
         ]);
 });
 

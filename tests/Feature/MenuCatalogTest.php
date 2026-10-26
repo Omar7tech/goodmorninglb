@@ -20,8 +20,8 @@ it('links products to their category and deletes them with it', function () {
     expect($product->category->is($category))->toBeTrue()
         ->and($category->products)->toHaveCount(1)
         ->and($product->variants)->toBe([
-            ['name' => 'Small', 'price' => 4],
-            ['name' => 'Large', 'price' => 6],
+            ['name' => 'Small', 'price' => 4, 'discount_price' => null],
+            ['name' => 'Large', 'price' => 6, 'discount_price' => 5],
         ]);
 
     $category->delete();

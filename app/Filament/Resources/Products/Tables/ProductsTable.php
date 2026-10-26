@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Enums\OrderType;
 use App\Models\Product;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -48,6 +49,11 @@ class ProductsTable
                     ->badge()
                     ->color('gray')
                     ->state(fn (Product $record): int => count($record->variants ?? [])),
+                TextColumn::make('order_type')
+                    ->label('Shown on')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
                 ToggleColumn::make('is_active')
                     ->label('Active')
                     ->sortable(),
@@ -71,6 +77,9 @@ class ProductsTable
                     ->relationship('category', 'title')
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('order_type')
+                    ->label('Shown on')
+                    ->options(OrderType::class),
                 TernaryFilter::make('is_active')->label('Active'),
                 TernaryFilter::make('is_featured')->label('Top seller'),
                 TernaryFilter::make('is_new')->label('New'),
@@ -93,7 +102,7 @@ class ProductsTable
     private static function priceLabel(Product $product): string
     {
         $sizePrices = array_map(
-            static fn (array $variant): float => (float) $variant['price'],
+            static fn (array $variant): float => (float) ($variant['price'] ?? 0),
             $product->variants ?? [],
         );
 

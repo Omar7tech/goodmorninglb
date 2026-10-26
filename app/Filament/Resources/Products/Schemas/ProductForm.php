@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Enums\OrderType;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
@@ -30,14 +31,39 @@ class ProductForm
                                 TextInput::make('title')
                                     ->required()
                                     ->maxLength(255),
+                                TextInput::make('subtitle')
+                                    ->helperText('A short line under the name in the details sheet.')
+                                    ->maxLength(255),
                                 Select::make('category_id')
                                     ->relationship('category', 'title')
                                     ->searchable()
                                     ->preload()
                                     ->required(),
+                                Select::make('order_type')
+                                    ->label('Shown on')
+                                    ->helperText('Which menu offers it. Most products are on both.')
+                                    ->options(OrderType::class)
+                                    ->default(OrderType::Both)
+                                    ->native(false)
+                                    ->required(),
                                 Textarea::make('description')
                                     ->rows(3)
                                     ->columnSpanFull(),
+                                TextInput::make('preparation_time')
+                                    ->label('Preparation time')
+                                    ->helperText('Roughly how long it takes, shown in its details.')
+                                    ->numeric()
+                                    ->integer()
+                                    ->minValue(0)
+                                    ->suffix('min'),
+                                TextInput::make('calories')
+                                    ->label('Calories')
+                                    ->helperText('Leave empty if uncounted — the menu then shows nothing rather than a zero.')
+                                    ->numeric()
+                                    ->integer()
+                                    ->minValue(0)
+                                    ->maxValue(65535)
+                                    ->suffix('kcal'),
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->collection('image')
                                     ->disk('public')
@@ -62,6 +88,13 @@ class ProductForm
                                     ->minValue(0)
                                     ->default(0)
                                     ->prefix('$'),
+                                TextInput::make('discount_price')
+                                    ->label('Offer price')
+                                    ->helperText('Set while the product is on offer; the menu strikes the full price through beside it.')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->lte('price')
+                                    ->prefix('$'),
                                 Toggle::make('is_active')
                                     ->label('Active')
                                     ->default(true)
@@ -76,6 +109,27 @@ class ProductForm
                                     ->inline(false),
                             ]),
 
+                        Tab::make('Ingredients')
+                            ->icon(Heroicon::OutlinedListBullet)
+                            ->schema([
+                                Repeater::make('ingredients')
+                                    ->hiddenLabel()
+                                    ->helperText('What is in it, in the order it should be read. Customers ordering delivery can take any of them out. Leave empty to say nothing about it.')
+                                    ->defaultItems(0)
+                                    ->table([
+                                        TableColumn::make('Ingredient')->markAsRequired(),
+                                    ])
+                                    ->compact()
+                                    ->addActionLabel('Add ingredient')
+                                    ->reorderable()
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->placeholder('Nutella')
+                                            ->required()
+                                            ->maxLength(255),
+                                    ]),
+                            ]),
+
                         Tab::make('Sizes')
                             ->icon(Heroicon::OutlinedRectangleStack)
                             ->schema([
@@ -86,6 +140,7 @@ class ProductForm
                                     ->table([
                                         TableColumn::make('Name')->markAsRequired(),
                                         TableColumn::make('Price')->markAsRequired(),
+                                        TableColumn::make('Offer price'),
                                     ])
                                     ->compact()
                                     ->addActionLabel('Add size')
@@ -98,6 +153,11 @@ class ProductForm
                                             ->required()
                                             ->numeric()
                                             ->minValue(0)
+                                            ->prefix('$'),
+                                        TextInput::make('discount_price')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->lte('price')
                                             ->prefix('$'),
                                     ]),
                             ]),

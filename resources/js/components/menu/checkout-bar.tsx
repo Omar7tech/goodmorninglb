@@ -1,0 +1,42 @@
+import { useCart } from '@/contexts/cart-context';
+
+/**
+ * The checkout call-to-action, riding along the bottom of the menu.
+ *
+ * It is sticky rather than fixed so it comes to rest inside the panel at the
+ * end of the list instead of hovering over the last product forever.
+ *
+ * Nothing is painted behind it: only the button itself covers the list, so the
+ * cards stay whole right up to its edge and simply pass behind it. A backdrop
+ * here would swallow a band of the list before it ever reached the button.
+ *
+ * It carries no empty state of its own — the menu only mounts it once the cart
+ * has something in it, so there is never a checkout to offer that leads nowhere.
+ *
+ * It says only where it goes. The count and the running total are the cart
+ * strip's job, at the top of the page where the order itself is — splitting
+ * them across both would have the page quoting its own total twice.
+ */
+export function CheckoutBar() {
+    const { setOpen } = useCart();
+
+    return (
+        // `z-20` to clear the cards passing beneath it: a card with sizes
+        // raises its picker to `z-10` so the options sit above the card's own
+        // tap target, and without an order of its own the sticky button would
+        // be painted under every one of them on the way past.
+        // Held to a button's width on a monitor rather than the panel's: a
+        // pill run edge to edge across a desk screen stops reading as a button
+        // at all. Centred, so it stays where a thumb — or a cursor — expects the
+        // one action on the page to be.
+        <div className="pointer-events-none sticky bottom-0 z-20 pt-2 pb-4 lg:mx-auto lg:w-full lg:max-w-md">
+            <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="pointer-events-auto h-16 w-full rounded-full bg-primary font-heading text-3xl text-primary-foreground shadow-lg transition-[box-shadow] duration-300 ease-out hover:shadow-xl focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none active:translate-y-px sm:text-4xl"
+            >
+                Check out
+            </button>
+        </div>
+    );
+}

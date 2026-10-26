@@ -54,3 +54,28 @@ it('leaves half-filled rows out of the footer links', function (): void {
         ['label' => 'Instagram', 'url' => 'https://www.instagram.com/good_morning_aley'],
     ]);
 });
+
+it('sends delivery orders to the old site\'s WhatsApp number by default', function (): void {
+    $settings = app(GeneralSettings::class);
+
+    expect($settings->whatsapp_number)->toBe('96170075017')
+        ->and($settings->canReceiveOrders())->toBeTrue();
+});
+
+it('saves the storefront settings from the settings page', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(ManageGeneral::class)
+        ->set('data.whatsapp_number', '96171123456')
+        ->set('data.charge_delivery', true)
+        ->set('data.delivery_fee', 2)
+        ->set('data.category_layout', 'mosaic')
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $settings = app(GeneralSettings::class)->refresh();
+
+    expect($settings->whatsapp_number)->toBe('96171123456')
+        ->and($settings->deliveryFeeUsd())->toBe(2.0)
+        ->and($settings->category_layout->value)->toBe('mosaic');
+});

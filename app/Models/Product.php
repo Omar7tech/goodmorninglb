@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderType;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\Attributes\Sluggable;
 
 /**
- * @property list<array{name: string, price: float|int}>|null $variants
+ * The JSON columns are typed as what the admin repeaters write, with every key
+ * optional: a column holds whatever was last saved to it, so its readers treat
+ * a missing name or price as something that can happen.
+ *
+ * @property array<int, array{name?: string|null, price?: float|int|string|null, discount_price?: float|int|string|null}>|null $variants
+ * @property array<int, mixed>|null $ingredients
  */
 #[Sluggable(from: 'title', to: 'slug')]
 #[Guarded(['id'])]
@@ -67,6 +73,11 @@ class Product extends Model implements HasMedia
             'is_featured' => 'boolean',
             'is_new' => 'boolean',
             'price' => 'decimal:2',
+            'discount_price' => 'decimal:2',
+            'order_type' => OrderType::class,
+            'preparation_time' => 'integer',
+            'calories' => 'integer',
+            'ingredients' => 'array',
             'sort_order' => 'integer',
             'variants' => 'array',
         ];

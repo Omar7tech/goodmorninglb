@@ -1,0 +1,101 @@
+import type { CSSProperties } from 'react';
+
+import { SmartImage } from '@/components/smart-image';
+import { cn } from '@/lib/utils';
+import type { Category } from '@/types';
+
+/** The mark's own proportions, taken from the artwork's viewBox. */
+const LOGO_ASPECT = '4193 / 2782';
+
+/**
+ * The logo painted in the box's own foreground colour.
+ *
+ * The file is drawn in the brand green and red, and the green is the box, so it
+ * cannot be dropped in as an image here. Masking a cream sheet with it keeps
+ * the artwork's shape exactly and lets the colour come from the page — the same
+ * trick the footer's knockout uses, the other way round.
+ */
+const LOGO_MASK = {
+    maskImage: "url('/images/logo.svg')",
+    WebkitMaskImage: "url('/images/logo.svg')",
+    maskSize: 'contain',
+    WebkitMaskSize: 'contain',
+    maskRepeat: 'no-repeat',
+    WebkitMaskRepeat: 'no-repeat',
+    maskPosition: 'center',
+    WebkitMaskPosition: 'center',
+} satisfies CSSProperties;
+
+/**
+ * A category's icon, or the Good Morning logo when it has none.
+ *
+ * Shared by all three layouts: the fallback is the same decision every time —
+ * a category with no icon yet carries the logo rather than a hole — and the
+ * mask trick behind it is not worth writing out three times.
+ *
+ * Sizing belongs to the caller, since a square box, a full-width band and a
+ * bento tile all want the art at different scales. Only the swell on hover is
+ * fixed here, so every layout answers the pointer the same way.
+ */
+export function CategoryArt({
+    category,
+    className,
+    logoClassName,
+    imageClassName,
+}: {
+    category: Category;
+    /** Applied whichever of the two is drawn. */
+    className?: string;
+    /** Extra classes for the logo fallback only. */
+    logoClassName?: string;
+    /** Extra classes for a real photo only. */
+    imageClassName?: string;
+}) {
+    const swell =
+        'transition-[scale] duration-300 ease-out group-hover:scale-105 motion-reduce:scale-100';
+
+    // The 600px cut, never the original: no layout draws this art larger than
+    // a box on a wide screen, so the whole photo is bytes nobody sees.
+    const src = category.thumbnail ?? category.image;
+
+    if (src === null) {
+        /* It keeps the logo's own ratio rather than the square the photos get —
+           stretched, the logo stops being it. */
+        return (
+            <span
+                aria-hidden
+                style={{ ...LOGO_MASK, aspectRatio: LOGO_ASPECT }}
+                className={cn(
+                    'bg-primary-foreground',
+                    swell,
+                    className,
+                    logoClassName,
+                )}
+            />
+        );
+    }
+
+    /* Category icons are cut out on a transparent background, so they sit
+       whole inside their box rather than being cropped.
+
+       The swell rides on the wrapper and the shadow stays on the picture: the
+       shadow traces the cut-out's own outline, and moving it out here would
+       draw it around the wrapper's square instead. */
+    return (
+        <SmartImage
+            src={src}
+            alt=""
+            draggable={false}
+            // `overflow-visible` undoes the wrapper's own clip, which is there
+            // for the rounded corners on a product photo. This art is a cut-out
+            // throwing a shadow past its own edges, and a clip would shear that
+            // shadow off wherever the picture meets the box.
+            className={cn('overflow-visible', swell, className, imageClassName)}
+            imgClassName="object-contain drop-shadow-[0_3px_6px_rgb(0_0_0/0.14)]"
+            // Standing on the brand green, so the default's green-on-green
+            // mark would be invisible. No panel behind it either — a tinted
+            // box on the slab would read as a hole where the art goes.
+            spinnerClassName="bg-transparent text-primary-foreground/50"
+        />
+    );
+}
