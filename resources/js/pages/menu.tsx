@@ -47,6 +47,20 @@ interface MenuProps {
 }
 
 /**
+ * Width of "No bad mornings here" in CK Tipsy, in ems, summed from the font's
+ * own advance widths (it has no kerning, so the sum is exact). Dividing the
+ * width the line has by this gives the size at which it fills that width.
+ */
+const HEADING_EM = 11.423;
+
+/**
+ * The heading's size: the full width of its container (`cqi`) shared out over
+ * the line, a little short of it so it never touches the edges, and capped so
+ * it stops growing on a wide screen.
+ */
+const HEADING_SIZE = `min(calc(94cqi / ${HEADING_EM}), 4.25rem)`;
+
+/**
  * How the product list is laid out, per card style.
  *
  * All three end up in columns as the screen allows, since a single item run the
@@ -666,9 +680,19 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                             className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-56 rounded-b-[2rem] bg-[radial-gradient(currentColor_1px,transparent_1px)] mask-[linear-gradient(to_top,#000_20%,transparent)] bg-size-[14px_14px] opacity-[0.07] [-webkit-mask-image:linear-gradient(to_top,#000_20%,transparent)]"
                         />
 
-                        <h1 className="text-center font-heading text-4xl leading-none text-berry sm:text-5xl lg:text-6xl">
-                            Choose your craving
-                        </h1>
+                        {/* One line at every width: sized off the panel's own
+                            width rather than a type scale, so it shrinks to fit
+                            a small phone instead of wrapping, and stops growing
+                            once it is big enough on a monitor. */}
+                        <div className="@container">
+                            <h1
+                                style={{ fontSize: HEADING_SIZE }}
+                                className="text-center font-heading leading-none whitespace-nowrap text-primary"
+                            >
+                                No bad mornings{' '}
+                                <span className="text-berry">here</span>
+                            </h1>
+                        </div>
 
                         {/* On the front page only, and only on the menu you
                             can order from. It is a way past the whole menu, so
