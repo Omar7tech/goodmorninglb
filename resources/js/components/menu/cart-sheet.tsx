@@ -356,7 +356,7 @@ function CartLines({
                                 ))}
 
                                 {/* Said in full rather than truncated: this is the
-                                one line on the row the kitchen has to get
+                                one line on the row the shop has to get
                                 right, and half of "no banana, no nuts" is
                                 worse than none of it. */}
                                 {item.excludedIngredients.length > 0 && (
@@ -427,7 +427,7 @@ function CartLines({
                                 onChange={(event) =>
                                     setNote(item.key, event.target.value)
                                 }
-                                placeholder="Note, e.g. sauce on the side"
+                                placeholder="Note, e.g. less sugar, extra chocolate"
                                 aria-label={`Note for ${item.name}`}
                                 className="min-w-0 flex-1 rounded-full bg-surface px-3.5 py-2 text-xs placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                             />
@@ -856,7 +856,7 @@ function NotePanel({ checkout }: { checkout: Checkout }) {
                         checkout.setOrderNote(event.target.value)
                     }
                     rows={3}
-                    placeholder="Directions, allergies, anything the kitchen should know."
+                    placeholder="Directions, allergies, or anything we should know."
                     className="resize-none rounded-2xl bg-card px-3.5 py-2.5 text-sm placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                 />
             </label>

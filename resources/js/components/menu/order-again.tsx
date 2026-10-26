@@ -116,8 +116,8 @@ export function OrderAgain({
             {dropped > 0 && (
                 <p className="text-center text-[0.7rem] text-muted-foreground">
                     {dropped === 1
-                        ? 'One dish from that order is no longer on the menu.'
-                        : `${dropped} dishes from that order are no longer on the menu.`}
+                        ? 'One item from that order is no longer on the menu.'
+                        : `${dropped} items from that order are no longer on the menu.`}
                 </p>
             )}
         </section>

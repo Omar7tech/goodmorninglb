@@ -153,7 +153,7 @@ export function forgetSharedOrder(): void {
     window.history.replaceState(window.history.state, '', url);
 }
 
-/** `[["Extra cheese", 2], …]`, keeping only the pairs that are actually pairs. */
+/** `[["Extra Nutella", 2], …]`, keeping only the pairs that are actually pairs. */
 function readAddons(value: unknown): { name: string; quantity: number }[] {
     if (!Array.isArray(value)) {
         return [];

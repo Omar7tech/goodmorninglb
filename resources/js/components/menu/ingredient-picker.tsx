@@ -67,8 +67,8 @@ export function IngredientPicker({
                        allowed is doing it by accident — three taps down a list
                        and everything is gone without a word said about it. */
                     <p className="text-xs font-medium text-berry">
-                        That&rsquo;s everything out. The kitchen may check with
-                        you before making it.
+                        That&rsquo;s everything out. We may check with you
+                        before preparing it.
                     </p>
                 ) : (
                     <p className="text-xs text-muted-foreground">
@@ -100,8 +100,8 @@ export function IngredientPicker({
                                 aria-pressed={!isOut}
                                 // The label says what the button will do, not
                                 // what it shows: a screen reader lands on
-                                // "Remove garlic", presses it, and hears
-                                // "Add garlic back" — which is the state
+                                // "Remove banana", presses it, and hears
+                                // "Add banana back" — which is the state
                                 // change, spoken.
                                 aria-label={
                                     isOut
@@ -135,8 +135,8 @@ export function IngredientPicker({
  * What was left out, said the way the kitchen needs to read it: one line
  * wherever a cart line is drawn, and the same wording in the order message.
  *
- * The "no" is repeated per ingredient — "No garlic, no onion" rather than "No
- * garlic, onion" — because the short form is one comma away from reading as a
+ * The "no" is repeated per ingredient — "No banana, no nuts" rather than "No
+ * banana, nuts" — because the short form is one comma away from reading as a
  * list of what to put in, and the pass reading it is busy.
  */
 export function withoutLabel(excluded: readonly string[]): string {

@@ -273,8 +273,8 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
 
         if (sharedOrder.dropped > 0) {
             return sharedOrder.dropped === 1
-                ? 'Added from a shared order. One dish in it is no longer on the menu.'
-                : `Added from a shared order. ${sharedOrder.dropped} dishes in it are no longer on the menu.`;
+                ? 'Added from a shared order. One item in it is no longer on the menu.'
+                : `Added from a shared order. ${sharedOrder.dropped} items in it are no longer on the menu.`;
         }
 
         return 'Added from a shared order — add yours, then send it all together.';

@@ -32,7 +32,7 @@ class SlideForm
                             ->conversion('slider')
                             ->imageEditor()
                             ->imageEditorAspectRatios(['16:9'])
-                            ->helperText('Wide, roughly 16:9. Leave empty to use the linked dish\'s own photo.')
+                            ->helperText('Wide, roughly 16:9. Leave empty to use the linked product\'s own photo.')
                             ->columnSpanFull(),
 
                         Select::make('product_id')
@@ -46,7 +46,7 @@ class SlideForm
                         TextInput::make('text')
                             ->label('Caption')
                             ->maxLength(255)
-                            ->helperText('Optional line laid over the picture. The dish\'s name is already shown.'),
+                            ->helperText('Optional line laid over the picture. The product\'s name is already shown.'),
 
                         Toggle::make('is_active')
                             ->label('Active')

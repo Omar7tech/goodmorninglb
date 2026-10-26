@@ -123,7 +123,7 @@ export function CartToast({
                     out the dish could have been changed. It is offered rather
                     than forced: the add already happened, this only says it can
                     still be undone, and saying nothing at all is how someone
-                    ends up with the onions they didn't want. */}
+                    ends up with the nuts they didn't want. */}
                 {onCustomise && (
                     <button
                         type="button"

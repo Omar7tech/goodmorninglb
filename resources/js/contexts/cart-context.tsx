@@ -74,7 +74,7 @@ function addonsSignature(addons: CartAddon[]): string {
 
 /**
  * The same, for what was left out. Sorted rather than kept in the kitchen's
- * order so a burger without onion and one without onion are one line however
+ * order so a crepe without banana and one without banana are one line however
  * the two were picked — the order only matters when it is read back.
  */
 function exclusionsSignature(excluded: string[]): string {

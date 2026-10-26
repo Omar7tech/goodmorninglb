@@ -45,10 +45,10 @@ enum CategoryLayout: string implements HasIcon, HasLabel
     public function getDescription(): string
     {
         return match ($this) {
-            self::Grid => 'Square boxes, two or three to a row. The art sits above the name.',
-            self::Rows => 'Full-width bands, one category each. The art sits on the right, and every band says how many items are inside.',
+            self::Grid => 'Square boxes, two or three to a row. The icon sits above the name.',
+            self::Rows => 'Full-width bands, one category each. The icon sits on the right, and every band says how many items are inside.',
             self::Mosaic => 'An uneven bento wall: every fifth category takes the full width, the rest are squares. Names sit bottom-left over a numbered slab.',
-            self::Tickets => 'Kitchen tickets: the dish printed on the body, the name on a stub below a notched, dashed tear line. They lift and tilt when pointed at.',
+            self::Tickets => 'Order tickets: the icon printed on the body, the name on a stub below a notched, dashed tear line. They lift and tilt when pointed at.',
         };
     }
 }

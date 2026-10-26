@@ -290,7 +290,7 @@ export function ProductDialog({
                     {addons.length > 0 && (
                         <div className="flex flex-col gap-2">
                             <span className="text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase">
-                                Extras
+                                Add-ons
                             </span>
 
                             <ul className="flex flex-col gap-1.5">

@@ -70,7 +70,7 @@ class ProductResource extends JsonResource
 
             // Deduplicated, keeping the kitchen's first spelling of it. The
             // storefront picker is keyed by name — the customer takes out
-            // "Garlic", not the second row of the repeater — so a dish listing
+            // "Banana", not the second row of the repeater — so a dish listing
             // it twice would otherwise draw two chips that toggle as one.
             if (array_any($names, static fn (string $kept): bool => mb_strtolower($kept) === mb_strtolower($name))) {
                 continue;

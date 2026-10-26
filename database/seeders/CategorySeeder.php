@@ -8,6 +8,29 @@ use Illuminate\Database\Seeder;
 class CategorySeeder extends Seeder
 {
     /**
+     * The add-ons offered on every crepe, shared by both crepe categories.
+     *
+     * @var list<array{name: string, price: float}>
+     */
+    private const CREPE_ADDONS = [
+        ['name' => 'Nutella/ Extra Nutella', 'price' => 2.20],
+        ['name' => 'Lotus', 'price' => 1.67],
+        ['name' => "Hershey's", 'price' => 1.67],
+        ['name' => 'Oreo', 'price' => 1.10],
+        ['name' => 'Kitkat', 'price' => 1.67],
+        ['name' => 'Kinder Bueno', 'price' => 1.67],
+        ['name' => 'Strawberry', 'price' => 1.11],
+        ['name' => 'Banana', 'price' => 0.56],
+        ['name' => 'Kiwi', 'price' => 1.67],
+        ['name' => 'Mango', 'price' => 1.67],
+        ['name' => 'Pineapple', 'price' => 1.67],
+        ['name' => 'Mixed Fruits', 'price' => 3.89],
+        ['name' => 'Scoop ice cream', 'price' => 1.11],
+        ['name' => 'Toppings /each', 'price' => 0.56],
+        ['name' => 'Belgium Chocolate', 'price' => 2.20],
+    ];
+
+    /**
      * The menu's categories as the old Good Morning site listed them, in
      * menu order, with each one's tagline and the extras it offers.
      *
@@ -36,30 +59,16 @@ class CategorySeeder extends Seeder
         [
             'title' => 'Crepe Your Way',
             'description' => 'Go in-crepe-able!',
-            'addons' => [
-                ['name' => 'Nutella/ Extra Nutella', 'price' => 2.20],
-                ['name' => 'Lotus', 'price' => 1.67],
-                ['name' => "Hershey's", 'price' => 1.67],
-                ['name' => 'Oreo', 'price' => 1.10],
-                ['name' => 'Kitkat', 'price' => 1.67],
-                ['name' => 'Kinder Bueno', 'price' => 1.67],
-                ['name' => 'Strawberry', 'price' => 1.11],
-                ['name' => 'Banana', 'price' => 0.56],
-                ['name' => 'Kiwi', 'price' => 1.67],
-                ['name' => 'Mango', 'price' => 1.67],
-                ['name' => 'Pineapple', 'price' => 1.67],
-                ['name' => 'Mixed Fruits', 'price' => 3.89],
-                ['name' => 'Scoop ice cream', 'price' => 1.11],
-                ['name' => 'Toppings /each', 'price' => 0.56],
-                ['name' => 'Belgium Chocolate', 'price' => 2.20],
-            ],
+            'addons' => self::CREPE_ADDONS,
         ],
         [
             'title' => 'Crepe Pro',
             'description' => 'Take your Crepe Into a Pro Level',
             'addons' => [
                 ['name' => 'Extra Belgium Chocolate', 'price' => 2.20],
-                ['name' => 'YOU CAN ADD ON SAME AS ABOVE CREPE SECTION', 'price' => 0.00],
+                // The old site said "same add-ons as the crepe section" in a
+                // $0 row; listed out here so each one can be ordered.
+                ...self::CREPE_ADDONS,
             ],
         ],
         ['title' => 'Pancakes', 'description' => "Here's Your Fantastic Flippin' Pancake!"],
