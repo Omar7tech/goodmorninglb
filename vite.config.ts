@@ -3,6 +3,7 @@ import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
+import { bunny, local } from 'laravel-vite-plugin/fonts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
@@ -10,6 +11,19 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
+            fonts: [
+                // Body text. Only the weights the UI renders, so the preload
+                // budget isn't spent on ones nothing uses.
+                bunny('Geist', {
+                    weights: [400, 500, 600],
+                }),
+                // Heading face. Run through the same pipeline so it is hashed,
+                // its @font-face is inlined in <head> and it is preloaded
+                // instead of waiting on the CSS parse. Latin only, one weight.
+                local('CK Tipsy', {
+                    src: 'resources/fonts/ck-tipsy.woff2',
+                }),
+            ],
         }),
         inertia({
             ssr: false,

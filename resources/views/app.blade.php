@@ -13,6 +13,8 @@
         <meta name="theme-color" content="#faf3de" />
         <link rel="manifest" href="/site.webmanifest?v=20261026" />
 
+        @fonts
+
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
