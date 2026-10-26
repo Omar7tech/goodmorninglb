@@ -56,8 +56,12 @@ export default function Welcome() {
             <main className="relative isolate flex min-h-svh flex-col items-center justify-center gap-10 overflow-hidden px-6 py-12 sm:gap-12">
                 <DessertPattern />
 
-                <h1 className="w-full max-w-sm animate-in duration-700 ease-out zoom-in-95 fade-in motion-reduce:animate-none sm:max-w-lg lg:max-w-xl">
-                    <GoodMorningLogo className="w-full drop-shadow-sm" />
+                {/* The logo draws itself in, so it gets no fade of its own. */}
+                <h1 className="w-full max-w-sm sm:max-w-lg lg:max-w-xl">
+                    <GoodMorningLogo
+                        animated
+                        className="w-full drop-shadow-sm"
+                    />
                 </h1>
 
                 {/* From `sm` up the pair sits side by side under the logo and
