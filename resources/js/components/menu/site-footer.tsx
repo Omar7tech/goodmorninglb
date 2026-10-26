@@ -100,67 +100,80 @@ export function SiteFooter() {
             </svg>
 
             <div className="bg-primary">
-                {/* One narrow column at every width: a footer this short reads
-                    best as a single stack, and held to a phone's width on a
-                    monitor it stays a footer rather than a spread-out band. */}
-                <div className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-6 pb-6 text-center">
-                    <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl">
-                        Fresh desserts and drinks in Aley
-                    </p>
+                {/* One centred column on a phone. From `lg` it opens out into a
+                    row that flanks the sun — the shop's line to the left of it,
+                    the ways to reach the shop to the right — so a monitor gets
+                    a footer laid out for its width rather than a phone's
+                    column marooned in the middle of a green band. */}
+                <div className="mx-auto w-full max-w-md px-6 pt-6 pb-6 lg:max-w-5xl lg:px-8 lg:pt-4 xl:max-w-6xl">
+                    <div className="flex flex-col items-center text-center lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:text-left">
+                        <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl lg:text-2xl">
+                            Fresh desserts and drinks in Aley
+                        </p>
 
-                    {/* The one solid button on the slab, full width and a
-                        thumb's height: of everything down here, finding the
-                        shop is what a customer most often came for. */}
-                    {locationUrl && (
-                        <a
-                            href={locationUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-slab-ink text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0"
-                        >
-                            <MapPin aria-hidden className="size-4" />
-                            Get directions
-                        </a>
-                    )}
-
-                    {/* The links as words, in the heading face, on one line
-                        with a dot of the sun's yellow between each — read like
-                        a sign-off rather than clicked like a toolbar. A wavy
-                        underline draws in under the one being pointed at, the
-                        same wave the footer rises on. Keyed by position — two
-                        rows may share a name, and the order is the owner's. */}
-                    {socialLinks.length > 0 && (
-                        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-                            {socialLinks.map(({ label, url }, index) => (
-                                <li
-                                    key={index}
-                                    className="flex items-center gap-x-3"
+                        <div className="flex w-full flex-col items-center lg:w-auto lg:items-end">
+                            {/* The one solid button on the slab, full width and
+                                a thumb's height on a phone: of everything down
+                                here, finding the shop is what a customer most
+                                often came for. A button's own width on a
+                                monitor. */}
+                            {locationUrl && (
+                                <a
+                                    href={locationUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-slab-ink px-6 text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0 lg:mt-0 lg:w-auto"
                                 >
-                                    {index > 0 && (
-                                        <span
-                                            aria-hidden
-                                            className="size-1.5 rounded-full bg-[#F4C338]"
-                                        />
-                                    )}
+                                    <MapPin aria-hidden className="size-4" />
+                                    Get directions
+                                </a>
+                            )}
 
-                                    <a
-                                        href={url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="rounded-md py-1 font-heading text-xl decoration-[#F4C338] decoration-wavy decoration-2 underline-offset-[6px] transition-colors duration-200 ease-out hover:underline focus-visible:underline focus-visible:outline-none sm:text-2xl"
-                                    >
-                                        {label}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                            {/* The links as words on one line with a dot of the
+                                sun's yellow between each — read like a sign-off
+                                rather than clicked like a toolbar. In the body
+                                face, so they sit quietly under the line above
+                                rather than competing with it. A wavy underline
+                                draws in under the one being pointed at, the
+                                same wave the footer rises on. Keyed by position
+                                — two rows may share a name, and the order is
+                                the owner's. */}
+                            {socialLinks.length > 0 && (
+                                <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 lg:mt-4 lg:justify-end">
+                                    {socialLinks.map(
+                                        ({ label, url }, index) => (
+                                            <li
+                                                key={index}
+                                                className="flex items-center gap-x-3"
+                                            >
+                                                {index > 0 && (
+                                                    <span
+                                                        aria-hidden
+                                                        className="size-1 rounded-full bg-[#F4C338]"
+                                                    />
+                                                )}
+
+                                                <a
+                                                    href={url}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="rounded-md py-1 text-sm font-medium tracking-wide decoration-[#F4C338] decoration-wavy decoration-2 underline-offset-[6px] opacity-90 transition-opacity duration-200 ease-out hover:underline hover:opacity-100 focus-visible:underline focus-visible:opacity-100 focus-visible:outline-none lg:text-base"
+                                                >
+                                                    {label}
+                                                </a>
+                                            </li>
+                                        ),
+                                    )}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
 
                     {hoursShown && (
-                        <ShopHours className="mt-6 w-full rounded-3xl bg-slab-ink/10 p-5 text-left" />
+                        <ShopHours className="mx-auto mt-6 w-full max-w-md rounded-3xl bg-slab-ink/10 p-5 text-left lg:mt-8" />
                     )}
 
-                    <div className="mt-8 flex w-full flex-col items-center gap-2 border-t border-slab-ink/20 pt-5 text-xs opacity-75">
+                    <div className="mt-8 flex flex-col items-center gap-2 border-t border-slab-ink/20 pt-5 text-xs opacity-75 lg:flex-row lg:justify-between">
                         <span>© {new Date().getFullYear()} Good Morning</span>
 
                         {/* Who built it, quieter than the shop's own line: a
