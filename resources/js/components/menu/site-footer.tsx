@@ -1,10 +1,42 @@
 import { usePage } from '@inertiajs/react';
-import { ArrowUpRight, MapPin } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+    createLucideIcon,
+    Globe,
+    MapPin,
+    MessageCircle,
+    Music2,
+} from 'lucide-react';
 import { useId } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 
 import { ShopHours } from '@/components/menu/shop-hours';
 import { hasPublishedHours, useShop } from '@/lib/shop';
+import { cn } from '@/lib/utils';
+
+/**
+ * Drawn here because the icon set no longer ships brand marks. Built with
+ * Lucide's own helper, in its stroke and grid, so they sit beside the rest
+ * as the same family rather than as pasted-in logos.
+ */
+const Instagram = createLucideIcon('instagram', [
+    [
+        'rect',
+        { x: '2', y: '2', width: '20', height: '20', rx: '5', key: 'frame' },
+    ],
+    ['circle', { cx: '12', cy: '12', r: '4', key: 'lens' }],
+    ['path', { d: 'M17.5 6.5h.01', key: 'flash' }],
+]);
+
+const Facebook = createLucideIcon('facebook', [
+    [
+        'path',
+        {
+            d: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
+            key: 'f',
+        },
+    ],
+]);
 
 /** How tall the wavy edge is, in pixels, from crest to trough. */
 const WAVE_HEIGHT = 24;
@@ -81,60 +113,83 @@ export function SiteFooter() {
             </svg>
 
             <div className="bg-primary">
-                <div className="mx-auto w-full max-w-2xl px-6 pt-4 pb-6 text-center lg:max-w-5xl xl:max-w-6xl">
+                {/* One narrow column at every width: a footer this short reads
+                    best as a single stack, and held to a phone's width on a
+                    monitor it stays a footer rather than a spread-out band. */}
+                <div className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-4 pb-6 text-center">
                     {/* The sun from the logo, whole. The light 6 KB cut, since
                         it is drawn small. */}
                     <img
                         src="/images/sun-light.svg"
                         alt=""
-                        width={88}
-                        height={88}
+                        width={80}
+                        height={80}
                         loading="lazy"
                         decoding="async"
                         draggable={false}
-                        className="mx-auto size-22 drop-shadow-[0_2px_4px_rgb(46_42_36/0.2)] select-none"
+                        className="size-20 drop-shadow-[0_2px_4px_rgb(46_42_36/0.2)] select-none"
                     />
-                    <p className="mt-3 font-heading text-2xl leading-tight sm:text-3xl">
+                    <p className="mt-3 font-heading text-2xl leading-tight text-balance sm:text-3xl">
                         Fresh desserts and drinks in Aley
                     </p>
 
-                    {/* Directions first and the shop's own links after it, all
-                        the same cream pill: one row of ways to reach the shop
-                        rather than a list to read. Keyed by position — two
-                        rows may share a name, and the order is the owner's. */}
-                    {(locationUrl || socialLinks.length > 0) && (
-                        <ul className="mt-6 flex flex-wrap justify-center gap-2">
-                            {locationUrl && (
-                                <li>
-                                    <FooterPill href={locationUrl}>
-                                        <MapPin
-                                            aria-hidden
-                                            className="size-4"
-                                        />
-                                        Directions
-                                    </FooterPill>
-                                </li>
-                            )}
+                    {/* The one solid button on the slab, full width and a
+                        thumb's height: of everything down here, finding the
+                        shop is what a customer most often came for. */}
+                    {locationUrl && (
+                        <a
+                            href={locationUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-slab-ink text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0"
+                        >
+                            <MapPin aria-hidden className="size-4" />
+                            Get directions
+                        </a>
+                    )}
 
-                            {socialLinks.map(({ label, url }, index) => (
-                                <li key={index}>
-                                    <FooterPill href={url}>
-                                        {label}
-                                        <ArrowUpRight
-                                            aria-hidden
-                                            className="size-3.5 opacity-60 transition-[translate,opacity] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 motion-reduce:transform-none"
-                                        />
-                                    </FooterPill>
-                                </li>
-                            ))}
+                    {/* Equal tiles, icon over name, three to a row: every link
+                        the same size and the same reach for a thumb, and no
+                        single pill left stranded on a line of its own. Keyed by
+                        position — two rows may share a name, and the order is
+                        the owner's. */}
+                    {socialLinks.length > 0 && (
+                        <ul
+                            className={cn(
+                                'grid w-full grid-cols-3 gap-2',
+                                locationUrl ? 'mt-3' : 'mt-6',
+                            )}
+                        >
+                            {socialLinks.map(({ label, url }, index) => {
+                                const Icon = socialIcon(url);
+
+                                return (
+                                    <li key={index}>
+                                        <a
+                                            href={url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="flex h-full flex-col items-center justify-center gap-1.5 rounded-2xl bg-slab-ink/10 px-2 py-3 text-xs font-semibold transition-colors duration-200 ease-out hover:bg-slab-ink/20 focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none"
+                                        >
+                                            <Icon
+                                                aria-hidden
+                                                className="size-5"
+                                            />
+                                            <span className="max-w-full truncate">
+                                                {label}
+                                            </span>
+                                        </a>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     )}
 
                     {hoursShown && (
-                        <ShopHours className="mx-auto mt-8 max-w-xs rounded-3xl bg-slab-ink/10 p-5 text-left" />
+                        <ShopHours className="mt-6 w-full rounded-3xl bg-slab-ink/10 p-5 text-left" />
                     )}
 
-                    <div className="mt-8 flex flex-col items-center gap-3 border-t border-slab-ink/20 pt-5 text-xs opacity-75 sm:flex-row sm:justify-between">
+                    <div className="mt-8 flex w-full flex-col items-center gap-2 border-t border-slab-ink/20 pt-5 text-xs opacity-75">
                         <span>© {new Date().getFullYear()} Good Morning</span>
 
                         {/* Who built it, quieter than the shop's own line: a
@@ -164,16 +219,35 @@ export function SiteFooter() {
     );
 }
 
-/** One way to reach the shop: a cream pill on the green, lifting on hover. */
-function FooterPill({ href, children }: { href: string; children: ReactNode }) {
-    return (
-        <a
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            className="group inline-flex items-center gap-1.5 rounded-full bg-slab-ink px-4 py-2 text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none motion-reduce:hover:translate-y-0"
-        >
-            {children}
-        </a>
-    );
+/**
+ * The icon for a link, worked out from where it goes rather than from what the
+ * owner called it — "Insta", "IG" and "Instagram" are all the same place.
+ * Anything not recognised gets a plain globe.
+ */
+function socialIcon(url: string): LucideIcon {
+    let host = '';
+
+    try {
+        host = new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+        return Globe;
+    }
+
+    if (host === 'wa.me' || host.endsWith('whatsapp.com')) {
+        return MessageCircle;
+    }
+
+    if (host.endsWith('instagram.com')) {
+        return Instagram;
+    }
+
+    if (host.endsWith('facebook.com') || host === 'fb.com') {
+        return Facebook;
+    }
+
+    if (host.endsWith('tiktok.com')) {
+        return Music2;
+    }
+
+    return Globe;
 }
