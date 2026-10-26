@@ -1,7 +1,29 @@
 {
-  "name": "Good Morning",
-  "short_name": "GM",
+  "id": "/",
+  "name": "Good Morning Aley",
+  "short_name": "Good Morning",
+  "description": "Fresh desserts, pastries, and drinks in Aley, Lebanon. Visit Good Morning for daily treats since 2011!",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#faf3de",
+  "background_color": "#faf3de",
+  "categories": ["food", "shopping"],
   "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png?v=20261026",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png?v=20261026",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/web-app-manifest-192x192.png?v=20261026",
       "sizes": "192x192",
@@ -14,8 +36,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "theme_color": "#faf3de",
-  "background_color": "#faf3de",
-  "display": "standalone"
+  ]
 }
