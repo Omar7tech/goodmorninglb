@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         User::updateOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@goodmorninglb.com'],
             [
                 'email' => 'admin@goodmorninglb.com',
@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            MenuImageSeeder::class,
         ]);
     }
 }
