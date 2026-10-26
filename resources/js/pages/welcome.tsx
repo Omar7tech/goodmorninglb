@@ -5,7 +5,7 @@ export default function Welcome() {
         <>
             <Head title="Welcome" />
             <main className="flex min-h-screen items-center justify-center p-6">
-                <h1 className="text-3xl font-semibold">Good Morning</h1>
+                <h1 className="font-heading text-5xl">Good Morning</h1>
             </main>
         </>
     );

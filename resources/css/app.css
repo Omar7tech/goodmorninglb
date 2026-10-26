@@ -13,13 +13,25 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
+/*
+ * Display face for headings. Kept in resources so Vite fingerprints the file
+ * and it can be cached forever. Latin only, one weight.
+ */
+@font-face {
+    font-family: 'CK Tipsy';
+    src: url('../fonts/ck-tipsy.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 @theme static {
     --color-cream: #faf3de;
     --color-sage: #78896c;
 }
 
 @theme inline {
-    --font-heading: var(--font-sans);
+    --font-heading: 'CK Tipsy', var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
