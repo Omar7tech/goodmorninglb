@@ -9,6 +9,7 @@
         <link rel="shortcut icon" href="/favicon.ico?v=20261026" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261026" />
         <meta name="apple-mobile-web-app-title" content="Good Morning" />
+        <meta name="theme-color" content="#faf3de" />
         <link rel="manifest" href="/site.webmanifest?v=20261026" />
 
         @fonts
