@@ -70,9 +70,10 @@ const MAKER_MARK = {
 
 /**
  * The foot of the page: the green of "Morning", rising into the page on a soft
- * wave rather than a straight edge.
+ * wave, with the logo's sun coming up behind it — its lower half sunk below the
+ * waterline, like a sunrise over the sea.
  *
- * Under the wave: the logo's sun, a button to the shop on a map when an
+ * Under the wave: the shop's line, a button to the shop on a map when an
  * address is set, the shop's own links, and the week's hours when the shop
  * runs on a schedule.
  */
@@ -84,7 +85,25 @@ export function SiteFooter() {
     const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
 
     return (
-        <footer className="text-slab-ink">
+        // `isolate` so the sun can sit on a layer under the waves without
+        // dropping behind the page itself.
+        <footer className="relative isolate text-slab-ink">
+            {/* The sun, centred on the wave's middle line, so the crests run
+                across it and the green hides its lower half. Behind the waves
+                rather than in front of them — that is the whole sunrise. The
+                light 6 KB cut: at this size it reads exactly like the full
+                one. */}
+            <img
+                src="/images/sun-light.svg"
+                alt=""
+                width={208}
+                height={208}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="pointer-events-none absolute -top-[77px] left-1/2 -z-10 size-44 -translate-x-1/2 select-none sm:-top-[93px] sm:size-52"
+            />
+
             {/* Drawn with repeating tiles rather than one stretched picture,
                 so a wave is the same shape on a phone as on a monitor. Pulled a
                 pixel into the green below, or a hairline of the page shows
@@ -116,20 +135,8 @@ export function SiteFooter() {
                 {/* One narrow column at every width: a footer this short reads
                     best as a single stack, and held to a phone's width on a
                     monitor it stays a footer rather than a spread-out band. */}
-                <div className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-4 pb-6 text-center">
-                    {/* The sun from the logo, whole. The light 6 KB cut, since
-                        it is drawn small. */}
-                    <img
-                        src="/images/sun-light.svg"
-                        alt=""
-                        width={80}
-                        height={80}
-                        loading="lazy"
-                        decoding="async"
-                        draggable={false}
-                        className="size-20 drop-shadow-[0_2px_4px_rgb(46_42_36/0.2)] select-none"
-                    />
-                    <p className="mt-3 font-heading text-2xl leading-tight text-balance sm:text-3xl">
+                <div className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-6 pb-6 text-center">
+                    <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl">
                         Fresh desserts and drinks in Aley
                     </p>
 
