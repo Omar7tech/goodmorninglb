@@ -1,10 +1,20 @@
+import { Clock } from 'lucide-react';
+
 import {
     formatTime,
     hasPublishedHours,
     useShop,
     weeklyHours,
 } from '@/lib/shop';
+import type { HoursRow } from '@/lib/shop';
 import { cn } from '@/lib/utils';
+
+/** A day's hours as one string, or "Closed". */
+function hoursLabel(row: HoursRow): string {
+    return row.isClosed
+        ? 'Closed'
+        : `${formatTime(row.opensAt)} – ${formatTime(row.closesAt)}`;
+}
 
 /**
  * The week's opening hours, for the foot of the menu.
@@ -13,8 +23,11 @@ import { cn } from '@/lib/utils';
  * there are no hours to publish, only a switch, and printing the untouched
  * nine-to-five default would be a promise the shop never made.
  *
- * Days sharing the same hours are run together into one line, and the line
- * covering today is lifted onto a pill of its own so it is the one read first.
+ * Two shapes. A shop keeping the same hours all week gets one line — "Open
+ * every day", and the hours — since a table of seven identical rows, or one
+ * row labelled "Mon – Sun", is a list for something that is not a list. A shop
+ * whose days differ gets the week, days with matching hours run together, and
+ * the line covering today lifted onto a cream pill so it is the one read first.
  */
 export function ShopHours({ className }: { className?: string }) {
     const shop = useShop();
@@ -25,41 +38,67 @@ export function ShopHours({ className }: { className?: string }) {
 
     const rows = weeklyHours(shop);
 
+    if (rows.length === 1) {
+        const [week] = rows;
+
+        return (
+            <section
+                aria-label="Opening hours"
+                className={cn('flex items-center gap-3', className)}
+            >
+                <span
+                    aria-hidden
+                    className="grid size-10 shrink-0 place-items-center rounded-full bg-slab-ink/15"
+                >
+                    <Clock className="size-5" />
+                </span>
+
+                <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="font-heading text-xl leading-tight">
+                        {week.isClosed ? 'Closed for now' : 'Open every day'}
+                    </span>
+                    {!week.isClosed && (
+                        <span className="text-sm tabular-nums opacity-85">
+                            {hoursLabel(week)}
+                        </span>
+                    )}
+                </span>
+            </section>
+        );
+    }
+
     return (
         <section aria-labelledby="footer-hours" className={className}>
-            <h2 id="footer-hours" className="font-heading text-2xl">
+            <h2
+                id="footer-hours"
+                className="flex items-center gap-2 font-heading text-xl"
+            >
+                <Clock aria-hidden className="size-5" />
                 Opening hours
             </h2>
 
-            <ul className="mt-3 flex flex-col gap-1">
+            <ul className="mt-3 flex flex-col gap-0.5">
                 {rows.map((row) => (
                     <li
                         key={row.label}
                         aria-current={row.isToday ? 'date' : undefined}
                         className={cn(
-                            '-mx-3 flex items-baseline justify-between gap-6 rounded-full px-3 py-1.5 text-sm',
+                            '-mx-3 flex items-center justify-between gap-4 rounded-full px-3 py-2 text-sm',
                             row.isToday
-                                ? 'bg-slab-ink/15 font-semibold'
-                                : 'opacity-80',
+                                ? 'bg-slab-ink font-semibold text-primary shadow-sm'
+                                : 'opacity-85',
                         )}
                     >
-                        <span>
+                        <span className="flex items-center gap-2">
                             {row.label}
                             {row.isToday && (
-                                <span className="ml-2 text-[0.65rem] font-normal tracking-wide uppercase opacity-80">
+                                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[0.6rem] tracking-wide uppercase">
                                     Today
                                 </span>
                             )}
                         </span>
 
-                        {row.isClosed ? (
-                            <span>Closed</span>
-                        ) : (
-                            <span className="tabular-nums">
-                                {formatTime(row.opensAt)} –{' '}
-                                {formatTime(row.closesAt)}
-                            </span>
-                        )}
+                        <span className="tabular-nums">{hoursLabel(row)}</span>
                     </li>
                 ))}
             </ul>

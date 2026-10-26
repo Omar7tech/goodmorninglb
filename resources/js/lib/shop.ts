@@ -80,13 +80,21 @@ export function dayName(day: number): string {
     return FULL_DAYS[day];
 }
 
-/** A `HH:mm` time as a friendly 12-hour string, e.g. "9:00 AM". */
+/**
+ * A `HH:mm` time as a friendly 12-hour string: "9 AM" on the hour, "9:30 AM"
+ * otherwise. The ":00" is dropped because it says nothing, and a schedule of
+ * "9:00 AM – 5:00 PM" reads as more numbers than the shop's hours really are.
+ */
 export function formatTime(time: string): string {
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hours, minutes = 0] = time.split(':').map(Number);
     const period = hours < 12 ? 'AM' : 'PM';
     const hour12 = hours % 12 === 0 ? 12 : hours % 12;
 
-    return `${hour12}:${String(minutes ?? 0).padStart(2, '0')} ${period}`;
+    if (minutes === 0) {
+        return `${hour12} ${period}`;
+    }
+
+    return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`;
 }
 
 /**
