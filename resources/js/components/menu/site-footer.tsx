@@ -1,42 +1,10 @@
 import { usePage } from '@inertiajs/react';
-import type { LucideIcon } from 'lucide-react';
-import {
-    createLucideIcon,
-    Globe,
-    MapPin,
-    MessageCircle,
-    Music2,
-} from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useId } from 'react';
 import type { CSSProperties } from 'react';
 
 import { ShopHours } from '@/components/menu/shop-hours';
 import { hasPublishedHours, useShop } from '@/lib/shop';
-import { cn } from '@/lib/utils';
-
-/**
- * Drawn here because the icon set no longer ships brand marks. Built with
- * Lucide's own helper, in its stroke and grid, so they sit beside the rest
- * as the same family rather than as pasted-in logos.
- */
-const Instagram = createLucideIcon('instagram', [
-    [
-        'rect',
-        { x: '2', y: '2', width: '20', height: '20', rx: '5', key: 'frame' },
-    ],
-    ['circle', { cx: '12', cy: '12', r: '4', key: 'lens' }],
-    ['path', { d: 'M17.5 6.5h.01', key: 'flash' }],
-]);
-
-const Facebook = createLucideIcon('facebook', [
-    [
-        'path',
-        {
-            d: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
-            key: 'f',
-        },
-    ],
-]);
 
 /** How tall the wavy edge is, in pixels, from crest to trough. */
 const WAVE_HEIGHT = 24;
@@ -155,40 +123,36 @@ export function SiteFooter() {
                         </a>
                     )}
 
-                    {/* Equal tiles, icon over name, three to a row: every link
-                        the same size and the same reach for a thumb, and no
-                        single pill left stranded on a line of its own. Keyed by
-                        position — two rows may share a name, and the order is
-                        the owner's. */}
+                    {/* The links as words, in the heading face, on one line
+                        with a dot of the sun's yellow between each — read like
+                        a sign-off rather than clicked like a toolbar. A wavy
+                        underline draws in under the one being pointed at, the
+                        same wave the footer rises on. Keyed by position — two
+                        rows may share a name, and the order is the owner's. */}
                     {socialLinks.length > 0 && (
-                        <ul
-                            className={cn(
-                                'grid w-full grid-cols-3 gap-2',
-                                locationUrl ? 'mt-3' : 'mt-6',
-                            )}
-                        >
-                            {socialLinks.map(({ label, url }, index) => {
-                                const Icon = socialIcon(url);
+                        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                            {socialLinks.map(({ label, url }, index) => (
+                                <li
+                                    key={index}
+                                    className="flex items-center gap-x-3"
+                                >
+                                    {index > 0 && (
+                                        <span
+                                            aria-hidden
+                                            className="size-1.5 rounded-full bg-[#F4C338]"
+                                        />
+                                    )}
 
-                                return (
-                                    <li key={index}>
-                                        <a
-                                            href={url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="flex h-full flex-col items-center justify-center gap-1.5 rounded-2xl bg-slab-ink/10 px-2 py-3 text-xs font-semibold transition-colors duration-200 ease-out hover:bg-slab-ink/20 focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none"
-                                        >
-                                            <Icon
-                                                aria-hidden
-                                                className="size-5"
-                                            />
-                                            <span className="max-w-full truncate">
-                                                {label}
-                                            </span>
-                                        </a>
-                                    </li>
-                                );
-                            })}
+                                    <a
+                                        href={url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="rounded-md py-1 font-heading text-xl decoration-[#F4C338] decoration-wavy decoration-2 underline-offset-[6px] transition-colors duration-200 ease-out hover:underline focus-visible:underline focus-visible:outline-none sm:text-2xl"
+                                    >
+                                        {label}
+                                    </a>
+                                </li>
+                            ))}
                         </ul>
                     )}
 
@@ -224,37 +188,4 @@ export function SiteFooter() {
             </div>
         </footer>
     );
-}
-
-/**
- * The icon for a link, worked out from where it goes rather than from what the
- * owner called it — "Insta", "IG" and "Instagram" are all the same place.
- * Anything not recognised gets a plain globe.
- */
-function socialIcon(url: string): LucideIcon {
-    let host = '';
-
-    try {
-        host = new URL(url).hostname.replace(/^www\./, '');
-    } catch {
-        return Globe;
-    }
-
-    if (host === 'wa.me' || host.endsWith('whatsapp.com')) {
-        return MessageCircle;
-    }
-
-    if (host.endsWith('instagram.com')) {
-        return Instagram;
-    }
-
-    if (host.endsWith('facebook.com') || host === 'fb.com') {
-        return Facebook;
-    }
-
-    if (host.endsWith('tiktok.com')) {
-        return Music2;
-    }
-
-    return Globe;
 }
