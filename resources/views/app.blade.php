@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="only light">
 
         <link rel="icon" type="image/png" href="/favicon-96x96.png?v=20261026" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20261026" />
