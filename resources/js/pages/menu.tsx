@@ -14,6 +14,7 @@ import { ProductCard } from '@/components/menu/product-card';
 import { ProductDialog } from '@/components/menu/product-dialog';
 import { ProductMinimal } from '@/components/menu/product-minimal';
 import { ProductShowcase } from '@/components/menu/product-showcase';
+import { ShopNotice } from '@/components/menu/shop-notice';
 import { SiteBanner } from '@/components/menu/site-banner';
 import { SiteFooter } from '@/components/menu/site-footer';
 import { SiteHeader } from '@/components/menu/site-header';
@@ -590,6 +591,14 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                     as one control with two halves. */}
                     <div className="px-5 pb-5 lg:mx-auto lg:w-full lg:max-w-md">
                         <OrderTypeSwitch current={orderType} />
+
+                        {/* On the menu you order from only: closed, or in the
+                            last hour, the customer hears it before building a
+                            basket rather than at the send button. Draws
+                            nothing the rest of the time. */}
+                        {canOrder && (
+                            <ShopNotice context="delivery" className="mt-3" />
+                        )}
                     </div>
 
                     {/* Straight under the switch, above everything the menu

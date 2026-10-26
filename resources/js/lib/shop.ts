@@ -129,9 +129,25 @@ export function nextOpening(shop: Shop, now: Date = new Date()): Date | null {
     return null;
 }
 
+/** How close an opening or a closing has to be before it is counted down. */
+const SOON_MINUTES = 60;
+
+/** A moment as the friendly time `formatTime` gives, e.g. "5 PM". */
+function clockLabel(date: Date): string {
+    return formatTime(
+        `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`,
+    );
+}
+
+/** Whole minutes from `now` until `target`, never less than one. */
+function minutesUntil(target: Date, now: Date): number {
+    return Math.max(1, Math.ceil((target.getTime() - now.getTime()) / 60_000));
+}
+
 /**
- * A sentence for when the shop next opens — "Opens today at 5:00 PM" — or null
- * when nothing is scheduled to open, which is also the answer in manual mode.
+ * A sentence for when the shop next opens — "Opens in 20 min" when it is
+ * nearly time, "Opens today at 5 PM" otherwise — or null when nothing is
+ * scheduled to open, which is also the answer in manual mode.
  */
 export function nextOpeningLabel(
     shop: Shop,
@@ -141,6 +157,12 @@ export function nextOpeningLabel(
 
     if (!target) {
         return null;
+    }
+
+    const minutes = minutesUntil(target, now);
+
+    if (minutes <= SOON_MINUTES) {
+        return `Opens in ${minutes} min`;
     }
 
     const startOfDay = (date: Date): number =>
@@ -155,11 +177,95 @@ export function nextOpeningLabel(
             : daysAhead === 1
               ? 'tomorrow'
               : `on ${dayName(target.getDay())}`;
-    const time = formatTime(
-        `${target.getHours()}:${String(target.getMinutes()).padStart(2, '0')}`,
-    );
 
-    return `Opens ${when} at ${time}`;
+    return `Opens ${when} at ${clockLabel(target)}`;
+}
+
+/**
+ * When the session the shop is in right now ends, on the automatic schedule.
+ * Null while closed, and in manual mode, where nobody has said when the switch
+ * will be flipped back.
+ *
+ * Yesterday's row is asked first: a session that crossed midnight (open 18:00,
+ * close 02:00) is still yesterday's in the small hours, and it closes today.
+ */
+export function currentClosing(
+    shop: Shop,
+    now: Date = new Date(),
+): Date | null {
+    if (shop.statusMode !== 'automatic') {
+        return null;
+    }
+
+    const minutesNow = now.getHours() * 60 + now.getMinutes();
+    const byDay = new Map(shop.openingHours.map((hours) => [hours.day, hours]));
+    const yesterday = byDay.get((now.getDay() + 6) % 7);
+    const today = byDay.get(now.getDay());
+
+    const at = (time: string, daysAhead: number): Date => {
+        const [hours, minutes = 0] = time.split(':').map(Number);
+        const date = new Date(now);
+        date.setDate(date.getDate() + daysAhead);
+        date.setHours(hours, minutes, 0, 0);
+
+        return date;
+    };
+
+    if (yesterday && isWithinHours(yesterday, minutesNow, true)) {
+        return at(yesterday.closesAt, 0);
+    }
+
+    if (today && isWithinHours(today, minutesNow, false)) {
+        const crossesMidnight =
+            toMinutes(today.closesAt) <= toMinutes(today.opensAt);
+
+        return at(today.closesAt, crossesMidnight ? 1 : 0);
+    }
+
+    return null;
+}
+
+/** Whether the shop is open right now, and what to say about it. */
+export type ShopStatus = {
+    open: boolean;
+    /**
+     * One short line for the moment: "Open until 5 PM", "Closing in 20 min",
+     * "Opens tomorrow at 9 AM". Null when there is nothing to add to open or
+     * closed, which is how a shop on the manual switch always reads.
+     */
+    detail: string | null;
+    /** Open, but for less than an hour more. */
+    closingSoon: boolean;
+};
+
+/** The shop's status at a given moment, worked out from its settings. */
+export function shopStatus(shop: Shop, now: Date = new Date()): ShopStatus {
+    const open = isShopOpen(shop, now);
+
+    if (!open) {
+        return {
+            open,
+            detail: nextOpeningLabel(shop, now),
+            closingSoon: false,
+        };
+    }
+
+    const closing = currentClosing(shop, now);
+
+    if (closing === null) {
+        return { open, detail: null, closingSoon: false };
+    }
+
+    const minutes = minutesUntil(closing, now);
+    const closingSoon = minutes <= SOON_MINUTES;
+
+    return {
+        open,
+        detail: closingSoon
+            ? `Closing in ${minutes} min`
+            : `Open until ${clockLabel(closing)}`,
+        closingSoon,
+    };
 }
 
 /** One line of the weekly schedule, days with matching hours run together. */
@@ -244,11 +350,11 @@ export function useShop(): Shop {
 }
 
 /**
- * Whether the shop is open. On the automatic schedule this is re-checked every
- * half minute, so a shop that opens or closes while the menu is on screen says
- * so on its own.
+ * The shop's status, kept current. On the automatic schedule it is re-checked
+ * every half minute, so a shop that opens or closes while the page is on
+ * screen says so on its own — and a countdown keeps counting.
  */
-export function useShopOpen(): boolean {
+export function useShopStatus(): ShopStatus {
     const shop = useShop();
     const [now, setNow] = useState(() => new Date());
 
@@ -262,5 +368,10 @@ export function useShopOpen(): boolean {
         return () => window.clearInterval(timer);
     }, [shop.statusMode]);
 
-    return isShopOpen(shop, now);
+    return shopStatus(shop, now);
+}
+
+/** Whether the shop is open, kept current the same way. */
+export function useShopOpen(): boolean {
+    return useShopStatus().open;
 }

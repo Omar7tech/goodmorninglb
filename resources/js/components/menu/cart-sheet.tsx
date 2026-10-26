@@ -29,7 +29,7 @@ import { cartItemUnitUsd, useCart } from '@/contexts/cart-context';
 import type { CartItem } from '@/contexts/cart-context';
 
 import { shareOrderUrl } from '@/lib/share-order';
-import { nextOpeningLabel, useShop } from '@/lib/shop';
+import { useShopStatus } from '@/lib/shop';
 import { useCheckout } from '@/lib/use-checkout';
 import { usePricing } from '@/lib/use-pricing';
 import { cn } from '@/lib/utils';
@@ -56,7 +56,8 @@ export function CartSheet({
     const { items, open, setOpen, subtotalUsd, clear } = useCart();
     const pricing = usePricing();
     // Only read when the shop is shut, but a hook cannot be called by halves.
-    const opensLabel = nextOpeningLabel(useShop());
+    // Live, so "Opens in 20 min" keeps counting while the basket is open.
+    const opensLabel = useShopStatus().detail;
 
     const deliveryFeeUsd = pricing.deliveryFeeUsd;
     const totalUsd = subtotalUsd + (deliveryFeeUsd ?? 0);

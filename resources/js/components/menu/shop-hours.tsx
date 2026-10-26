@@ -4,10 +4,46 @@ import {
     formatTime,
     hasPublishedHours,
     useShop,
+    useShopStatus,
     weeklyHours,
 } from '@/lib/shop';
 import type { HoursRow } from '@/lib/shop';
 import { cn } from '@/lib/utils';
+
+/**
+ * Where the shop stands right now, under its hours: a dot, filled while open
+ * and hollow while shut, and a few words that keep themselves current —
+ * "Open now", "Closing in 20 min", "Closed · Opens tomorrow at 9 AM".
+ */
+function LiveStatus({ className }: { className?: string }) {
+    const { open, detail, closingSoon } = useShopStatus();
+
+    const text = open
+        ? closingSoon && detail !== null
+            ? detail
+            : 'Open now'
+        : ['Closed', detail].filter(Boolean).join(' · ');
+
+    return (
+        <p
+            role="status"
+            className={cn('flex items-center gap-2 text-sm', className)}
+        >
+            <span
+                aria-hidden
+                className={cn(
+                    'size-2 shrink-0 rounded-full border-[1.5px]',
+                    open
+                        ? 'border-[#F4C338] bg-[#F4C338]'
+                        : 'border-slab-ink bg-transparent',
+                )}
+            />
+            <span className={cn(open ? 'font-semibold' : 'opacity-90')}>
+                {text}
+            </span>
+        </p>
+    );
+}
 
 /** A day's hours as one string, or "Closed". */
 function hoursLabel(row: HoursRow): string {
@@ -62,6 +98,7 @@ export function ShopHours({ className }: { className?: string }) {
                             {hoursLabel(week)}
                         </span>
                     )}
+                    <LiveStatus className="mt-1.5" />
                 </span>
             </section>
         );
@@ -76,6 +113,8 @@ export function ShopHours({ className }: { className?: string }) {
                 <Clock aria-hidden className="size-5" />
                 Opening hours
             </h2>
+
+            <LiveStatus className="mt-1.5" />
 
             <ul className="mt-3 flex flex-col gap-0.5">
                 {rows.map((row) => (

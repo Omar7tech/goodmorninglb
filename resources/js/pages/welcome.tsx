@@ -4,6 +4,7 @@ import { ArrowRight, Bike, UtensilsCrossed } from 'lucide-react';
 
 import { DessertPattern } from '@/components/dessert-pattern';
 import { GoodMorningLogo } from '@/components/good-morning-logo';
+import { ShopNotice } from '@/components/menu/shop-notice';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -64,25 +65,35 @@ export default function Welcome() {
                     />
                 </h1>
 
-                {/* From `sm` up the pair sits side by side under the logo and
-                    shares its width, so the two read as one block. */}
-                <nav
-                    aria-label="Order"
-                    className="flex w-full max-w-sm animate-in flex-col gap-3 delay-300 duration-500 ease-out fill-mode-backwards fade-in slide-in-from-bottom-4 motion-reduce:animate-none sm:max-w-lg sm:flex-row sm:gap-4 lg:max-w-xl"
-                >
-                    <ChoiceButton
-                        label="Dine In"
-                        href="/menu/dine-in"
-                        icon={UtensilsCrossed}
-                        className="bg-sage hover:bg-sage"
+                <div className="flex w-full max-w-sm flex-col gap-4 sm:max-w-lg lg:max-w-xl">
+                    {/* From `sm` up the pair sits side by side under the logo
+                        and shares its width, so the two read as one block. */}
+                    <nav
+                        aria-label="Order"
+                        className="flex w-full animate-in flex-col gap-3 delay-300 duration-500 ease-out fill-mode-backwards fade-in slide-in-from-bottom-4 motion-reduce:animate-none sm:flex-row sm:gap-4"
+                    >
+                        <ChoiceButton
+                            label="Dine In"
+                            href="/menu/dine-in"
+                            icon={UtensilsCrossed}
+                            className="bg-sage hover:bg-sage"
+                        />
+                        <ChoiceButton
+                            label="Delivery"
+                            href="/menu/delivery"
+                            icon={Bike}
+                            className="bg-berry hover:bg-berry"
+                        />
+                    </nav>
+
+                    {/* Said here rather than at the door of the menu: the menu
+                        is worth reading either way, and someone who knows
+                        before they open it is not led on. Only while closed. */}
+                    <ShopNotice
+                        context="home"
+                        className="animate-in delay-500 duration-500 ease-out fill-mode-backwards fade-in slide-in-from-bottom-4 motion-reduce:animate-none"
                     />
-                    <ChoiceButton
-                        label="Delivery"
-                        href="/menu/delivery"
-                        icon={Bike}
-                        className="bg-berry hover:bg-berry"
-                    />
-                </nav>
+                </div>
             </main>
         </>
     );
