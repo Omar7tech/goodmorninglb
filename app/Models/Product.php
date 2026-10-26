@@ -13,6 +13,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\Attributes\Sluggable;
 
+/**
+ * @property list<array{name: string, price: float|int}>|null $variants
+ */
 #[Sluggable(from: 'title', to: 'slug')]
 #[Guarded(['id'])]
 class Product extends Model implements HasMedia
