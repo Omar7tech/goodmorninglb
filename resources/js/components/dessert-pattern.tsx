@@ -1,33 +1,69 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+    Avocado,
+    Blender,
     CakeSlice,
-    Cherry,
     Citrus,
-    Coffee,
-    Cookie,
     Croissant,
     CupSoda,
+    createLucideIcon,
     Donut,
     IceCreamBowl,
     IceCreamCone,
-    Popsicle,
+    Nut,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-/** What the shop sells, drawn small: the doodles the pattern is made of. */
+/**
+ * Drawn here because the icon set has no waffle or pancakes, two of the
+ * menu's biggest categories. Built with Lucide's own helper so the stroke
+ * and sizing match the rest of the doodles.
+ */
+const Waffle = createLucideIcon('waffle', [
+    [
+        'rect',
+        { x: '3', y: '3', width: '18', height: '18', rx: '4', key: 'edge' },
+    ],
+    ['path', { d: 'M9 3v18', key: 'left' }],
+    ['path', { d: 'M15 3v18', key: 'right' }],
+    ['path', { d: 'M3 9h18', key: 'top' }],
+    ['path', { d: 'M3 15h18', key: 'bottom' }],
+]);
+
+const Pancakes = createLucideIcon('pancakes', [
+    [
+        'rect',
+        { x: '3', y: '17', width: '18', height: '4', rx: '2', key: 'base' },
+    ],
+    [
+        'rect',
+        { x: '4', y: '13', width: '16', height: '4', rx: '2', key: 'middle' },
+    ],
+    ['rect', { x: '5', y: '9', width: '14', height: '4', rx: '2', key: 'top' }],
+    [
+        'rect',
+        { x: '10', y: '6', width: '4', height: '3', rx: '1', key: 'butter' },
+    ],
+]);
+
+/**
+ * What the shop actually sells, drawn small: each doodle stands for a part
+ * of the menu, from the avocado cocktails to the croissants and donuts.
+ */
 const DOODLES: LucideIcon[] = [
-    Croissant,
-    IceCreamCone,
-    Coffee,
-    Donut,
-    Cherry,
-    CakeSlice,
-    Citrus,
-    Cookie,
-    CupSoda,
-    Popsicle,
-    IceCreamBowl,
+    Croissant, // Croissants, mini croissants
+    Avocado, // The avocado category
+    Waffle, // Waffles
+    CupSoda, // Juices, smoothies and shakes
+    Donut, // Filled and topped donuts
+    Pancakes, // Pancakes
+    CakeSlice, // Cakes and cheesecake
+    Citrus, // Orange, lemonade, Vitamin C
+    IceCreamBowl, // Special Cups
+    Blender, // Fresh blends
+    IceCreamCone, // The ice-cream scoops on crepes and cups
+    Nut, // Almonds, walnuts, hazelnuts, pistachio
 ];
 
 /** Small tilts, so the field reads as placed by hand rather than stamped. */
@@ -65,9 +101,12 @@ export function DessertPattern({ className }: { className?: string }) {
                     >
                         {Array.from({ length: COLUMNS }, (_, column) => {
                             const index = row * COLUMNS + column;
+                            // Steps of 5 and 7 share no factor with the 12
+                            // doodles, so every row cycles through all of them
+                            // and no two neighbours ever match.
                             const Doodle =
                                 DOODLES[
-                                    (row * 7 + column * 3) % DOODLES.length
+                                    (row * 7 + column * 5) % DOODLES.length
                                 ];
 
                             return (
