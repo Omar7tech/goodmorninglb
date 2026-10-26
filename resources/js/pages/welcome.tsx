@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRight, Bike, UtensilsCrossed } from 'lucide-react';
 
+import { DessertPattern } from '@/components/dessert-pattern';
 import { GoodMorningLogo } from '@/components/good-morning-logo';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -52,7 +53,9 @@ export default function Welcome() {
         <>
             <Head title="Fresh Desserts & Drinks in Aley" />
 
-            <main className="flex min-h-svh flex-col items-center justify-center gap-10 px-6 py-12 sm:gap-12">
+            <main className="relative isolate flex min-h-svh flex-col items-center justify-center gap-10 overflow-hidden px-6 py-12 sm:gap-12">
+                <DessertPattern />
+
                 <h1 className="w-full max-w-sm animate-in duration-700 ease-out zoom-in-95 fade-in motion-reduce:animate-none sm:max-w-lg lg:max-w-xl">
                     <GoodMorningLogo className="w-full drop-shadow-sm" />
                 </h1>
