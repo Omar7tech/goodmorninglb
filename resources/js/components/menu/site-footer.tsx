@@ -1,46 +1,23 @@
 import { usePage } from '@inertiajs/react';
 import { ArrowUpRight, MapPin } from 'lucide-react';
-import type { CSSProperties } from 'react';
+import { useId } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import { ShopHours } from '@/components/menu/shop-hours';
 import { hasPublishedHours, useShop } from '@/lib/shop';
-import { cn } from '@/lib/utils';
 
-/** The logo's own proportions, taken from the artwork's viewBox. */
-const LOGO_ASPECT = '4193 / 2782';
-
-/** The same proportions as a multiplier, for working a height out of a width. */
-const LOGO_RATIO = '2782 / 4193';
+/** How tall the wavy edge is, in pixels, from crest to trough. */
+const WAVE_HEIGHT = 24;
 
 /**
- * The logo, cut out of the slab rather than drawn on it.
- *
- * Two mask layers: the whole sheet, and the artwork on top of it composited
- * away, which leaves the sheet with the logo missing — so the cream of the page
- * shows through in its shape.
- *
- * Its place is set by numbers the column below already uses — centred and
- * `py-10` from the top — and its width comes in through `--footer-logo-w`,
- * which the space held open for it reads too, so the hole lands on that space
- * without either side measuring the other.
- *
- * The height is worked out from that width and the artwork's own ratio rather
- * than left to `auto`: WebKit answers `auto` for an SVG mask with the size of
- * the box being masked — the whole footer — which stretches the logo from edge
- * to edge on iOS.
+ * One soft wave, crest to crest, repeated along the top of the footer. It runs
+ * on past the edge's own height, so the tile below it is green all the way
+ * down rather than leaving a seam where one row of tiles meets the next.
  */
-const LOGO_KNOCKOUT = {
-    maskImage: "url('/images/logo.svg'), linear-gradient(#000, #000)",
-    WebkitMaskImage: "url('/images/logo.svg'), linear-gradient(#000, #000)",
-    maskPosition: 'center 2.5rem, 0 0',
-    WebkitMaskPosition: 'center 2.5rem, 0 0',
-    maskSize: `var(--footer-logo-w) calc(var(--footer-logo-w) * ${LOGO_RATIO}), 100% 100%`,
-    WebkitMaskSize: `var(--footer-logo-w) calc(var(--footer-logo-w) * ${LOGO_RATIO}), 100% 100%`,
-    maskRepeat: 'no-repeat, no-repeat',
-    WebkitMaskRepeat: 'no-repeat, no-repeat',
-    maskComposite: 'exclude',
-    WebkitMaskComposite: 'xor',
-} satisfies CSSProperties;
+const WAVE = {
+    width: 220,
+    path: 'M0 18C27.5 18 27.5 4 55 4S82.5 18 110 18 137.5 4 165 4 192.5 18 220 18V44H0Z',
+};
 
 /**
  * The maker's mark at the foot, painted in the slab's own ink so it follows the
@@ -60,159 +37,143 @@ const MAKER_MARK = {
 } satisfies CSSProperties;
 
 /**
- * The foot of the page: one green slab the whole menu comes to rest on, with
- * the logo cut out of it.
+ * The foot of the page: the green of "Morning", rising into the page on a soft
+ * wave rather than a straight edge.
  *
- * Below the logo: a button to the shop on a map when an address is set, the
- * week's hours when the shop runs on a schedule, and the links the owner has
- * listed in the dashboard — named rather than drawn as icons, so the logo is
- * the only mark on the slab.
+ * Under the wave: the logo's sun, a button to the shop on a map when an
+ * address is set, the shop's own links, and the week's hours when the shop
+ * runs on a schedule.
  */
 export function SiteFooter() {
     const { socialLinks, locationUrl } = usePage().props;
-    // The hours draw their own rule above them, so the list below only tightens
-    // up under the location button when there is nothing in between.
     const hoursShown = hasPublishedHours(useShop());
+    // The patterns need ids of their own; the colons React puts in one are
+    // not safe inside `url(#…)`.
+    const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
 
     return (
-        <footer className="relative overflow-hidden rounded-t-[2rem] text-slab-ink shadow-[0_-6px_20px_rgb(0_0_0/0.08)] [--footer-logo-w:min(calc(100vw-6rem),17rem)] lg:[--footer-logo-w:20rem]">
-            {/* The green itself, so the logo can be taken out of it. The colour
-                cannot sit on the footer: whatever is behind the hole would be
-                filled straight back in. */}
-            <div
+        <footer className="text-slab-ink">
+            {/* Drawn with repeating tiles rather than one stretched picture,
+                so a wave is the same shape on a phone as on a monitor. Pulled a
+                pixel into the green below, or a hairline of the page shows
+                between the two at some zoom levels. */}
+            <svg
                 aria-hidden
-                style={LOGO_KNOCKOUT}
-                className="absolute inset-0 bg-primary"
-            />
+                style={{ height: WAVE_HEIGHT }}
+                className="-mb-px block w-full"
+            >
+                <defs>
+                    <pattern
+                        id={`${id}-wave`}
+                        width={WAVE.width}
+                        height={WAVE_HEIGHT + 30}
+                        patternUnits="userSpaceOnUse"
+                    >
+                        <path className="fill-primary" d={WAVE.path} />
+                    </pattern>
+                </defs>
 
-            {/* The slab runs edge to edge; only its contents keep to the same
-                column the menu above them stands in. */}
-            <div className="relative mx-auto w-full max-w-2xl px-6 py-10 lg:max-w-5xl xl:max-w-6xl">
-                {/* The room the cut-out logo stands in. It is the page showing
-                    through the slab rather than any ink of its own, so there is
-                    nothing here to draw — only its name, for readers. */}
-                <div
-                    role="img"
-                    aria-label="Good Morning"
-                    style={{
-                        aspectRatio: LOGO_ASPECT,
-                        width: 'var(--footer-logo-w)',
-                    }}
-                    className="mx-auto"
+                <rect
+                    width="100%"
+                    height={WAVE_HEIGHT}
+                    fill={`url(#${id}-wave)`}
                 />
+            </svg>
 
-                {/* The one thing a menu's foot is actually asked for, so it is
-                    a filled block rather than another line in the list: the
-                    slab's colours swapped, which on hover swap back and leave
-                    the button outlined. Left out entirely when the owner has
-                    set no address. */}
-                {locationUrl && (
-                    <a
-                        href={locationUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group relative mt-9 flex items-center justify-center gap-3 rounded-full border border-slab-ink bg-slab-ink px-6 py-3 text-primary transition-colors duration-300 ease-out hover:bg-transparent hover:text-slab-ink focus-visible:bg-transparent focus-visible:text-slab-ink focus-visible:outline-none motion-reduce:transition-none"
-                    >
-                        <MapPin
-                            className="size-5 shrink-0 transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5 motion-reduce:transform-none"
-                            strokeWidth={2.5}
-                        />
+            <div className="bg-primary">
+                <div className="mx-auto w-full max-w-2xl px-6 pt-4 pb-6 text-center lg:max-w-5xl xl:max-w-6xl">
+                    {/* The sun from the logo, whole. The light 6 KB cut, since
+                        it is drawn small. */}
+                    <img
+                        src="/images/sun-light.svg"
+                        alt=""
+                        width={88}
+                        height={88}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="mx-auto size-22 drop-shadow-[0_2px_4px_rgb(46_42_36/0.2)] select-none"
+                    />
+                    <p className="mt-3 font-heading text-2xl leading-tight sm:text-3xl">
+                        Fresh desserts and drinks in Aley
+                    </p>
 
-                        <span className="font-heading text-2xl sm:text-3xl">
-                            Find us
-                        </span>
-                    </a>
-                )}
-
-                {/* Where the shop is, then when it is there. */}
-                <ShopHours />
-
-                {/* One line per account, ruled like a listing. Nothing changes
-                    colour on hover — the row's own rule simply draws itself in
-                    under the name, which is all the pointing it needs.
-
-                    With nothing listed the whole rule disappears rather than
-                    leaving an empty box under the logo. Keyed by position: two
-                    rows may well share a name, and the order is the owner's. */}
-                {socialLinks.length > 0 && (
-                    <ul
-                        className={cn(
-                            'relative border-t border-slab-ink/25',
-                            // Closer under the button than under the logo: the
-                            // two belong to the same block of business.
-                            locationUrl && !hoursShown ? 'mt-6' : 'mt-9',
-                        )}
-                    >
-                        {socialLinks.map(({ label, url }, index) => (
-                            <li
-                                key={index}
-                                className="border-b border-slab-ink/25"
-                            >
-                                <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="group relative flex items-center justify-between gap-4 py-3 focus-visible:outline-none"
-                                >
-                                    {/* Drawn straight over the faint rule the row
-                                        already sits on, so the line brightens in
-                                        place rather than a second one appearing. */}
-                                    <span
-                                        aria-hidden
-                                        className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-slab-ink transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none"
-                                    />
-
-                                    <span className="font-heading text-2xl transition-transform duration-300 ease-out group-hover:translate-x-1.5 group-focus-visible:translate-x-1.5 motion-reduce:transform-none sm:text-3xl">
-                                        {label}
-                                    </span>
-
-                                    {/* The arrow rides off the corner and a fresh
-                                        one climbs in behind it, the same way the
-                                        home page buttons handle theirs. */}
-                                    <span className="relative flex size-5 items-center justify-center overflow-hidden">
-                                        <ArrowUpRight
-                                            className="size-5 shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-6 group-hover:-translate-y-6 group-focus-visible:translate-x-6 group-focus-visible:-translate-y-6 motion-reduce:transform-none"
-                                            strokeWidth={2.5}
+                    {/* Directions first and the shop's own links after it, all
+                        the same cream pill: one row of ways to reach the shop
+                        rather than a list to read. Keyed by position — two
+                        rows may share a name, and the order is the owner's. */}
+                    {(locationUrl || socialLinks.length > 0) && (
+                        <ul className="mt-6 flex flex-wrap justify-center gap-2">
+                            {locationUrl && (
+                                <li>
+                                    <FooterPill href={locationUrl}>
+                                        <MapPin
+                                            aria-hidden
+                                            className="size-4"
                                         />
+                                        Directions
+                                    </FooterPill>
+                                </li>
+                            )}
+
+                            {socialLinks.map(({ label, url }, index) => (
+                                <li key={index}>
+                                    <FooterPill href={url}>
+                                        {label}
                                         <ArrowUpRight
                                             aria-hidden
-                                            className="absolute size-5 shrink-0 -translate-x-6 translate-y-6 transition-transform duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 motion-reduce:hidden"
-                                            strokeWidth={2.5}
+                                            className="size-3.5 opacity-60 transition-[translate,opacity] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 motion-reduce:transform-none"
                                         />
-                                    </span>
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                                    </FooterPill>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
 
-                <div className="relative mt-7 flex items-center justify-between gap-4 text-[0.65rem] tracking-wide uppercase opacity-75">
-                    <span>© {new Date().getFullYear()} Good Morning</span>
-                    <span>Aley, Lebanon</span>
+                    {hoursShown && (
+                        <ShopHours className="mx-auto mt-8 max-w-xs rounded-3xl bg-slab-ink/10 p-5 text-left" />
+                    )}
+
+                    <div className="mt-8 flex flex-col items-center gap-3 border-t border-slab-ink/20 pt-5 text-xs opacity-75 sm:flex-row sm:justify-between">
+                        <span>© {new Date().getFullYear()} Good Morning</span>
+
+                        {/* Who built it, quieter than the shop's own line: a
+                            credit is the last thing on the page, not a second
+                            name over the door. */}
+                        <a
+                            href="https://yamencreates.com"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-2 uppercase transition-opacity duration-300 ease-out hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                        >
+                            <span className="text-[0.65rem]">Crafted by</span>
+
+                            {/* The mark itself, and the only name it needs:
+                                the label is what a reader hears in its place. */}
+                            <span
+                                role="img"
+                                aria-label="Yamen Creates"
+                                style={MAKER_MARK}
+                                className="h-2.5 bg-current"
+                            />
+                        </a>
+                    </div>
                 </div>
-
-                {/* Who built it, under the shop's own line and quieter than it:
-                    a credit is the last thing on the page, not a second name
-                    over the door. It brightens on hover, which is the only
-                    thing marking it as somewhere to go. */}
-                <a
-                    href="https://yamencreates.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="relative mt-4 flex items-center justify-center gap-2 text-[0.65rem] uppercase opacity-55 transition-opacity duration-300 ease-out hover:opacity-90 focus-visible:opacity-90 focus-visible:outline-none motion-reduce:transition-none"
-                >
-                    <span>Crafted by</span>
-
-                    {/* The mark itself, and the only name it needs: the label
-                        is what a reader hears in place of the artwork. */}
-                    <span
-                        role="img"
-                        aria-label="Yamen Creates"
-                        style={MAKER_MARK}
-                        className="h-2.5 bg-current"
-                    />
-                </a>
             </div>
         </footer>
+    );
+}
+
+/** One way to reach the shop: a cream pill on the green, lifting on hover. */
+function FooterPill({ href, children }: { href: string; children: ReactNode }) {
+    return (
+        <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="group inline-flex items-center gap-1.5 rounded-full bg-slab-ink px-4 py-2 text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none motion-reduce:hover:translate-y-0"
+        >
+            {children}
+        </a>
     );
 }

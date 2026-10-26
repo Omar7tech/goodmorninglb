@@ -758,7 +758,7 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                     closes on the slab instead of on bare page. The gap is on
                     the wrapper rather than the slab, or `mt-auto` would have
                     nothing left to push with. */}
-                <div className="mt-auto pt-10">
+                <div className="mt-auto pt-12">
                     <SiteFooter />
                 </div>
             </div>
