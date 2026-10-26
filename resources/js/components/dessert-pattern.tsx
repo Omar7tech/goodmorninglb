@@ -73,42 +73,27 @@ const ROWS = 6;
 const COLUMNS = 30;
 
 /**
- * A wallpaper of the menu's desserts growing from one edge of the screen and
- * fading out before it reaches the content: rising from the bottom of the
- * home page, hanging from the top of the menu. Rows are offset by half a cell,
- * like bricks, and every third doodle takes the red of the logo instead of
- * its green. Laid out from fixed tables rather than at random, so it is the
- * same pattern on every visit. Purely decorative, so it is hidden from
- * assistive technology.
+ * A wallpaper of the menu's desserts rising from the bottom of the screen
+ * and fading out before it reaches the content. Rows are offset by half a
+ * cell, like bricks, and every third doodle takes the red of the logo
+ * instead of its green. Laid out from fixed tables rather than at random,
+ * so it is the same pattern on every visit. Purely decorative, so it is
+ * hidden from assistive technology.
  */
-export function DessertPattern({
-    placement = 'bottom',
-    className,
-}: {
-    /** The edge the doodles grow from. */
-    placement?: 'top' | 'bottom';
-    className?: string;
-}) {
-    const fromTop = placement === 'top';
-
+export function DessertPattern({ className }: { className?: string }) {
     return (
         <div
             aria-hidden
             className={cn(
-                'pointer-events-none absolute inset-x-0 -z-10 h-[40svh] overflow-hidden',
-                fromTop ? 'top-0' : 'bottom-0',
+                'pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[40svh] overflow-hidden',
                 className,
             )}
             style={{
-                maskImage: `linear-gradient(to ${fromTop ? 'bottom' : 'top'}, black 10%, transparent 95%)`,
+                maskImage:
+                    'linear-gradient(to top, black 10%, transparent 95%)',
             }}
         >
-            <div
-                className={cn(
-                    'absolute left-1/2 flex -translate-x-1/2',
-                    fromTop ? 'top-0 flex-col' : 'bottom-0 flex-col-reverse',
-                )}
-            >
+            <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 flex-col-reverse">
                 {Array.from({ length: ROWS }, (_, row) => (
                     <div
                         key={row}

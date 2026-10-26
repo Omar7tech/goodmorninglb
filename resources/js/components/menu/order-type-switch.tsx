@@ -33,9 +33,8 @@ export function OrderTypeSwitch({ current }: { current: OrderType }) {
     );
 
     return (
-        // The track is opaque on purpose. A translucent tint here sits over the
-        // dessert doodles, and the doodles reading through it turn the whole
-        // control busy — it has to be its own surface, like the cards.
+        // The track is opaque on purpose: it is its own surface, like the
+        // cards, rather than a tint over the cream behind it.
         <div className="relative grid w-full grid-cols-2 gap-1 rounded-full border border-primary/15 bg-card p-1 shadow-sm">
             {/* The pill tracks the active option. Its width is one grid
                 column: half the box, less the padding and half the gap. */}

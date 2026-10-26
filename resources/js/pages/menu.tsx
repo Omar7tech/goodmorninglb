@@ -1,7 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import { DessertPattern } from '@/components/dessert-pattern';
 import { CartSheet } from '@/components/menu/cart-sheet';
 import { CartStrip } from '@/components/menu/cart-strip';
 import { CartToast } from '@/components/menu/cart-toast';
@@ -574,11 +573,6 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                 Below that nothing changes: the layout a phone gets is the one
                 it had. */}
             <div className="relative isolate flex min-h-screen flex-col">
-                {/* The home page's doodles, hanging from the top here rather
-                    than rising from the bottom, so the menu opens on the same
-                    wallpaper the customer just tapped through. */}
-                <DessertPattern placement="top" />
-
                 {/* Above the column and everything in it: the strip is the top
                     edge of the page, so it runs the full width of the window
                     rather than stopping where the menu does. */}
