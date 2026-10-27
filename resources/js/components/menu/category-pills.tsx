@@ -179,7 +179,7 @@ export function CategoryPills({
                                         aria-pressed={isActive}
                                         onClick={() => onSelect(category.id)}
                                         className={cn(
-                                            'flex w-16 flex-col items-center gap-2 rounded-2xl p-1 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
+                                            'flex w-[4.5rem] flex-col items-center gap-2 rounded-2xl p-1 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
                                             'transition-opacity duration-200 ease-out',
                                             isActive
                                                 ? 'opacity-100'
@@ -188,7 +188,7 @@ export function CategoryPills({
                                     >
                                         <span
                                             className={cn(
-                                                'flex size-13 items-center justify-center rounded-full shadow-sm ring-2 ring-offset-2 ring-offset-surface',
+                                                'flex size-15 items-center justify-center rounded-full shadow-sm ring-2 ring-offset-2 ring-offset-surface',
                                                 'transition-[box-shadow] duration-200 ease-out',
                                                 // Every circle is ringed, with a
                                                 // gap of the panel's cream: the
