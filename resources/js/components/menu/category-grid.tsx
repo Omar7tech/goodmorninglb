@@ -38,7 +38,7 @@ export function CategoryGrid({
             // and its picture at the other with a stretch of green in
             // between — pairing them keeps each band the proportion it was
             // drawn at.
-            <div className="flex flex-col gap-3 sm:gap-4 lg:grid lg:grid-cols-2">
+            <div className="flex flex-col gap-2.5 sm:gap-3 lg:grid lg:grid-cols-2">
                 {categories.map((category) => (
                     <CategoryRow
                         key={category.id}

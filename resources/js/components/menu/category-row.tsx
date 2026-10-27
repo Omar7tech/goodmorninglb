@@ -60,7 +60,7 @@ export function CategoryRow({
             type="button"
             onClick={() => onSelect(category.id)}
             className={cn(
-                'group relative flex h-28 w-full items-center overflow-hidden rounded-3xl bg-primary pr-4 pl-5 text-left text-primary-foreground sm:h-32 sm:pr-5 sm:pl-7',
+                'group relative flex h-20 w-full items-center overflow-hidden rounded-2xl bg-primary pr-3 pl-4 text-left text-primary-foreground sm:h-24 sm:pr-4 sm:pl-6',
                 'shadow-[0_2px_8px_rgb(113_144_103/0.3)] hover:shadow-[0_12px_24px_rgb(113_144_103/0.42)]',
                 // Slides toward the reader rather than lifting: a wide band that
                 // rises reads as peeling off the page, where a short one reads
@@ -115,10 +115,10 @@ export function CategoryRow({
 
             {/* `min-w-0` so the name clips inside its own column rather than
                 shoving the art off the end of the band. */}
-            <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-1 py-4">
+            <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-0.5 py-2">
                 <span
                     className={cn(
-                        'line-clamp-2 font-heading text-2xl leading-none text-balance sm:text-3xl',
+                        'truncate font-heading text-xl leading-tight sm:text-2xl',
                         uppercase && 'uppercase',
                     )}
                 >
@@ -145,7 +145,7 @@ export function CategoryRow({
                 the last thing that should be half there. */}
             <span
                 aria-hidden
-                className="relative flex h-full w-24 shrink-0 items-center justify-center sm:w-36"
+                className="relative flex h-full w-16 shrink-0 items-center justify-center sm:w-24"
             >
                 <CategoryArt
                     category={category}
