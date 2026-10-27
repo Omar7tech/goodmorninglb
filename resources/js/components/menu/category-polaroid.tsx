@@ -14,6 +14,13 @@ import type { Category } from '@/types';
 const COLOURS = ['bg-sage', 'bg-berry', 'bg-[#F4C338]'] as const;
 
 /**
+ * The ink each name is written in, matching its photo — as if captioned with a
+ * marker the same colour as the picture. The yellow is too light to read as
+ * writing, so its caption is in the page's dark ink.
+ */
+const INKS = ['text-sage', 'text-berry', 'text-foreground'] as const;
+
+/**
  * How far each photo leans, taken in turn — uneven on purpose, so the wall
  * reads as pinned up by hand rather than set out by a machine.
  */
@@ -26,8 +33,8 @@ const TILTS = [
 
 /**
  * One category as an instant photo: the icon on a square of colour in a white
- * frame, the name handwritten in the wide strip at the foot, and a strip of
- * the sun's yellow tape holding it to the page.
+ * frame, the name handwritten in the frame's wide foot in an ink matching the
+ * photo, and a strip of the sun's yellow tape holding it to the page.
  *
  * Each photo leans a little, a different way from its neighbour. Pointed at,
  * it straightens and lifts off the page.
@@ -50,7 +57,9 @@ export function CategoryPolaroid({
             type="button"
             onClick={() => onSelect(category.id)}
             className={cn(
-                'group relative flex w-full flex-col rounded-md bg-white p-2 pb-3 text-left shadow-[0_6px_16px_-6px_rgb(46_42_36/0.35)]',
+                // A real instant photo's proportions: a narrow border on three
+                // sides and a wide one at the foot for the caption.
+                'group relative flex w-full flex-col rounded-md bg-white p-2 pb-4 text-left shadow-[0_6px_16px_-6px_rgb(46_42_36/0.35)]',
                 'transition-[rotate,translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:rotate-0 hover:shadow-[0_14px_28px_-8px_rgb(46_42_36/0.4)] motion-reduce:transition-none',
                 'focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none',
                 TILTS[index % TILTS.length],
@@ -83,7 +92,8 @@ export function CategoryPolaroid({
             {/* The caption, written in the frame's wide foot. */}
             <span
                 className={cn(
-                    'mt-2 text-center font-heading text-lg leading-none text-balance text-foreground sm:text-xl',
+                    'mt-3 text-center font-heading text-lg leading-none text-balance sm:text-xl',
+                    INKS[colour],
                     uppercase && 'uppercase',
                 )}
             >
