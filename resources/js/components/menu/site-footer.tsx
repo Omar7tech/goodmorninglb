@@ -1,10 +1,11 @@
 import { usePage } from '@inertiajs/react';
-import { MapPin } from 'lucide-react';
 import { useId } from 'react';
 import type { CSSProperties } from 'react';
 
+import { DirectionsCard } from '@/components/menu/directions-card';
 import { ShopHours } from '@/components/menu/shop-hours';
 import { hasPublishedHours, useShop } from '@/lib/shop';
+import { cn } from '@/lib/utils';
 
 /** How tall the wavy edge is, in pixels, from crest to trough. */
 const WAVE_HEIGHT = 24;
@@ -100,46 +101,48 @@ export function SiteFooter() {
             </svg>
 
             <div className="bg-primary">
-                {/* One centred column on a phone. From `lg` it opens out into a
-                    row that flanks the sun — the shop's line to the left of it,
-                    the ways to reach the shop to the right — so a monitor gets
-                    a footer laid out for its width rather than a phone's
-                    column marooned in the middle of a green band. */}
-                <div className="mx-auto w-full max-w-md px-6 pt-6 pb-6 lg:max-w-5xl lg:px-8 lg:pt-4 xl:max-w-6xl">
-                    <div className="flex flex-col items-center text-center lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:text-left">
-                        <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl lg:text-2xl">
+                {/* One centred column on a phone. From `lg` it becomes a grid
+                    with the sun rising over it: the shop's line and its links
+                    on the left, the week's hours in the middle when there are
+                    any, and the map card on the right. Named areas rather than
+                    a reordering of the markup, so a phone still reads it
+                    top to bottom in the order it needs — line, map, links,
+                    hours. */}
+                <div className="mx-auto w-full max-w-md px-6 pt-6 pb-6 lg:max-w-5xl lg:px-8 lg:pt-8 xl:max-w-6xl">
+                    <div
+                        className={cn(
+                            'flex flex-col items-center text-center lg:grid lg:items-center lg:gap-x-12 lg:gap-y-3 lg:text-left',
+                            hoursShown
+                                ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)_minmax(0,19rem)] lg:[grid-template-areas:'line_hours_map''links_hours_map']"
+                                : "lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:[grid-template-areas:'line_map''links_map']",
+                        )}
+                    >
+                        <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl lg:self-end lg:[grid-area:line]">
                             Fresh desserts and drinks in Aley
                         </p>
 
-                        <div className="flex w-full flex-col items-center lg:w-auto lg:items-end">
-                            {/* The one solid button on the slab, full width and
-                                a thumb's height on a phone: of everything down
-                                here, finding the shop is what a customer most
-                                often came for. A button's own width on a
-                                monitor. */}
-                            {locationUrl && (
-                                <a
-                                    href={locationUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-slab-ink px-6 text-sm font-semibold text-primary shadow-sm transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-slab-ink/50 focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0 lg:mt-0 lg:w-auto"
-                                >
-                                    <MapPin aria-hidden className="size-4" />
-                                    Get directions
-                                </a>
-                            )}
+                        {/* The way to the shop, as a little map card: of
+                            everything down here, finding the shop is what a
+                            customer most often came for. */}
+                        {locationUrl && (
+                            <DirectionsCard
+                                href={locationUrl}
+                                className="mt-6 w-full lg:mt-0 lg:[grid-area:map]"
+                            />
+                        )}
 
-                            {/* The links as words on one line with a dot of the
-                                sun's yellow between each — read like a sign-off
-                                rather than clicked like a toolbar. In the body
-                                face, so they sit quietly under the line above
-                                rather than competing with it. A wavy underline
-                                draws in under the one being pointed at, the
-                                same wave the footer rises on. Keyed by position
-                                — two rows may share a name, and the order is
-                                the owner's. */}
-                            {socialLinks.length > 0 && (
-                                <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 lg:mt-4 lg:justify-end">
+                        {/* The links as words on one line with a dot of the
+                            sun's yellow between each — read like a sign-off
+                            rather than clicked like a toolbar. In the body
+                            face, so they sit quietly under the line above
+                            rather than competing with it. A wavy underline
+                            draws in under the one being pointed at, the same
+                            wave the footer rises on. Keyed by position — two
+                            rows may share a name, and the order is the
+                            owner's. */}
+                        {socialLinks.length > 0 && (
+                            <div className="lg:self-start lg:[grid-area:links]">
+                                <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 lg:mt-0 lg:justify-start">
                                     {socialLinks.map(
                                         ({ label, url }, index) => (
                                             <li
@@ -165,13 +168,13 @@ export function SiteFooter() {
                                         ),
                                     )}
                                 </ul>
-                            )}
-                        </div>
-                    </div>
+                            </div>
+                        )}
 
-                    {hoursShown && (
-                        <ShopHours className="mx-auto mt-6 w-full max-w-md rounded-3xl bg-slab-ink/10 p-5 text-left lg:mt-8" />
-                    )}
+                        {hoursShown && (
+                            <ShopHours className="mt-6 w-full rounded-3xl bg-slab-ink/10 p-5 text-left lg:mt-0 lg:[grid-area:hours]" />
+                        )}
+                    </div>
 
                     <div className="mt-8 flex flex-col items-center gap-2 border-t border-slab-ink/20 pt-5 text-xs opacity-75 lg:flex-row lg:justify-between">
                         <span>© {new Date().getFullYear()} Good Morning</span>
