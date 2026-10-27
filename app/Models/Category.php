@@ -40,11 +40,7 @@ class Category extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('webp')
-            ->nonQueued()
-            ->format('webp')
-            ->quality(70);
-
+        // One cut only: an icon is never drawn larger than a category box.
         $this->addMediaConversion('thumb')
             ->nonQueued()
             ->format('webp')

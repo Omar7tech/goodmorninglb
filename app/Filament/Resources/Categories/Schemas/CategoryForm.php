@@ -42,8 +42,7 @@ class CategoryForm
                             ->image()
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(5120)
-                            ->conversion('webp')
-                            ->responsiveImages()
+                            ->conversion('thumb')
                             ->imageEditor()
                             ->columnSpanFull(),
                     ]),

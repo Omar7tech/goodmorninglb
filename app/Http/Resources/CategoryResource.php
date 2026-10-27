@@ -31,7 +31,7 @@ class CategoryResource extends JsonResource
             // box tops out at 236px, and the rows layout repeats the art at
             // 48px as a watermark. `image` stays for anything that wants the
             // photo whole.
-            'image' => $this->getFirstMediaUrl('image', 'webp') ?: null,
+            'image' => $this->getFirstMediaUrl('image') ?: null,
             'thumbnail' => $this->getFirstMediaUrl('image', 'thumb') ?: null,
             'addons' => self::addonsPayload($this->addons ?? []),
             'products' => $this->whenLoaded(

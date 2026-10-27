@@ -132,4 +132,16 @@ it('stores uploaded images with webp and thumbnail conversions', function (strin
     expect($media->hasGeneratedConversion('webp'))->toBeTrue()
         ->and($media->hasGeneratedConversion('thumb'))->toBeTrue()
         ->and($record->getFirstMediaUrl('image', 'webp'))->toEndWith('.webp');
-})->with([Category::class, Product::class]);
+})->with([Product::class]);
+
+it('stores a category icon with the thumbnail conversion only', function (): void {
+    Storage::fake('public');
+
+    $category = Category::factory()->create();
+
+    $media = $category
+        ->addMedia(UploadedFile::fake()->image('icon.png', 800, 800))
+        ->toMediaCollection('image');
+
+    expect(array_keys($media->generated_conversions))->toBe(['thumb']);
+});
