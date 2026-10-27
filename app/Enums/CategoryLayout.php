@@ -18,6 +18,7 @@ enum CategoryLayout: string implements HasIcon, HasLabel
     case Polaroids = 'polaroids';
     case Bubbles = 'bubbles';
     case Blocks = 'blocks';
+    case MenuList = 'list';
 
     public function getLabel(): string
     {
@@ -27,6 +28,7 @@ enum CategoryLayout: string implements HasIcon, HasLabel
             self::Polaroids => 'Polaroids',
             self::Bubbles => 'Bubbles',
             self::Blocks => 'Colour blocks',
+            self::MenuList => 'Menu list',
         };
     }
 
@@ -38,6 +40,7 @@ enum CategoryLayout: string implements HasIcon, HasLabel
             self::Polaroids => Heroicon::OutlinedPhoto,
             self::Bubbles => Heroicon::OutlinedEllipsisHorizontalCircle,
             self::Blocks => Heroicon::OutlinedSwatch,
+            self::MenuList => Heroicon::OutlinedListBullet,
         };
     }
 
@@ -53,6 +56,7 @@ enum CategoryLayout: string implements HasIcon, HasLabel
             self::Polaroids => 'Each category an instant photo: the icon on a square of colour in a white frame, the name handwritten underneath, taped to the page at a slight tilt.',
             self::Bubbles => 'Round icons with a ring, four to a row on a phone and the name underneath, like story highlights. The most categories on one screen.',
             self::Blocks => 'Boxes taking turns in the green, red and sun yellow of the logo. The name sits top-left with the item count under it, and the icon is drawn big and tilted, bleeding off the bottom-right corner.',
+            self::MenuList => 'A clean list like a printed menu: a round coloured icon, the name, and the category tagline underneath, with fine lines between. Fast to read and very tidy.',
         };
     }
 }

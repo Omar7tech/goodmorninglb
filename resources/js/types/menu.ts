@@ -10,7 +10,8 @@ export type CategoryLayout =
     | 'rows'
     | 'polaroids'
     | 'bubbles'
-    | 'blocks';
+    | 'blocks'
+    | 'list';
 
 /** Mirrors `App\Enums\ProductCardStyle` — how one product is drawn. */
 export type ProductCardStyle = 'row' | 'minimal';

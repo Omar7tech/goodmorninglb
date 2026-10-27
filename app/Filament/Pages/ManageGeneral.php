@@ -255,7 +255,7 @@ class ManageGeneral extends SettingsPage
                                             ->helperText('On: the categories take turns in the green, red and sun yellow of the logo. Off: every category stays green.')
                                             ->default(true)
                                             ->visibleJs(<<<'JS'
-                                                ['polaroids', 'bubbles', 'blocks'].includes($get('category_layout'))
+                                                ['polaroids', 'bubbles', 'blocks', 'list'].includes($get('category_layout'))
                                                 JS),
                                     ]),
 

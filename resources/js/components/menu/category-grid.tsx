@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/react';
 import { CategoryBlock } from '@/components/menu/category-block';
 import { CategoryBubble } from '@/components/menu/category-bubble';
 import { CategoryCard } from '@/components/menu/category-card';
+import { CategoryListItem } from '@/components/menu/category-list-item';
 import { CategoryPolaroid } from '@/components/menu/category-polaroid';
 import { CategoryRow } from '@/components/menu/category-row';
 import type { Category, CategoryLayout } from '@/types';
@@ -84,6 +85,28 @@ export function CategoryGrid({
                     />
                 ))}
             </div>
+        );
+    }
+
+    if (layout === 'list') {
+        return (
+            // Ruled like a printed menu, a line between each row. Two columns
+            // on a monitor, each ruled on its own, so a line is never stretched
+            // across a desk screen.
+            <ul className="grid gap-x-10 lg:grid-cols-2">
+                {categories.map((category, index) => (
+                    <li
+                        key={category.id}
+                        className="border-b border-border last:border-b-0 lg:[&:nth-last-child(2):nth-child(odd)]:border-b-0"
+                    >
+                        <CategoryListItem
+                            category={category}
+                            index={index}
+                            onSelect={onSelect}
+                        />
+                    </li>
+                ))}
+            </ul>
         );
     }
 
