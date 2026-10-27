@@ -3,9 +3,25 @@ import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
+ * The main road through Aley, as it runs past the shop: up from the south-west
+ * and on to the north-east. In the drawing's own units (320 × 128), with the
+ * shop standing just west of it.
+ */
+const MAIN_ROAD =
+    'M112 150C142 112 176 92 214 84S270 56 292 18 318 -20 330 -40';
+
+/**
+ * The streets off it: east from just past the shop, south-east from just
+ * before it, and the winding lanes to the west.
+ */
+const SIDE_STREETS =
+    'M246 70C280 62 318 66 350 88M226 92C258 106 286 132 300 160M-10 96C30 92 64 104 96 132S118 160 124 170M60 -10C82 20 110 34 150 22S196 6 232 22M96 132C110 112 132 98 160 96';
+
+/**
  * The way to the shop, drawn as a little map rather than written as a button:
- * a few streets in the brand's colours, a park, and a red pin standing on the
- * spot with the logo's sun inside it. The whole card is the link.
+ * the real streets around the shop in Aley, redrawn in the brand's colours, and
+ * a red pin standing at the roadside where the shop is, with the logo's sun
+ * inside it. The whole card is the link.
  *
  * It is a picture of a map, not a map — nothing here is loaded from a map
  * service, so it costs no request and no cookie banner, and it looks the same
@@ -42,48 +58,113 @@ export function DirectionsCard({
                 preserveAspectRatio="xMaxYMid slice"
                 className="absolute inset-0 size-full transition-transform duration-700 ease-out group-hover:-translate-x-1.5 group-hover:translate-y-0.5 motion-reduce:transform-none"
             >
-                {/* A park and a block of buildings, in tints of the green. */}
-                <path
-                    d="M196 -6C236 -8 262 10 258 34S222 62 196 52 160 22 168 8 182 -4 196 -6Z"
-                    className="fill-primary/15"
-                />
-                <rect
-                    x="262"
-                    y="78"
-                    width="64"
-                    height="56"
-                    rx="10"
-                    className="fill-primary/10"
-                />
+                {/* Houses, as soft blocks between the streets — enough of them
+                    to read as a neighbourhood, none so sharp they compete with
+                    the pin. Turned to follow the streets they stand on. */}
+                <g className="fill-primary/10">
+                    <rect
+                        x="150"
+                        y="34"
+                        width="22"
+                        height="16"
+                        rx="3"
+                        transform="rotate(-28 161 42)"
+                    />
+                    <rect
+                        x="176"
+                        y="70"
+                        width="20"
+                        height="15"
+                        rx="3"
+                        transform="rotate(-30 186 77)"
+                    />
+                    <rect
+                        x="128"
+                        y="66"
+                        width="18"
+                        height="14"
+                        rx="3"
+                        transform="rotate(-12 137 73)"
+                    />
+                    <rect
+                        x="292"
+                        y="22"
+                        width="22"
+                        height="18"
+                        rx="3"
+                        transform="rotate(8 303 31)"
+                    />
+                    <rect
+                        x="300"
+                        y="104"
+                        width="24"
+                        height="18"
+                        rx="3"
+                        transform="rotate(-18 312 113)"
+                    />
+                    <rect
+                        x="236"
+                        y="2"
+                        width="16"
+                        height="13"
+                        rx="3"
+                        transform="rotate(-34 244 8)"
+                    />
+                    <rect
+                        x="276"
+                        y="114"
+                        width="16"
+                        height="12"
+                        rx="3"
+                        transform="rotate(30 284 120)"
+                    />
+                    <rect
+                        x="200"
+                        y="104"
+                        width="18"
+                        height="14"
+                        rx="3"
+                        transform="rotate(-36 209 111)"
+                    />
+                    <rect
+                        x="88"
+                        y="34"
+                        width="20"
+                        height="15"
+                        rx="3"
+                        transform="rotate(14 98 41)"
+                    />
+                </g>
 
-                {/* Streets: a wide outline in the green under a white road,
+                {/* The streets around the shop in Aley, traced from the map:
+                    the main road running up through the town, the street
+                    branching off it to the east just past the shop, the one
+                    dropping away to the south-east, and the winding lanes to
+                    the west. A wide outline in the green under a white road,
                     which is how a printed map draws them. */}
                 <g
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     className="stroke-primary/20"
-                    strokeWidth="16"
                 >
-                    <path d="M120 140C150 100 190 92 230 70S300 30 340 34" />
-                    <path d="M150 -10C170 30 200 50 250 66S310 104 330 140" />
-                    <path d="M300 -10V140" />
+                    <path strokeWidth="22" d={MAIN_ROAD} />
+                    <path strokeWidth="13" d={SIDE_STREETS} />
                 </g>
                 <g
                     fill="none"
                     stroke="#fff"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="11"
                 >
-                    <path d="M120 140C150 100 190 92 230 70S300 30 340 34" />
-                    <path d="M150 -10C170 30 200 50 250 66S310 104 330 140" />
-                    <path d="M300 -10V140" />
+                    <path strokeWidth="17" d={MAIN_ROAD} />
+                    <path strokeWidth="9" d={SIDE_STREETS} />
                 </g>
 
-                {/* The route, dotted in the sun's yellow, arriving at the pin. */}
+                {/* The way in, dotted in the sun's yellow up the main road to
+                    the door. */}
                 <path
-                    d="M130 140C155 108 190 98 228 76"
+                    d="M130 150C152 112 178 98 208 92"
                     fill="none"
                     stroke="#F4C338"
                     strokeWidth="3"
@@ -96,7 +177,7 @@ export function DirectionsCard({
                 the street under it. */}
             <span
                 aria-hidden
-                className="absolute top-[38%] right-[23%] flex flex-col items-center"
+                className="absolute top-[26%] right-[33%] flex flex-col items-center"
             >
                 <svg
                     viewBox="0 0 40 52"
