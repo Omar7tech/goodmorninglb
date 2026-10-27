@@ -78,7 +78,7 @@ export function CategoryBlock({
             <span className="relative flex max-w-[68%] flex-col gap-1">
                 <span
                     className={cn(
-                        'line-clamp-2 font-heading text-xl leading-none text-balance sm:text-2xl',
+                        'font-heading text-xl leading-none text-balance sm:text-2xl',
                         uppercase && 'uppercase',
                     )}
                 >
