@@ -3,6 +3,7 @@
 namespace App\Settings;
 
 use App\Enums\BannerMode;
+use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
 use App\Enums\PriceDisplay;
 use App\Enums\ProductCardStyle;
@@ -106,6 +107,12 @@ class GeneralSettings extends Settings
     public VariantStyle $variant_style;
 
     /**
+     * How the row of categories above an open category's products is drawn.
+     * A look only — the same categories in the same order, whichever is picked.
+     */
+    public CategoryFilterStyle $category_filter_style;
+
+    /**
      * How one product is drawn in an open category. A look only — the same
      * products at the same prices, whichever is picked.
      */
@@ -205,6 +212,7 @@ class GeneralSettings extends Settings
             'product_card_style' => new EnumCast(ProductCardStyle::class),
             'status_mode' => new EnumCast(ShopStatusMode::class),
             'variant_style' => new EnumCast(VariantStyle::class),
+            'category_filter_style' => new EnumCast(CategoryFilterStyle::class),
         ];
     }
 

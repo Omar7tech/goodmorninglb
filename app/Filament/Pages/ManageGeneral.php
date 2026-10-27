@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Enums\BannerMode;
+use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
 use App\Enums\PriceDisplay;
 use App\Enums\ProductCardStyle;
@@ -257,6 +258,26 @@ class ManageGeneral extends SettingsPage
                                             ->visibleJs(<<<'JS'
                                                 ['polaroids', 'bubbles', 'blocks', 'list'].includes($get('category_layout'))
                                                 JS),
+                                    ]),
+
+                                Section::make('Category filter')
+                                    ->description('The row of categories above the products once a category is open.')
+                                    ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->persistCollapsed()
+                                    ->id('appearance-category-filter')
+                                    ->schema([
+                                        Radio::make('category_filter_style')
+                                            ->hiddenLabel()
+                                            ->options(CategoryFilterStyle::class)
+                                            ->descriptions(collect(CategoryFilterStyle::cases())
+                                                ->mapWithKeys(fn (CategoryFilterStyle $style): array => [
+                                                    $style->value => $style->getDescription(),
+                                                ])
+                                                ->all())
+                                            ->default(CategoryFilterStyle::Pills->value)
+                                            ->required(),
                                     ]),
 
                                 Section::make('Product card')

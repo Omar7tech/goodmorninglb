@@ -1,5 +1,6 @@
 import type { Auth } from '@/types/auth';
 import type {
+    CategoryFilterStyle,
     CategoryLayout,
     Checkout,
     Pricing,
@@ -30,6 +31,8 @@ declare module '@inertiajs/core' {
             categoryLayout: CategoryLayout;
             /** How a product's sizes are offered on the card and in the sheet. */
             variantStyle: VariantStyle;
+            /** How the row of categories above an open category is drawn. */
+            categoryFilterStyle: CategoryFilterStyle;
             /** How one product is drawn in an open category. */
             productCardStyle: ProductCardStyle;
             /** Whether the pop-out, bubble and block layouts use the logo's colours. */

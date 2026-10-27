@@ -19,6 +19,9 @@ export type ProductCardStyle = 'row' | 'minimal';
 /** Mirrors `App\Enums\VariantStyle` — how a product's sizes are offered. */
 export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 
+/** Mirrors `App\Enums\CategoryFilterStyle` — how the category row is drawn. */
+export type CategoryFilterStyle = 'pills' | 'circles';
+
 export type Pricing = {
     display: PriceDisplay;
     /** LBP per 1 USD, or null when LBP pricing is unavailable. */

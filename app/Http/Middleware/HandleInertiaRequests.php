@@ -69,6 +69,8 @@ class HandleInertiaRequests extends Middleware
             'productCardStyle' => $settings->product_card_style->value,
             // How a product's sizes are offered, wherever the picker appears.
             'variantStyle' => $settings->variant_style->value,
+            // How the row of categories above an open category is drawn.
+            'categoryFilterStyle' => $settings->category_filter_style->value,
             // Whether the names the shop typed are shouted or left as written,
             // asked separately for the two kinds of title on the menu.
             'uppercaseCategoryTitles' => $settings->uppercase_category_titles,
