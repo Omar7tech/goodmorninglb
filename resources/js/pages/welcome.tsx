@@ -65,7 +65,7 @@ export default function Welcome() {
                     />
                 </h1>
 
-                <div className="flex w-full max-w-sm flex-col gap-4 sm:max-w-lg lg:max-w-xl">
+                <div className="flex w-full max-w-sm flex-col gap-5 sm:max-w-lg lg:max-w-xl">
                     {/* From `sm` up the pair sits side by side under the logo
                         and shares its width, so the two read as one block. */}
                     <nav
@@ -86,9 +86,8 @@ export default function Welcome() {
                         />
                     </nav>
 
-                    {/* Said here rather than at the door of the menu: the menu
-                        is worth reading either way, and someone who knows
-                        before they open it is not led on. Only while closed. */}
+                    {/* Under the buttons, only while closed: when the shop is
+                        back, and that a basket can be filled in the meantime. */}
                     <ShopNotice
                         context="home"
                         className="animate-in delay-500 duration-500 ease-out fill-mode-backwards fade-in slide-in-from-bottom-4 motion-reduce:animate-none"
