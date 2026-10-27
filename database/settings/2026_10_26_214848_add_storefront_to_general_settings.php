@@ -54,8 +54,9 @@ return new class extends SettingsMigration
         $this->migrator->add('general.require_phone_number', false);
         $this->migrator->add('general.get_client_location', false);
 
-        // Footer.
-        $this->migrator->add('general.location_url', null);
+        // Footer. The shop's place in Aley on Google Maps, behind the
+        // footer's directions button.
+        $this->migrator->add('general.location_url', 'https://maps.app.goo.gl/CjgZnRC9s4dBdYe69');
     }
 
     public function down(): void

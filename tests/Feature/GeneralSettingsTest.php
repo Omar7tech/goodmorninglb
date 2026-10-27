@@ -79,3 +79,8 @@ it('saves the storefront settings from the settings page', function (): void {
         ->and($settings->deliveryFeeUsd())->toBe(2.0)
         ->and($settings->category_layout->value)->toBe('rows');
 });
+
+it('points the footer directions at the shop on Google Maps by default', function (): void {
+    expect(app(GeneralSettings::class)->usableLocationUrl())
+        ->toBe('https://maps.app.goo.gl/CjgZnRC9s4dBdYe69');
+});
