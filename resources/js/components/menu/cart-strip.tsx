@@ -3,9 +3,7 @@ import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { ProductImage } from '@/components/menu/product-image';
-import { ShopNotice } from '@/components/menu/shop-notice';
 import { useCart } from '@/contexts/cart-context';
-import { useShopStatus } from '@/lib/shop';
 import { usePricing } from '@/lib/use-pricing';
 import { cn } from '@/lib/utils';
 
@@ -33,10 +31,6 @@ const SHEET_BLEED = '-12rem';
 export function CartStrip() {
     const { items, count, subtotalUsd, setOpen } = useCart();
     const pricing = usePricing();
-    const { open, closingSoon } = useShopStatus();
-    // Closed, or about to be: the strip is where that is said, since it is the
-    // box the customer is about to fill.
-    const hasNotice = !open || closingSoon;
 
     const [emblaRef] = useEmblaCarousel({
         dragFree: true,
@@ -53,19 +47,6 @@ export function CartStrip() {
     // where the tiles will go only invite a press that does nothing — an empty
     // shelf doesn't need a picture of the tins.
     if (items.length === 0) {
-        // Closed, the strip's own line gives way to the notice: "your order
-        // will show up here" is no use without "and you can send it at 9".
-        if (hasNotice) {
-            return (
-                <Sheet>
-                    <ShopNotice
-                        context="delivery"
-                        className="relative px-6 py-5"
-                    />
-                </Sheet>
-            );
-        }
-
         return (
             <Sheet>
                 <p className="relative flex items-center justify-center gap-2 px-6 py-7 text-center text-[0.7rem] tracking-wide text-muted-foreground uppercase">
@@ -82,10 +63,6 @@ export function CartStrip() {
 
     return (
         <Sheet>
-            {hasNotice && (
-                <ShopNotice context="delivery" className="relative px-6 pt-4" />
-            )}
-
             {/* The top padding is what keeps the corner badges out of the
                 carousel's clipping; the foot only has to clear the rule below. */}
             <div

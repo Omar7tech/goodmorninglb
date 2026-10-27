@@ -591,6 +591,14 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                     as one control with two halves. */}
                     <div className="px-5 pb-5 lg:mx-auto lg:w-full lg:max-w-md">
                         <OrderTypeSwitch current={orderType} />
+
+                        {/* Under the switch on both menus, as it sits under the
+                            buttons on the home page: closed, or in the last
+                            hour on the menu you order from. Nothing otherwise. */}
+                        <ShopNotice
+                            context={canOrder ? 'delivery' : 'dine_in'}
+                            className="mt-3"
+                        />
                     </div>
 
                     {/* Straight under the switch, above everything the menu
@@ -688,13 +696,6 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                                 <span className="text-berry">here</span>
                             </h1>
                         </div>
-
-                        {/* The dine-in menu has no basket to say it in, so a
-                            closed shop says so under the heading instead. The
-                            delivery menu says it in its basket strip. */}
-                        {!canOrder && (
-                            <ShopNotice context="dine_in" className="-mt-2" />
-                        )}
 
                         {/* On the front page only, and only on the menu you
                             can order from. It is a way past the whole menu, so
