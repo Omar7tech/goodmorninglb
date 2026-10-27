@@ -16,12 +16,14 @@ enum CategoryFilterStyle: string implements HasIcon, HasLabel
 {
     case Pills = 'pills';
     case Circles = 'circles';
+    case Words = 'words';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::Pills => 'Pills',
             self::Circles => 'Story circles',
+            self::Words => 'Big words',
         };
     }
 
@@ -30,6 +32,7 @@ enum CategoryFilterStyle: string implements HasIcon, HasLabel
         return match ($this) {
             self::Pills => Heroicon::OutlinedRectangleGroup,
             self::Circles => Heroicon::OutlinedEllipsisHorizontalCircle,
+            self::Words => Heroicon::OutlinedLanguage,
         };
     }
 
@@ -42,6 +45,7 @@ enum CategoryFilterStyle: string implements HasIcon, HasLabel
         return match ($this) {
             self::Pills => 'Rounded pills with the category names, the open one filled green.',
             self::Circles => 'Small round icons with the name underneath, like story highlights. The open one gets a ring and the others dim a little.',
+            self::Words => 'Just the names in the heading font: the open one large and green with a wavy yellow underline, the others small and faded.',
         };
     }
 }

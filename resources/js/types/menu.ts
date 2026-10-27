@@ -20,7 +20,7 @@ export type ProductCardStyle = 'row' | 'minimal';
 export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 
 /** Mirrors `App\Enums\CategoryFilterStyle` — how the category row is drawn. */
-export type CategoryFilterStyle = 'pills' | 'circles';
+export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 
 export type Pricing = {
     display: PriceDisplay;

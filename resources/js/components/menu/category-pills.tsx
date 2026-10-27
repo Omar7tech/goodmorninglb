@@ -49,6 +49,10 @@ export function CategoryPills({
     const { ref, dragHandlers } = useDragScroll<HTMLDivElement>();
     const { categoryFilterStyle, colourfulCategories } = usePage().props;
     const circles = categoryFilterStyle === 'circles';
+    const words = categoryFilterStyle === 'words';
+    // Circles and words both head the row with "All categories" rather than
+    // leading it with a pill.
+    const headed = circles || words;
 
     /** A circle's colours: in turn while colourful, else all green. */
     const circleColour = (index: number) =>
@@ -120,10 +124,8 @@ export function CategoryPills({
         // pills it is the first pill; above circles it is a "see all" link in
         // a small header, the way an app heads a row of stories — so the row
         // itself holds nothing but categories.
-        <div
-            className={cn('flex', circles ? 'flex-col' : 'items-center gap-2')}
-        >
-            {circles ? (
+        <div className={cn('flex', headed ? 'flex-col' : 'items-center gap-2')}>
+            {headed ? (
                 <div className="flex items-center justify-between">
                     <span className="text-[0.7rem] font-medium tracking-wide text-muted-foreground uppercase">
                         Categories
@@ -166,9 +168,40 @@ export function CategoryPills({
                 {/* `w-max` so the row is as wide as its pills, which is what
                     makes the trailing padding reachable at the end of the
                     scroll. */}
-                <ul className="flex w-max gap-2">
+                <ul
+                    className={cn(
+                        'flex w-max',
+                        words ? 'items-end gap-5 pb-1.5' : 'gap-2',
+                    )}
+                >
                     {categories.map((category, index) => {
                         const isActive = category.id === activeId;
+
+                        if (words) {
+                            return (
+                                <li key={category.id}>
+                                    <button
+                                        type="button"
+                                        ref={isActive ? activeRef : undefined}
+                                        aria-pressed={isActive}
+                                        onClick={() => onSelect(category.id)}
+                                        className={cn(
+                                            'rounded-md font-heading leading-none whitespace-nowrap transition-colors duration-200 ease-out focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
+                                            // The open one large and green with
+                                            // the footer's wavy yellow
+                                            // underline; the rest small and
+                                            // faded, brightening when pointed
+                                            // at.
+                                            isActive
+                                                ? 'text-3xl text-primary underline decoration-[#F4C338] decoration-wavy decoration-2 underline-offset-[10px]'
+                                                : 'text-lg text-foreground/35 hover:text-foreground/60',
+                                        )}
+                                    >
+                                        {category.name}
+                                    </button>
+                                </li>
+                            );
+                        }
 
                         if (circles) {
                             return (
