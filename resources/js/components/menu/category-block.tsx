@@ -1,5 +1,3 @@
-import { ArrowUpRight } from 'lucide-react';
-
 import { CategoryArt } from '@/components/menu/category-art';
 import {
     useCategoryColour,
@@ -15,18 +13,20 @@ import type { Category } from '@/types';
  * when the shop has the colourful setting off.
  */
 const COLOURS = [
-    'bg-sage text-cream shadow-[0_6px_16px_-8px_rgb(113_144_103/0.9)]',
-    'bg-berry text-cream shadow-[0_6px_16px_-8px_rgb(182_73_69/0.9)]',
-    'bg-[#F4C338] text-foreground shadow-[0_6px_16px_-8px_rgb(244_195_56/0.9)]',
+    'bg-sage text-cream shadow-[0_8px_18px_-10px_rgb(113_144_103/0.9)]',
+    'bg-berry text-cream shadow-[0_8px_18px_-10px_rgb(182_73_69/0.9)]',
+    'bg-[#F4C338] text-foreground shadow-[0_8px_18px_-10px_rgb(244_195_56/0.9)]',
 ] as const;
 
 /**
- * One category as a short block of colour: the icon in the top-right corner,
- * the name set hard into the bottom-left, and a small arrow beside it.
- * Graphic rather than pictorial — the colours do most of the work, taking turns
- * across the grid so no two neighbours match.
+ * One category as a block of colour with its icon drawn big and bleeding off
+ * the bottom-right corner — tilted, partly cropped by the box, on a soft disc
+ * of lighter colour. The name sits in the top-left with how many items are
+ * inside under it, so the words and the picture each own a corner and never
+ * crowd one another.
  *
- * Pointed at, the block lifts and the icon swells a little.
+ * Pointed at, the box lifts and the icon straightens and grows a little, as if
+ * it had turned to face you.
  */
 export function CategoryBlock({
     category,
@@ -40,31 +40,42 @@ export function CategoryBlock({
 }) {
     const uppercase = useUppercaseCategoryTitles();
     const colour = useCategoryColour(index, COLOURS.length);
+    const count = category.products.length;
 
     return (
         <button
             type="button"
             onClick={() => onSelect(category.id)}
             className={cn(
-                'group relative flex h-28 flex-col justify-between overflow-hidden rounded-3xl p-3.5 text-left sm:h-32',
+                'group relative h-28 overflow-hidden rounded-3xl p-3.5 text-left sm:h-32 sm:p-4',
                 'transition-[translate] duration-300 ease-out hover:-translate-y-1 active:translate-y-0 motion-reduce:translate-none',
                 'focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none',
                 COLOURS[colour],
             )}
         >
-            <span className="flex h-12 justify-end sm:h-14">
+            {/* The soft disc the icon stands on, cut by the corner. */}
+            <span
+                aria-hidden
+                className="absolute -right-8 -bottom-8 size-28 rounded-full bg-white/15 sm:size-32"
+            />
+
+            {/* The icon, big and tilted, half out of the box. */}
+            <span
+                aria-hidden
+                className="absolute -right-3 -bottom-3 flex size-20 -rotate-12 items-center justify-center transition-[rotate,scale] duration-500 ease-out group-hover:scale-110 group-hover:rotate-0 motion-reduce:transition-none sm:size-24"
+            >
                 <CategoryArt
                     category={category}
-                    className="max-h-full"
+                    className="max-h-full drop-shadow-[0_4px_6px_rgb(46_42_36/0.2)]"
                     logoClassName={cn(
-                        'w-16',
+                        'w-full',
                         colour === 2 && 'bg-foreground/70',
                     )}
-                    imageClassName="aspect-square h-full"
+                    imageClassName="aspect-square w-full"
                 />
             </span>
 
-            <span className="flex items-end justify-between gap-2">
+            <span className="relative flex max-w-[68%] flex-col gap-1">
                 <span
                     className={cn(
                         'line-clamp-2 font-heading text-xl leading-none text-balance sm:text-2xl',
@@ -73,12 +84,9 @@ export function CategoryBlock({
                 >
                     {category.name}
                 </span>
-
-                <ArrowUpRight
-                    aria-hidden
-                    className="size-4 shrink-0 opacity-60 transition-[translate,opacity] duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 motion-reduce:translate-none"
-                    strokeWidth={2.5}
-                />
+                <span className="text-[0.7rem] font-medium opacity-75">
+                    {count === 1 ? '1 item' : `${count} items`}
+                </span>
             </span>
         </button>
     );

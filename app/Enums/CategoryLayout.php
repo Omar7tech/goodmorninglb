@@ -52,7 +52,7 @@ enum CategoryLayout: string implements HasIcon, HasLabel
             self::Rows => 'Full-width bands, one category each. The icon sits on the right, and every band says how many items are inside.',
             self::Popout => 'Short cards in green and red, with the icon bursting out over the top edge like a sticker coming off the card.',
             self::Bubbles => 'Round icons with a ring, four to a row on a phone and the name underneath, like story highlights. The most categories on one screen.',
-            self::Blocks => 'Shorter boxes taking turns in the green, red and sun yellow of the logo, with the icon top-right and the name bottom-left.',
+            self::Blocks => 'Boxes taking turns in the green, red and sun yellow of the logo. The name sits top-left with the item count under it, and the icon is drawn big and tilted, bleeding off the bottom-right corner.',
         };
     }
 }
