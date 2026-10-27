@@ -14,9 +14,21 @@ import type { Category } from '@/types';
  * taken in turn. All green when the shop has the colourful setting off.
  */
 const COLOURS = [
-    { disc: 'bg-sage', chevron: 'text-sage' },
-    { disc: 'bg-berry', chevron: 'text-berry' },
-    { disc: 'bg-[#F4C338]', chevron: 'text-[#c79a14]' },
+    {
+        disc: 'bg-sage ring-sage/15',
+        chevron:
+            'bg-sage/10 text-sage group-hover:bg-sage group-hover:text-cream',
+    },
+    {
+        disc: 'bg-berry ring-berry/15',
+        chevron:
+            'bg-berry/10 text-berry group-hover:bg-berry group-hover:text-cream',
+    },
+    {
+        disc: 'bg-[#F4C338] ring-[#F4C338]/25',
+        chevron:
+            'bg-[#F4C338]/20 text-[#a07a0a] group-hover:bg-[#F4C338] group-hover:text-foreground',
+    },
 ] as const;
 
 /**
@@ -24,8 +36,11 @@ const COLOURS = [
  * icon in it, the name, and the category's tagline underneath — the one place
  * on the menu where the shop's own line about each category is read.
  *
+ * The disc wears a soft halo of its own colour, and the way in is a small
+ * round button tinted the same.
+ *
  * A category with no tagline simply shows its name. Pointed at, the row warms
- * a little and the chevron steps forward.
+ * a little, the disc swells and the button fills in solid.
  */
 export function CategoryListItem({
     category,
@@ -48,7 +63,8 @@ export function CategoryListItem({
         >
             <span
                 className={cn(
-                    'flex size-12 shrink-0 items-center justify-center rounded-full shadow-sm sm:size-14',
+                    'flex size-12 shrink-0 items-center justify-center rounded-full shadow-sm ring-4 sm:size-14',
+                    'transition-[scale] duration-300 ease-out group-hover:scale-105 motion-reduce:scale-100',
                     colour.disc,
                 )}
             >
@@ -77,14 +93,18 @@ export function CategoryListItem({
                 )}
             </span>
 
-            <ChevronRight
+            <span
                 aria-hidden
                 className={cn(
-                    'size-5 shrink-0 transition-[translate] duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:translate-none',
+                    'flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-200 ease-out',
                     colour.chevron,
                 )}
-                strokeWidth={2.5}
-            />
+            >
+                <ChevronRight
+                    className="size-4 transition-[translate] duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:translate-none"
+                    strokeWidth={2.5}
+                />
+            </span>
         </button>
     );
 }
