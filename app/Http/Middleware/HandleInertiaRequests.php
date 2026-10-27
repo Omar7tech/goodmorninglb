@@ -72,6 +72,9 @@ class HandleInertiaRequests extends Middleware
             // Whether the names the shop typed are shouted or left as written,
             // asked separately for the two kinds of title on the menu.
             'uppercaseCategoryTitles' => $settings->uppercase_category_titles,
+            // Whether the colourful category layouts use the logo's colours
+            // or stay green.
+            'colourfulCategories' => $settings->colourful_categories,
             'uppercaseProductTitles' => $settings->uppercase_product_titles,
             // Null closes checkout: an order with nowhere to go is worse than
             // no checkout button at all.

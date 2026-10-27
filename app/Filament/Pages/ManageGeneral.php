@@ -249,6 +249,14 @@ class ManageGeneral extends SettingsPage
                                                 ->all())
                                             ->default(CategoryLayout::Grid->value)
                                             ->required(),
+
+                                        Toggle::make('colourful_categories')
+                                            ->label('Colourful')
+                                            ->helperText('On: the categories take turns in the green, red and sun yellow of the logo. Off: every category stays green.')
+                                            ->default(true)
+                                            ->visibleJs(<<<'JS'
+                                                ['popout', 'bubbles', 'blocks'].includes($get('category_layout'))
+                                                JS),
                                     ]),
 
                                 Section::make('Product card')

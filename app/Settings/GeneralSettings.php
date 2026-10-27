@@ -118,6 +118,14 @@ class GeneralSettings extends Settings
     public bool $uppercase_category_titles;
 
     /**
+     * Whether the pop-out, bubble and block category layouts take turns in the
+     * logo's colours — green, red, and the sun's yellow where it fits — or
+     * keep every category in the green. The grid and rows layouts are always
+     * green, so it means nothing to them.
+     */
+    public bool $colourful_categories;
+
+    /**
      * Whether product names are shouted wherever a dish is named as a title:
      * the cards, the carousel and the heading of the product sheet.
      */

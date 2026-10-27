@@ -50,3 +50,21 @@ it('reads back as an enum rather than a string', function (): void {
 
     expect($settings->category_layout)->toBe(CategoryLayout::Rows);
 });
+
+it('keeps the colourful layouts in colour by default', function (): void {
+    $this->get(route('menu.dine-in'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('colourfulCategories', true)
+        );
+});
+
+it('shares the colourful setting as the shop set it', function (bool $colourful): void {
+    settings(['colourful_categories' => $colourful]);
+
+    $this->get(route('menu.delivery'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('colourfulCategories', $colourful)
+        );
+})->with([true, false]);

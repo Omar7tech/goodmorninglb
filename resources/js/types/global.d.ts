@@ -32,6 +32,8 @@ declare module '@inertiajs/core' {
             variantStyle: VariantStyle;
             /** How one product is drawn in an open category. */
             productCardStyle: ProductCardStyle;
+            /** Whether the pop-out, bubble and block layouts use the logo's colours. */
+            colourfulCategories: boolean;
             /** Whether category names are drawn in capitals. */
             uppercaseCategoryTitles: boolean;
             /** Whether product names are drawn in capitals. */

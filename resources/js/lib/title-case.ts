@@ -18,3 +18,14 @@ export function useUppercaseCategoryTitles(): boolean {
 export function useUppercaseProductTitles(): boolean {
     return usePage().props.uppercaseProductTitles ?? false;
 }
+
+/**
+ * Which of a layout's colours a category at `index` takes: turn by turn
+ * through all of them while the shop keeps the colourful setting on, the first
+ * — the green — for every category when it is off.
+ */
+export function useCategoryColour(index: number, count: number): number {
+    const colourful = usePage().props.colourfulCategories ?? true;
+
+    return colourful ? index % count : 0;
+}
