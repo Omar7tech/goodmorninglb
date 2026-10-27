@@ -44,7 +44,7 @@ export function DirectionsCard({
             rel="noreferrer"
             aria-label="Get directions to Good Morning in Aley"
             className={cn(
-                'group relative block h-32 overflow-hidden rounded-3xl bg-cream text-left text-primary shadow-[0_10px_30px_-12px_rgb(46_42_36/0.45)] ring-1 ring-black/5',
+                'group relative block h-28 overflow-hidden rounded-3xl bg-cream text-left text-primary shadow-[0_10px_30px_-12px_rgb(46_42_36/0.45)] ring-1 ring-black/5',
                 'transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgb(46_42_36/0.5)] motion-reduce:hover:translate-y-0',
                 'focus-visible:ring-3 focus-visible:ring-slab-ink/60 focus-visible:outline-none',
                 className,
@@ -201,7 +201,7 @@ export function DirectionsCard({
 
             {/* The words, on a wash of the card's own cream so the streets fade
                 out under them rather than running through the letters. */}
-            <span className="absolute inset-y-0 left-0 flex w-[64%] flex-col justify-between bg-linear-to-r from-cream from-45% via-cream/85 via-65% to-transparent p-4 pr-6">
+            <span className="absolute inset-y-0 left-0 flex w-[64%] flex-col justify-center gap-3 bg-linear-to-r from-cream from-45% via-cream/85 via-65% to-transparent p-4 pr-6">
                 <span>
                     <span className="block font-heading text-2xl leading-none">
                         Find us
