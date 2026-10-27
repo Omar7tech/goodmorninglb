@@ -46,7 +46,7 @@ it('leaves the products themselves untouched whichever style is chosen', functio
 });
 
 it('reads back as an enum rather than a string', function (): void {
-    $settings = settings(['product_card_style' => ProductCardStyle::Card]);
+    $settings = settings(['product_card_style' => ProductCardStyle::Minimal]);
 
-    expect($settings->product_card_style)->toBe(ProductCardStyle::Card);
+    expect($settings->product_card_style)->toBe(ProductCardStyle::Minimal);
 });

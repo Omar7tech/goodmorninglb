@@ -69,7 +69,7 @@ it('saves the storefront settings from the settings page', function (): void {
         ->set('data.whatsapp_number', '96171123456')
         ->set('data.charge_delivery', true)
         ->set('data.delivery_fee', 2)
-        ->set('data.category_layout', 'mosaic')
+        ->set('data.category_layout', 'rows')
         ->call('save')
         ->assertHasNoFormErrors();
 
@@ -77,5 +77,5 @@ it('saves the storefront settings from the settings page', function (): void {
 
     expect($settings->whatsapp_number)->toBe('96171123456')
         ->and($settings->deliveryFeeUsd())->toBe(2.0)
-        ->and($settings->category_layout->value)->toBe('mosaic');
+        ->and($settings->category_layout->value)->toBe('rows');
 });

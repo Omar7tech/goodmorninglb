@@ -13,7 +13,6 @@ import { OrderTypeSwitch } from '@/components/menu/order-type-switch';
 import { ProductCard } from '@/components/menu/product-card';
 import { ProductDialog } from '@/components/menu/product-dialog';
 import { ProductMinimal } from '@/components/menu/product-minimal';
-import { ProductShowcase } from '@/components/menu/product-showcase';
 import { ShopNotice } from '@/components/menu/shop-notice';
 import { SiteBanner } from '@/components/menu/site-banner';
 import { SiteFooter } from '@/components/menu/site-footer';
@@ -63,20 +62,17 @@ const HEADING_SIZE = `min(calc(94cqi / ${HEADING_EM}), 4.25rem)`;
 /**
  * How the product list is laid out, per card style.
  *
- * All three end up in columns as the screen allows, since a single item run the
+ * Both end up in columns as the screen allows, since a single item run the
  * width of a monitor is a stripe of content with an acre of nothing beside it.
  * Where they differ is how soon, and how far.
  *
- * The order runs opposite to how it first reads. A row is the widest shape of
- * the three — it sets its picture and its copy side by side — so it holds a
- * single column the longest and stops at three. A card is upright and needs only
- * a photo and two lines, so it tiles sooner. The minimal item has no padding, no
- * edge and no rule to clear, so it starts at two on a phone and ends at five.
- * The less each one is given to draw, the more of them fit.
+ * A row is the wider shape — it sets its picture and its copy side by side — so
+ * it holds a single column the longest and stops at three. The minimal item has
+ * no padding, no edge and no rule to clear, so it starts at two on a phone and
+ * ends at five. The less each one is given to draw, the more of them fit.
  */
 const PRODUCT_LIST: Record<ProductCardStyle, string> = {
     row: 'flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-4 xl:grid-cols-3',
-    card: 'grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4',
     // The rows are given more air than the columns: with no card edge to mark
     // where one dish ends, the space between them is the only thing separating
     // a name from the photograph of the next dish under it.
@@ -95,10 +91,6 @@ function ProductInStyle({
     onOpen: (product: Product, variantIndex: number | null) => void;
     onAdd?: (product: Product, variantIndex: number | null) => void;
 }) {
-    if (style === 'card') {
-        return <ProductShowcase {...props} />;
-    }
-
     if (style === 'minimal') {
         return <ProductMinimal {...props} />;
     }

@@ -15,16 +15,12 @@ enum CategoryLayout: string implements HasIcon, HasLabel
 {
     case Grid = 'grid';
     case Rows = 'rows';
-    case Mosaic = 'mosaic';
-    case Tickets = 'tickets';
 
     public function getLabel(): string
     {
         return match ($this) {
             self::Grid => 'Grid',
             self::Rows => 'Rows',
-            self::Mosaic => 'Mosaic',
-            self::Tickets => 'Tickets',
         };
     }
 
@@ -33,8 +29,6 @@ enum CategoryLayout: string implements HasIcon, HasLabel
         return match ($this) {
             self::Grid => Heroicon::OutlinedSquares2x2,
             self::Rows => Heroicon::OutlinedBars3,
-            self::Mosaic => Heroicon::OutlinedViewColumns,
-            self::Tickets => Heroicon::OutlinedTicket,
         };
     }
 
@@ -47,8 +41,6 @@ enum CategoryLayout: string implements HasIcon, HasLabel
         return match ($this) {
             self::Grid => 'Square boxes, two or three to a row. The icon sits above the name.',
             self::Rows => 'Full-width bands, one category each. The icon sits on the right, and every band says how many items are inside.',
-            self::Mosaic => 'An uneven bento wall: every fifth category takes the full width, the rest are squares. Names sit bottom-left over a numbered slab.',
-            self::Tickets => 'Order tickets: the icon printed on the body, the name on a stub below a notched, dashed tear line. They lift and tilt when pointed at.',
         };
     }
 }

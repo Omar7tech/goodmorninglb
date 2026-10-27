@@ -2,16 +2,7 @@ import { usePage } from '@inertiajs/react';
 
 import { CategoryCard } from '@/components/menu/category-card';
 import { CategoryRow } from '@/components/menu/category-row';
-import { CategoryTicket } from '@/components/menu/category-ticket';
-import { CategoryTile } from '@/components/menu/category-tile';
 import type { Category, CategoryLayout } from '@/types';
-
-/**
- * How often the bento wall throws a full-width tile. Five gives a wide one and
- * then two clean rows of squares, so the pattern repeats on a whole number of
- * rows and never leaves a gap at the foot of the wall.
- */
-const MOSAIC_WIDE_EVERY = 5;
 
 /**
  * The menu's landing view: the categories, drawn however the shop has chosen.
@@ -19,7 +10,7 @@ const MOSAIC_WIDE_EVERY = 5;
  *
  * The layout is a setting rather than a breakpoint — a menu of six categories
  * and a menu of forty want different things, and only the owner knows which
- * they have. All three list the same categories in the same order; they differ
+ * they have. Both list the same categories in the same order; they differ
  * in how much of the screen each one is given and what it can therefore say.
  */
 export function CategoryGrid({
@@ -52,43 +43,6 @@ export function CategoryGrid({
                     <CategoryRow
                         key={category.id}
                         category={category}
-                        onSelect={onSelect}
-                    />
-                ))}
-            </div>
-        );
-    }
-
-    if (layout === 'tickets') {
-        return (
-            // The same count as the grid: a ticket is only a little taller than
-            // a square, so it wants the same share of the row.
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-                {categories.map((category) => (
-                    <CategoryTicket
-                        key={category.id}
-                        category={category}
-                        onSelect={onSelect}
-                    />
-                ))}
-            </div>
-        );
-    }
-
-    if (layout === 'mosaic') {
-        return (
-            // Two columns up to `lg`: the wide tile is defined as spanning
-            // both, so a third column would break the pattern rather than
-            // widen it — the tiles themselves grow instead. Four is the next
-            // width that works, since the wide tile still spans two of them
-            // and simply becomes a half rather than a whole row.
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-                {categories.map((category, index) => (
-                    <CategoryTile
-                        key={category.id}
-                        category={category}
-                        index={index}
-                        wide={index % MOSAIC_WIDE_EVERY === 0}
                         onSelect={onSelect}
                     />
                 ))}

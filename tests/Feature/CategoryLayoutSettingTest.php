@@ -46,7 +46,7 @@ it('leaves the categories themselves untouched whichever layout is chosen', func
 });
 
 it('reads back as an enum rather than a string', function (): void {
-    $settings = settings(['category_layout' => CategoryLayout::Mosaic]);
+    $settings = settings(['category_layout' => CategoryLayout::Rows]);
 
-    expect($settings->category_layout)->toBe(CategoryLayout::Mosaic);
+    expect($settings->category_layout)->toBe(CategoryLayout::Rows);
 });
