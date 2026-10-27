@@ -5,7 +5,12 @@ export type OrderType = 'dine_in' | 'delivery';
 export type PriceDisplay = 'usd' | 'lbp' | 'both';
 
 /** Mirrors `App\Enums\CategoryLayout` — how the landing view draws categories. */
-export type CategoryLayout = 'grid' | 'rows' | 'popout' | 'bubbles' | 'blocks';
+export type CategoryLayout =
+    | 'grid'
+    | 'rows'
+    | 'polaroids'
+    | 'bubbles'
+    | 'blocks';
 
 /** Mirrors `App\Enums\ProductCardStyle` — how one product is drawn. */
 export type ProductCardStyle = 'row' | 'minimal';

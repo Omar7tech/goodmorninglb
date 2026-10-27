@@ -3,7 +3,7 @@ import { usePage } from '@inertiajs/react';
 import { CategoryBlock } from '@/components/menu/category-block';
 import { CategoryBubble } from '@/components/menu/category-bubble';
 import { CategoryCard } from '@/components/menu/category-card';
-import { CategoryPopout } from '@/components/menu/category-popout';
+import { CategoryPolaroid } from '@/components/menu/category-polaroid';
 import { CategoryRow } from '@/components/menu/category-row';
 import type { Category, CategoryLayout } from '@/types';
 
@@ -53,13 +53,13 @@ export function CategoryGrid({
         );
     }
 
-    if (layout === 'popout') {
+    if (layout === 'polaroids') {
         return (
-            // Room above every row for the icons to rise into, which is what
-            // the large vertical gap and the top padding are for.
-            <div className="grid grid-cols-2 gap-x-3 gap-y-12 pt-10 sm:grid-cols-3 sm:gap-x-4 sm:gap-y-14 lg:grid-cols-5">
+            // Room between the photos for their tilt and their tape, which
+            // reach a little past each frame.
+            <div className="grid grid-cols-2 gap-x-4 gap-y-7 pt-2 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-5">
                 {categories.map((category, index) => (
-                    <CategoryPopout
+                    <CategoryPolaroid
                         key={category.id}
                         category={category}
                         index={index}
