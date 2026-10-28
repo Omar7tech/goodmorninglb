@@ -60,7 +60,14 @@ class MenuController extends Controller
         return Inertia::render('screen', [
             'categories' => CategoryResource::collection($this->categories(OrderType::DineIn))->resolve(),
             'slides' => SlideResource::collection($this->slides(OrderType::DineIn))->resolve(),
-            'rotateSeconds' => max(3, $settings->screen_rotate_seconds),
+            'screen' => [
+                'autoRotate' => $settings->screen_auto_rotate,
+                'rotateSeconds' => max(3, $settings->screen_rotate_seconds),
+                'resumeSeconds' => max(5, $settings->screen_resume_seconds),
+                'theme' => $settings->screen_theme->value,
+                'columns' => min(6, max(3, $settings->screen_columns)),
+                'showSlider' => $settings->screen_show_slider,
+            ],
         ]);
     }
 

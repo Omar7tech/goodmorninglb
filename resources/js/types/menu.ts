@@ -19,6 +19,24 @@ export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 /** Mirrors `App\Enums\CategoryFilterStyle` — how the category row is drawn. */
 export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 
+/** Mirrors `App\Enums\ScreenTheme` — how the counter screen is coloured. */
+export type ScreenTheme = 'classic' | 'garden' | 'sunrise' | 'paper' | 'night';
+
+/** The counter screen's settings, from the dashboard. */
+export type CounterScreen = {
+    /** Whether it turns through the categories on its own. */
+    autoRotate: boolean;
+    /** How long a category stays up while nobody is touching the screen. */
+    rotateSeconds: number;
+    /** How long after the last touch before it starts turning again. */
+    resumeSeconds: number;
+    theme: ScreenTheme;
+    /** Dishes to a row, 3 to 6. */
+    columns: number;
+    /** Whether the carousel heads the board. */
+    showSlider: boolean;
+};
+
 export type Pricing = {
     /** Delivery charge in USD added to an order, or null when none applies. */
     deliveryFeeUsd: number | null;

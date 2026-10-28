@@ -1,9 +1,9 @@
 <?php
 
 use App\Enums\OrderType;
+use App\Enums\ScreenTheme;
 use App\Models\Category;
 use App\Models\Product;
-use App\Settings\GeneralSettings;
 use Inertia\Testing\AssertableInertia;
 
 it('shows the dine-in menu full screen for the counter tablet', function (): void {
@@ -23,23 +23,59 @@ it('shows the dine-in menu full screen for the counter tablet', function (): voi
         );
 });
 
-it('turns to the next category every ten seconds by default', function (): void {
-    expect(app(GeneralSettings::class)->screen_rotate_seconds)->toBe(10);
-
+it('starts out turning every ten seconds in the classic theme', function (): void {
     $this->get(route('menu.screen'))
         ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
-            ->where('rotateSeconds', 10)
+            ->where('screen', [
+                'autoRotate' => true,
+                'rotateSeconds' => 10,
+                'resumeSeconds' => 20,
+                'theme' => ScreenTheme::Classic->value,
+                'columns' => 5,
+                'showSlider' => true,
+            ])
         );
 });
 
-it('uses the seconds set in the dashboard, never faster than three', function (int $configured, int $shared): void {
-    settings(['screen_rotate_seconds' => $configured]);
+it('shares the options set in the dashboard', function (): void {
+    settings([
+        'screen_auto_rotate' => false,
+        'screen_rotate_seconds' => 25,
+        'screen_resume_seconds' => 60,
+        'screen_columns' => 4,
+        'screen_show_slider' => false,
+    ]);
 
     $this->get(route('menu.screen'))
         ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
-            ->where('rotateSeconds', $shared)
+            ->where('screen.autoRotate', false)
+            ->where('screen.rotateSeconds', 25)
+            ->where('screen.resumeSeconds', 60)
+            ->where('screen.columns', 4)
+            ->where('screen.showSlider', false)
         );
-})->with([
-    'slower' => [25, 25],
-    'too fast' => [1, 3],
-]);
+});
+
+it('shares whichever theme the shop has chosen', function (ScreenTheme $theme): void {
+    settings(['screen_theme' => $theme]);
+
+    $this->get(route('menu.screen'))
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('screen.theme', $theme->value)
+        );
+})->with(ScreenTheme::cases());
+
+it('keeps the timings and columns within what the screen can draw', function (): void {
+    settings([
+        'screen_rotate_seconds' => 1,
+        'screen_resume_seconds' => 1,
+        'screen_columns' => 12,
+    ]);
+
+    $this->get(route('menu.screen'))
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('screen.rotateSeconds', 3)
+            ->where('screen.resumeSeconds', 5)
+            ->where('screen.columns', 6)
+        );
+});

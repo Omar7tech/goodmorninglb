@@ -6,6 +6,7 @@ use App\Enums\BannerMode;
 use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
 use App\Enums\ProductCardStyle;
+use App\Enums\ScreenTheme;
 use App\Enums\ShopStatusMode;
 use App\Enums\VariantStyle;
 use App\Enums\Weekday;
@@ -122,6 +123,27 @@ class GeneralSettings extends Settings
     public int $screen_rotate_seconds;
 
     /**
+     * Whether the counter screen turns through the categories on its own. Off,
+     * it stays on whichever category was last picked.
+     */
+    public bool $screen_auto_rotate;
+
+    /**
+     * How many seconds after the last touch the counter screen waits before
+     * it starts turning again, so it never moves on from someone browsing.
+     */
+    public int $screen_resume_seconds;
+
+    /** How the counter screen is coloured. */
+    public ScreenTheme $screen_theme;
+
+    /** How many dishes the counter screen shows to a row. */
+    public int $screen_columns;
+
+    /** Whether the counter screen shows the carousel above the dishes. */
+    public bool $screen_show_slider;
+
+    /**
      * Whether product names are shouted wherever a dish is named as a title:
      * the cards, the carousel and the heading of the product sheet.
      */
@@ -207,6 +229,7 @@ class GeneralSettings extends Settings
             'status_mode' => new EnumCast(ShopStatusMode::class),
             'variant_style' => new EnumCast(VariantStyle::class),
             'category_filter_style' => new EnumCast(CategoryFilterStyle::class),
+            'screen_theme' => new EnumCast(ScreenTheme::class),
         ];
     }
 

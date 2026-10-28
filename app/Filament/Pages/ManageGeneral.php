@@ -6,6 +6,7 @@ use App\Enums\BannerMode;
 use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
 use App\Enums\ProductCardStyle;
+use App\Enums\ScreenTheme;
 use App\Enums\ShopStatusMode;
 use App\Enums\VariantStyle;
 use App\Enums\Weekday;
@@ -357,19 +358,79 @@ class ManageGeneral extends SettingsPage
                         Tab::make('Counter screen')
                             ->icon(Heroicon::OutlinedDeviceTablet)
                             ->schema([
-                                TextInput::make('screen_rotate_seconds')
-                                    ->label('Seconds per category')
-                                    ->helperText(new HtmlString(
-                                        'The dine-in menu, full screen, for a tablet at the counter: <a href="'.e(route('menu.screen')).'" target="_blank" class="underline">'.e(route('menu.screen')).'</a>. While nobody is touching it, the screen turns to the next category after this many seconds.',
+                                Section::make('The screen')
+                                    ->description(new HtmlString(
+                                        'The dine-in menu, full screen, for a tablet at the counter. Open this link on the tablet: <a href="'.e(route('menu.screen')).'" target="_blank" class="font-semibold underline">'.e(route('menu.screen')).'</a>. On an iPad, use Share, then Add to Home Screen, so it opens without the browser bar.',
                                     ))
-                                    ->numeric()
-                                    ->integer()
-                                    ->minValue(3)
-                                    ->maxValue(300)
-                                    ->suffix('seconds')
-                                    ->default(10)
-                                    ->required()
-                                    ->columnSpanFull(),
+                                    ->schema([
+                                        Toggle::make('screen_auto_rotate')
+                                            ->label('Switch categories automatically')
+                                            ->helperText('While nobody is touching the screen, it turns to the next category on its own. Off, it stays on the category last picked.')
+                                            ->default(true),
+
+                                        TextInput::make('screen_rotate_seconds')
+                                            ->label('Seconds per category')
+                                            ->helperText('How long each category stays up before the next.')
+                                            ->numeric()
+                                            ->integer()
+                                            ->minValue(3)
+                                            ->maxValue(300)
+                                            ->suffix('seconds')
+                                            ->default(10)
+                                            ->required()
+                                            ->visibleJs(<<<'JS'
+                                                $get('screen_auto_rotate')
+                                                JS),
+
+                                        TextInput::make('screen_resume_seconds')
+                                            ->label('Start again after')
+                                            ->helperText('After someone touches the screen, how long it waits with nobody touching it before it starts switching again.')
+                                            ->numeric()
+                                            ->integer()
+                                            ->minValue(5)
+                                            ->maxValue(600)
+                                            ->suffix('seconds')
+                                            ->default(20)
+                                            ->required()
+                                            ->visibleJs(<<<'JS'
+                                                $get('screen_auto_rotate')
+                                                JS),
+                                    ])
+                                    ->columns(1),
+
+                                Section::make('Look')
+                                    ->schema([
+                                        Radio::make('screen_theme')
+                                            ->label('Theme')
+                                            ->options(ScreenTheme::class)
+                                            ->descriptions(collect(ScreenTheme::cases())
+                                                ->mapWithKeys(fn (ScreenTheme $theme): array => [
+                                                    $theme->value => $theme->getDescription(),
+                                                ])
+                                                ->all())
+                                            ->default(ScreenTheme::Classic->value)
+                                            ->required(),
+
+                                        Radio::make('screen_columns')
+                                            ->label('Dishes per row')
+                                            ->helperText('Fewer makes each photo bigger; more fits a whole category on screen.')
+                                            ->options([
+                                                3 => '3',
+                                                4 => '4',
+                                                5 => '5',
+                                                6 => '6',
+                                            ])
+                                            ->inline()
+                                            ->default(5)
+                                            ->dehydrateStateUsing(fn (int|string $state): int => (int) $state)
+                                            ->required(),
+
+                                        Toggle::make('screen_show_slider')
+                                            ->label('Show the slider')
+                                            ->helperText('The carousel of featured dishes above the menu. Off gives the dishes the whole screen.')
+                                            ->default(true),
+                                    ])
+                                    ->columns(1),
                             ]),
 
                         Tab::make('Footer')

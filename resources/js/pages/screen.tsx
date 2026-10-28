@@ -7,6 +7,7 @@ import {
     RectangleVertical,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 
 import { GoodMorningLogo } from '@/components/good-morning-logo';
 import { CategoryArt } from '@/components/menu/category-art';
@@ -16,13 +17,19 @@ import { ProductMinimal } from '@/components/menu/product-minimal';
 import { CartProvider } from '@/contexts/cart-context';
 import { useUppercaseCategoryTitles } from '@/lib/title-case';
 import { cn } from '@/lib/utils';
-import type { Addon, Category, Product, Slide } from '@/types';
+import type {
+    Addon,
+    Category,
+    CounterScreen,
+    Product,
+    ScreenTheme,
+    Slide,
+} from '@/types';
 
 type ScreenProps = {
     categories: Category[];
     slides: Slide[];
-    /** How long a category stays up while nobody is touching the screen. */
-    rotateSeconds: number;
+    screen: CounterScreen;
 };
 
 /** How the board is laid out: following the tablet, or held one way. */
@@ -41,6 +48,87 @@ const SHEET_IDLE_MS = 45_000;
 
 /** The least time between two touches counted as separate, for scrolling. */
 const TOUCH_THROTTLE_MS = 400;
+
+/** Dishes to a row, written out whole so Tailwind can see every class. */
+const COLUMNS: Record<number, string> = {
+    3: 'grid-cols-3 gap-x-6 gap-y-8',
+    4: 'grid-cols-4 gap-x-5 gap-y-7',
+    5: 'grid-cols-5 gap-x-5 gap-y-7',
+    6: 'grid-cols-6 gap-x-4 gap-y-6',
+};
+
+/**
+ * A theme is the page's own colours, set again over the board (and, for the
+ * side panel, over the panel alone). Every colour on the board is drawn from
+ * these, so redefining them repaints the whole thing without a second set of
+ * classes. The product sheet opens outside the board and keeps the menu's
+ * own colours.
+ */
+const THEMES: Record<
+    ScreenTheme,
+    { board?: CSSProperties; side?: CSSProperties; lightLogo: boolean }
+> = {
+    classic: { lightLogo: false },
+    garden: {
+        side: {
+            '--surface': '#719067',
+            '--foreground': '#faf3de',
+            '--muted-foreground': 'rgb(250 243 222 / 0.75)',
+            '--border': 'transparent',
+            '--primary': '#faf3de',
+            '--primary-foreground': '#4f6a46',
+            '--ring': '#faf3de',
+        } as CSSProperties,
+        lightLogo: true,
+    },
+    sunrise: {
+        side: {
+            '--surface': '#F4C338',
+            '--foreground': '#2e2a24',
+            '--muted-foreground': 'rgb(46 42 36 / 0.7)',
+            '--border': 'transparent',
+        } as CSSProperties,
+        lightLogo: false,
+    },
+    paper: {
+        board: {
+            '--background': '#ffffff',
+            '--surface': '#ffffff',
+            '--border': '#efe8d8',
+            '--muted': '#f6f2e8',
+        } as CSSProperties,
+        lightLogo: false,
+    },
+    night: {
+        board: {
+            '--background': '#1d1a16',
+            '--surface': '#26221c',
+            '--foreground': '#f6efdc',
+            '--card': '#2c2721',
+            '--card-foreground': '#f6efdc',
+            '--muted': '#332e26',
+            '--muted-foreground': '#b5aa95',
+            '--border': '#3a342b',
+            '--primary': '#8fb083',
+            '--primary-foreground': '#1d1a16',
+            '--ring': '#8fb083',
+        } as CSSProperties,
+        lightLogo: true,
+    },
+};
+
+/** The logo as a cream silhouette, for a dark panel its colours vanish on. */
+const LIGHT_LOGO = {
+    maskImage: "url('/images/logo.svg')",
+    WebkitMaskImage: "url('/images/logo.svg')",
+    maskSize: 'contain',
+    WebkitMaskSize: 'contain',
+    maskRepeat: 'no-repeat',
+    WebkitMaskRepeat: 'no-repeat',
+    maskPosition: 'center',
+    WebkitMaskPosition: 'center',
+    aspectRatio: '4193 / 2782',
+} satisfies CSSProperties;
 
 /**
  * The dine-in menu as a board for a tablet at the counter.
@@ -63,19 +151,28 @@ export default function Screen(props: ScreenProps) {
     );
 }
 
-function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
+function ScreenBoard({ categories, slides, screen }: ScreenProps) {
     const uppercase = useUppercaseCategoryTitles();
-    const rotateMs = rotateSeconds * 1000;
+    const rotateMs = screen.rotateSeconds * 1000;
+    const resumeMs = screen.resumeSeconds * 1000;
+    const theme = THEMES[screen.theme] ?? THEMES.classic;
 
     const [activeIndex, setActiveIndex] = useState(0);
     const active = categories[activeIndex] ?? null;
 
     /**
-     * Bumped on every touch: it restarts the countdown, so the board only
-     * turns once a full stretch has passed with nobody using it.
+     * Bumped on every touch. It is what keeps an open sheet from closing on
+     * someone still reading it.
      */
     const [cycle, setCycle] = useState(0);
+    /**
+     * Set by a touch and cleared once the screen has gone untouched for the
+     * resume time: while it is set the board waits for the person using it
+     * rather than turning the menu out from under them.
+     */
+    const [holding, setHolding] = useState(false);
     const lastTouch = useRef(0);
+    const holdTimer = useRef<number | undefined>(undefined);
 
     const touch = useCallback((): void => {
         const now = Date.now();
@@ -86,7 +183,15 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
 
         lastTouch.current = now;
         setCycle((value) => value + 1);
-    }, []);
+        setHolding(true);
+        window.clearTimeout(holdTimer.current);
+        holdTimer.current = window.setTimeout(
+            () => setHolding(false),
+            resumeMs,
+        );
+    }, [resumeMs]);
+
+    useEffect(() => () => window.clearTimeout(holdTimer.current), []);
 
     // The open dish, kept after closing so the sheet has something to draw
     // while it animates out.
@@ -108,10 +213,14 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
         mainRef.current?.scrollTo({ top: 0 });
     }, []);
 
-    // The countdown: once a full stretch passes untouched, the next category.
-    // Held while a dish is open — someone is reading it.
+    // Turning on its own only when the shop wants it, nobody is using the
+    // screen, and no dish is open on it.
+    const turning =
+        screen.autoRotate && !holding && !productOpen && categories.length > 1;
+
+    // The countdown: once a full stretch passes, the next category.
     useEffect(() => {
-        if (productOpen || categories.length < 2) {
+        if (!turning) {
             return;
         }
 
@@ -120,14 +229,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
         }, rotateMs);
 
         return () => window.clearTimeout(timer);
-    }, [
-        activeIndex,
-        categories.length,
-        cycle,
-        productOpen,
-        rotateMs,
-        showCategory,
-    ]);
+    }, [activeIndex, categories.length, rotateMs, showCategory, turning]);
 
     // The bar under the open category, run off the same stretch. Driven by
     // the animation API rather than state, so a bar filling ten times a
@@ -139,7 +241,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
             return;
         }
 
-        if (productOpen || categories.length < 2) {
+        if (!turning) {
             bar.style.transform = 'scaleX(0)';
 
             return;
@@ -151,7 +253,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
         );
 
         return () => animation.cancel();
-    }, [activeIndex, categories.length, cycle, productOpen, rotateMs]);
+    }, [activeIndex, rotateMs, turning]);
 
     // An open dish left on the screen closes itself, so the board doesn't sit
     // on one sheet all afternoon after the customer has gone.
@@ -206,12 +308,14 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                 onPointerDownCapture={touch}
                 onWheelCapture={touch}
                 onKeyDownCapture={touch}
+                style={theme.board}
                 className={cn(
                     'fixed inset-0 flex overflow-hidden bg-background text-foreground select-none',
                     portrait ? 'flex-col' : 'flex-row',
                 )}
             >
                 <aside
+                    style={theme.side}
                     className={cn(
                         'flex shrink-0 bg-surface',
                         portrait
@@ -222,12 +326,24 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                     {/* The logo, with the two quiet controls tucked into the
                         far corner from it. */}
                     <div className="flex items-start justify-between gap-4">
-                        <GoodMorningLogo
-                            className={cn(
-                                'drop-shadow-sm',
-                                portrait ? 'w-28' : 'w-32',
-                            )}
-                        />
+                        {theme.lightLogo ? (
+                            <span
+                                role="img"
+                                aria-label="Good Morning"
+                                style={LIGHT_LOGO}
+                                className={cn(
+                                    'block bg-cream',
+                                    portrait ? 'w-28' : 'w-32',
+                                )}
+                            />
+                        ) : (
+                            <GoodMorningLogo
+                                className={cn(
+                                    'drop-shadow-sm',
+                                    portrait ? 'w-28' : 'w-32',
+                                )}
+                            />
+                        )}
 
                         <ScreenControls layout={layout} />
                     </div>
@@ -252,7 +368,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                             portrait ? 'px-6 pt-5' : 'px-8 pt-6',
                         )}
                     >
-                        {slides.length > 0 && (
+                        {screen.showSlider && slides.length > 0 && (
                             <MenuSlider
                                 slides={slides}
                                 onOpen={openSlide}
@@ -302,7 +418,10 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                         {active !== null && (
                             <ul
                                 key={active.id}
-                                className="grid animate-in grid-cols-5 gap-x-5 gap-y-7 duration-500 fade-in slide-in-from-bottom-3 motion-reduce:animate-none"
+                                className={cn(
+                                    'grid animate-in duration-500 fade-in slide-in-from-bottom-3 motion-reduce:animate-none',
+                                    COLUMNS[screen.columns] ?? COLUMNS[5],
+                                )}
                             >
                                 {active.products.map((product) => (
                                     <li key={product.id}>
@@ -420,7 +539,7 @@ function CategoryList({
                                 cream to stand off its own green row. */}
                             <span
                                 className={cn(
-                                    'flex size-11 shrink-0 items-center justify-center rounded-full bg-primary shadow-sm transition-shadow duration-300',
+                                    'flex size-11 shrink-0 items-center justify-center rounded-full bg-sage shadow-sm transition-shadow duration-300',
                                     isActive && 'ring-3 ring-cream/70',
                                 )}
                             >
