@@ -45,6 +45,8 @@ declare module '@inertiajs/core' {
             socialLinks: SocialLink[];
             /** Map link for the footer's location button. Null leaves it out. */
             locationUrl: string | null;
+            /** Where the footer's review card sends people. Null leaves it out. */
+            reviewUrl: string | null;
             /** Null when orders have nowhere to go, which closes checkout. */
             whatsappNumber: string | null;
             sidebarOpen: boolean;

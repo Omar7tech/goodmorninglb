@@ -3,6 +3,7 @@ import { useId } from 'react';
 import type { CSSProperties } from 'react';
 
 import { DirectionsCard } from '@/components/menu/directions-card';
+import { ReviewCard } from '@/components/menu/review-card';
 import { ShopHours } from '@/components/menu/shop-hours';
 import { hasPublishedHours, useShop } from '@/lib/shop';
 import { cn } from '@/lib/utils';
@@ -47,7 +48,7 @@ const MAKER_MARK = {
  * runs on a schedule.
  */
 export function SiteFooter() {
-    const { socialLinks, locationUrl } = usePage().props;
+    const { socialLinks, locationUrl, reviewUrl } = usePage().props;
     const hoursShown = hasPublishedHours(useShop());
     // The patterns need ids of their own; the colons React puts in one are
     // not safe inside `url(#…)`.
@@ -107,14 +108,14 @@ export function SiteFooter() {
                     any, and the map card on the right. Named areas rather than
                     a reordering of the markup, so a phone still reads it
                     top to bottom in the order it needs — line, map, links,
-                    hours. */}
+                    review, hours. */}
                 <div className="mx-auto w-full max-w-md px-6 pt-6 pb-6 lg:max-w-5xl lg:px-8 lg:pt-8 xl:max-w-6xl">
                     <div
                         className={cn(
                             'flex flex-col items-center text-center lg:grid lg:items-center lg:gap-x-12 lg:gap-y-3 lg:text-left',
                             hoursShown
-                                ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)_minmax(0,19rem)] lg:[grid-template-areas:'line_hours_map''links_hours_map']"
-                                : "lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:[grid-template-areas:'line_map''links_map']",
+                                ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)_minmax(0,19rem)] lg:[grid-template-areas:'line_hours_map''links_hours_map''review_hours_map']"
+                                : "lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:[grid-template-areas:'line_map''links_map''review_map']",
                         )}
                     >
                         <p className="font-heading text-2xl leading-tight text-balance sm:text-3xl lg:self-end lg:[grid-area:line]">
@@ -169,6 +170,16 @@ export function SiteFooter() {
                                     )}
                                 </ul>
                             </div>
+                        )}
+
+                        {/* Asked last on a phone, once the customer has seen
+                            everything else; on a desktop it closes the left
+                            column under the links. */}
+                        {reviewUrl && (
+                            <ReviewCard
+                                href={reviewUrl}
+                                className="mt-6 w-full lg:mt-3 lg:max-w-sm lg:self-start lg:[grid-area:review]"
+                            />
                         )}
 
                         {hoursShown && (

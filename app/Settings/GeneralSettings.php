@@ -178,6 +178,12 @@ class GeneralSettings extends Settings
      */
     public ?string $location_url;
 
+    /**
+     * Where customers leave the shop a review, e.g. on Google. Null leaves the
+     * footer's review card out.
+     */
+    public ?string $review_url;
+
     public static function group(): string
     {
         return 'general';
@@ -439,5 +445,13 @@ class GeneralSettings extends Settings
     public function usableLocationUrl(): ?string
     {
         return filled($this->location_url) ? trim((string) $this->location_url) : null;
+    }
+
+    /**
+     * The review link worth rendering, or null when none is set.
+     */
+    public function usableReviewUrl(): ?string
+    {
+        return filled($this->review_url) ? trim((string) $this->review_url) : null;
     }
 }

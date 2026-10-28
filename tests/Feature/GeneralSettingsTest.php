@@ -84,3 +84,8 @@ it('points the footer directions at the shop on Google Maps by default', functio
     expect(app(GeneralSettings::class)->usableLocationUrl())
         ->toBe('https://maps.app.goo.gl/CjgZnRC9s4dBdYe69');
 });
+
+it('opens the Google review form for the shop by default', function (): void {
+    expect(app(GeneralSettings::class)->usableReviewUrl())
+        ->toBe('https://search.google.com/local/writereview?placeid=ChIJtYerZsEiHxUR5G49Fcco7a8');
+});

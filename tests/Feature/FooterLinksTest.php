@@ -69,3 +69,27 @@ it('shares no location link when none is configured', function (?string $configu
     'blank' => '',
     'whitespace' => '   ',
 ]);
+
+it('shares the review link with the storefront', function (): void {
+    settings(['review_url' => 'https://g.page/r/goodmorning/review']);
+
+    $this->get(route('menu.dine-in'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('reviewUrl', 'https://g.page/r/goodmorning/review')
+        );
+});
+
+it('shares no review link when none is configured', function (?string $configured): void {
+    settings(['review_url' => $configured]);
+
+    $this->get(route('menu.dine-in'))
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page): AssertableInertia => $page
+            ->where('reviewUrl', null)
+        );
+})->with([
+    'unset' => null,
+    'blank' => '',
+    'whitespace' => '   ',
+]);

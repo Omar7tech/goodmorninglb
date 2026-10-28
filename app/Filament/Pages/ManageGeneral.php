@@ -364,6 +364,14 @@ class ManageGeneral extends SettingsPage
                                     ->maxLength(255)
                                     ->columnSpanFull(),
 
+                                TextInput::make('review_url')
+                                    ->label('Review link')
+                                    ->helperText('Where customers leave a review. Best is the "Ask for reviews" link from your Google Business Profile (g.page/r/.../review). Leave empty to hide the footer review card.')
+                                    ->placeholder('https://g.page/r/.../review')
+                                    ->url()
+                                    ->maxLength(500)
+                                    ->columnSpanFull(),
+
                                 Repeater::make('social_links')
                                     ->label('Footer links')
                                     ->helperText('Listed at the foot of the menu, in this order. Rows missing a name or an address are not shown.')

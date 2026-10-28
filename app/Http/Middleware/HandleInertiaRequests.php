@@ -87,6 +87,8 @@ class HandleInertiaRequests extends Middleware
             // The map link behind the footer's location button. Null leaves
             // the button out.
             'locationUrl' => $settings->usableLocationUrl(),
+            // Where the footer's review card sends people. Null leaves it out.
+            'reviewUrl' => $settings->usableReviewUrl(),
             // What the customer has to provide before an order can be sent.
             'checkout' => [
                 'requireFullName' => $settings->require_full_name,

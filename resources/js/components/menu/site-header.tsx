@@ -16,7 +16,7 @@ export function SiteHeader() {
                 aria-label="Good Morning — home"
                 className="rounded-2xl focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
             >
-                <GoodMorningLogo className="w-32 drop-shadow-sm sm:w-40 lg:w-48" />
+                <GoodMorningLogo className="w-28 drop-shadow-sm sm:w-36 lg:w-44" />
             </Link>
 
             <button
