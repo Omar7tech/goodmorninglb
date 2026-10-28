@@ -216,7 +216,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                         'flex shrink-0 bg-surface',
                         portrait
                             ? 'flex-col gap-4 border-b border-border px-6 pt-5 pb-4'
-                            : 'w-72 flex-col gap-6 border-r border-border px-5 py-6 xl:w-80',
+                            : 'w-64 flex-col gap-5 border-r border-border px-4 py-5 xl:w-72',
                     )}
                 >
                     {/* The logo, with the two quiet controls tucked into the
@@ -225,7 +225,7 @@ function ScreenBoard({ categories, slides, rotateSeconds }: ScreenProps) {
                         <GoodMorningLogo
                             className={cn(
                                 'drop-shadow-sm',
-                                portrait ? 'w-36' : 'w-40',
+                                portrait ? 'w-28' : 'w-32',
                             )}
                         />
 
@@ -388,7 +388,7 @@ function CategoryList({
         <ul
             ref={listRef}
             className={cn(
-                'relative no-scrollbar flex gap-1.5',
+                'relative no-scrollbar flex gap-1',
                 portrait
                     ? '-mx-6 overflow-x-auto px-6'
                     : 'min-h-0 flex-1 flex-col overflow-y-auto',
@@ -406,8 +406,8 @@ function CategoryList({
                             className={cn(
                                 'relative flex items-center gap-3 overflow-hidden rounded-2xl text-left transition-colors duration-300 ease-out focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
                                 portrait
-                                    ? 'py-2 pr-5 pl-2'
-                                    : 'w-full px-2.5 py-2.5',
+                                    ? 'py-1.5 pr-4 pl-1.5'
+                                    : 'w-full px-2 py-1.5',
                                 isActive
                                     ? 'bg-primary text-primary-foreground shadow-sm'
                                     : 'text-foreground hover:bg-primary/10',
@@ -420,7 +420,7 @@ function CategoryList({
                                 cream to stand off its own green row. */}
                             <span
                                 className={cn(
-                                    'flex size-14 shrink-0 items-center justify-center rounded-full bg-primary shadow-sm transition-shadow duration-300',
+                                    'flex size-11 shrink-0 items-center justify-center rounded-full bg-primary shadow-sm transition-shadow duration-300',
                                     isActive && 'ring-3 ring-cream/70',
                                 )}
                             >
@@ -435,7 +435,7 @@ function CategoryList({
                             <span className="flex min-w-0 flex-col">
                                 <span
                                     className={cn(
-                                        'truncate font-heading text-xl leading-tight',
+                                        'truncate font-heading text-lg leading-tight',
                                         uppercase && 'uppercase',
                                     )}
                                 >
