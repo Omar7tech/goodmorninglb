@@ -56,8 +56,8 @@ it('seeds every product with a price or a list of sizes', function () {
         ['name' => 'M', 'price' => 3.11],
         ['name' => 'L', 'price' => 3.5],
         ['name' => 'XL', 'price' => 5.3],
-        ['name' => '1 Liter', 'price' => 6.6],
-        ['name' => '1.5 Liter', 'price' => 9.4],
+        ['name' => '1L', 'price' => 6.6],
+        ['name' => '1.5L', 'price' => 9.4],
     ]);
 
     $unpriced = Product::all()

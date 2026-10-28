@@ -94,7 +94,7 @@ export function VariantSelector({
         rows: 'flex flex-col overflow-hidden rounded-2xl bg-primary/5',
         chips: 'flex flex-wrap gap-1.5',
         // Equal parts that wrap onto a second line rather than squeezing a
-        // name like "1.5 Liter" into a sliver when a juice comes in six sizes.
+        // name like "1.5L" into a sliver when a juice comes in six sizes.
         segmented:
             'grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-1 rounded-2xl bg-primary/10 p-1',
         // Lines of up to four, stacked; see `BUBBLES_PER_ROW`.
