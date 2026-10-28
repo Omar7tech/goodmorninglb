@@ -2,8 +2,9 @@ import { usePricing } from '@/lib/use-pricing';
 import { cn } from '@/lib/utils';
 
 /**
- * A product price in dollars, with the pre-discount price struck through
- * beside it while the product is on offer.
+ * A product price in dollars, large and bold in the body face the copy is set
+ * in, and green — or the logo's red while the product is on offer, with the
+ * full price struck through beside it.
  */
 export function ProductPrice({
     price,
@@ -17,6 +18,7 @@ export function ProductPrice({
     const pricing = usePricing();
     const hasDiscount = discountPrice !== null && discountPrice !== undefined;
     const effectivePrice = hasDiscount ? discountPrice : price;
+
     return (
         <span
             className={cn(
@@ -26,7 +28,14 @@ export function ProductPrice({
                 className,
             )}
         >
-            <span className="text-lg font-semibold text-primary tabular-nums">
+            {/* Grows with the screen alongside the card's name: 24px on a
+                360px phone, about 27px on a 430px one, stopping at 30px. */}
+            <span
+                className={cn(
+                    'text-[length:clamp(1.5rem,0.7rem+3.6vw,1.875rem)] leading-none font-bold tracking-tight tabular-nums',
+                    hasDiscount ? 'text-berry' : 'text-primary',
+                )}
+            >
                 {pricing.usd(effectivePrice)}
             </span>
             {hasDiscount && (
