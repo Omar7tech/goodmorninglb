@@ -67,9 +67,13 @@ export function ProductCard({
             </button>
 
             <div className="pointer-events-none flex items-center gap-3">
+                {/* Grows with the screen alongside the name: 88px on a
+                    360px phone, about 104px on a 430px one, stopping at
+                    112px. The 400px thumbnail stays sharp at that size even
+                    on a 3x screen. */}
                 <ProductImage
                     product={product}
-                    className="size-20 shrink-0 sm:size-22"
+                    className="size-[clamp(5.5rem,0.36rem+22.86vw,7rem)] shrink-0"
                 />
 
                 <div className="min-w-0 flex-1">
