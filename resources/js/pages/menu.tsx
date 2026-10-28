@@ -46,18 +46,20 @@ interface MenuProps {
 }
 
 /**
- * Width of "No bad mornings here" in CK Tipsy, in ems, summed from the font's
- * own advance widths (it has no kerning, so the sum is exact). Dividing the
- * width the line has by this gives the size at which it fills that width.
+ * Width of "Good Choices. Good Morning" in CK Tipsy, in ems, summed from the
+ * font's own advance widths (it has no kerning, so the sum is exact). Dividing
+ * the width the line has by this gives the size at which it fills that width.
+ * Measure again whenever the heading's words change.
  */
-const HEADING_EM = 11.423;
+const HEADING_EM = 14.871;
 
 /**
  * The heading's size: the full width of its container (`cqi`) shared out over
- * the line, a little short of it so it never touches the edges, and capped so
- * it stops growing on a wide screen.
+ * the line, a little short of it so it never touches the edges, clamped
+ * between a floor that stays readable on the smallest phone and a cap that
+ * stops it growing on a wide screen.
  */
-const HEADING_SIZE = `min(calc(94cqi / ${HEADING_EM}), 4.25rem)`;
+const HEADING_SIZE = `clamp(1rem, calc(92cqi / ${HEADING_EM}), 4.25rem)`;
 
 /**
  * How the product list is laid out, per card style.
@@ -684,8 +686,10 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                                 style={{ fontSize: HEADING_SIZE }}
                                 className="text-center font-heading leading-none whitespace-nowrap text-primary"
                             >
-                                No bad mornings{' '}
-                                <span className="text-berry">here</span>
+                                <span className="text-berry">
+                                    Good Choices.
+                                </span>{' '}
+                                Good Morning
                             </h1>
                         </div>
 

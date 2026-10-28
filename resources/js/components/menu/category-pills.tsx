@@ -13,9 +13,9 @@ import type { Category } from '@/types';
  * shop has the colourful setting off, as on the category boxes.
  */
 const CIRCLES = [
-    { fill: 'bg-sage', ring: 'ring-sage' },
-    { fill: 'bg-berry', ring: 'ring-berry' },
-    { fill: 'bg-[#F4C338]', ring: 'ring-[#F4C338]' },
+    { fill: 'bg-sage' },
+    { fill: 'bg-berry' },
+    { fill: 'bg-[#F4C338]' },
 ] as const;
 
 /**
@@ -225,11 +225,11 @@ export function CategoryPills({
                                                 'transition-[box-shadow] duration-200 ease-out',
                                                 // Every circle is ringed, with a
                                                 // gap of the panel's cream: the
-                                                // open one in its own colour,
+                                                // open one in the logo's red,
                                                 // the rest in a soft grey.
                                                 circleColour(index).fill,
                                                 isActive
-                                                    ? circleColour(index).ring
+                                                    ? 'ring-berry'
                                                     : 'ring-foreground/15',
                                             )}
                                         >
