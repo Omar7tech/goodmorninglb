@@ -73,10 +73,14 @@ export function ProductCard({
                 {/* Grows with the screen alongside the name: 88px on a
                     360px phone, about 104px on a 430px one, stopping at
                     112px. The 400px thumbnail stays sharp at that size even
-                    on a 3x screen. */}
+                    on a 3x screen.
+
+                    Its corners follow the card's 18px around the 10px of
+                    padding between them, kept a touch rounder than the strict
+                    18 − 10 so the photo still reads soft, not square. */}
                 <ProductImage
                     product={product}
-                    className="size-[clamp(5.5rem,0.36rem+22.86vw,7rem)] shrink-0"
+                    className="size-[clamp(5.5rem,0.36rem+22.86vw,7rem)] shrink-0 rounded-[0.75rem]"
                 />
 
                 <div className="min-w-0 flex-1">
