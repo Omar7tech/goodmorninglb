@@ -12,11 +12,14 @@ const NEXT_KEYS = ['ArrowRight', 'ArrowDown'];
 const PREVIOUS_KEYS = ['ArrowLeft', 'ArrowUp'];
 
 /**
- * The most bubbles on one line. Past four the pills grow too narrow to read on
- * a phone, so the rest start a line of their own underneath, carrying on the
- * growth from where the line above left off.
+ * Up to this many sizes, the bubbles stretch across the full width, each one
+ * a longer pill than the last. Past it there is no room left to grow, so they
+ * sit at their own size instead, all on one line.
  */
-const BUBBLES_PER_ROW = 4;
+const BUBBLES_TO_STRETCH = 4;
+
+/** The most bubbles on one line; a seventh starts a line underneath. */
+const BUBBLES_PER_ROW = 6;
 
 /** Classes every option shares, whatever shape it is drawn in. */
 const OPTION_BASE =
@@ -97,9 +100,11 @@ export function VariantSelector({
         // name like "1.5L" into a sliver when a juice comes in six sizes.
         segmented:
             'grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-1 rounded-2xl bg-primary/10 p-1',
-        // Lines of up to four, stacked; see `BUBBLES_PER_ROW`.
+        // Lines of up to six, stacked; see `BUBBLES_PER_ROW`.
         bubbles: 'flex flex-col gap-2',
     }[style];
+
+    const stretchBubbles = variants.length <= BUBBLES_TO_STRETCH;
 
     const options = variants.map((variant, index) => {
         const selected = index === selectedIndex;
@@ -125,9 +130,13 @@ export function VariantSelector({
                 onClick={() => onSelect(index)}
                 className={cn(
                     OPTION_BASE,
-                    optionClasses(style, selected, index),
+                    optionClasses(style, selected, index, stretchBubbles),
                 )}
-                style={style === 'bubbles' ? bubbleGrowth(index) : undefined}
+                style={
+                    style === 'bubbles' && stretchBubbles
+                        ? bubbleGrowth(index)
+                        : undefined
+                }
             >
                 {style === 'chips' && (
                     <ChipOption
@@ -156,6 +165,7 @@ export function VariantSelector({
                 {style === 'bubbles' && (
                     <BubbleOption
                         index={index}
+                        stretched={stretchBubbles}
                         name={variant.name}
                         now={now}
                         was={was}
@@ -182,12 +192,18 @@ export function VariantSelector({
                           length: Math.ceil(options.length / BUBBLES_PER_ROW),
                       },
                       (_, line) => (
-                          // Each line runs the full width on its own. Should
-                          // the names not fit on a narrow phone it wraps, and
-                          // every line still fills edge to edge.
+                          // Stretched, the line runs the full width on its
+                          // own, wrapping should the names not fit. At their
+                          // own size, the bubbles spread out along it instead
+                          // and never wrap: six always share one line.
                           <div
                               key={line}
-                              className="flex flex-wrap gap-x-1.5 gap-y-2"
+                              className={cn(
+                                  'flex',
+                                  stretchBubbles
+                                      ? 'flex-wrap gap-x-1.5 gap-y-2'
+                                      : 'justify-between gap-1',
+                              )}
                           >
                               {options.slice(
                                   line * BUBBLES_PER_ROW,
@@ -206,6 +222,7 @@ function optionClasses(
     style: VariantStyle,
     selected: boolean,
     index: number,
+    stretchBubbles: boolean,
 ): string {
     if (style === 'chips') {
         return cn(
@@ -237,8 +254,12 @@ function optionClasses(
 
     // Bubbles: the button is the bubble and its price together, so the ring
     // a keyboard draws goes round both rather than round the circle alone.
-    // Never narrower than its own name, nor than a circle.
-    return 'group/bubble flex min-w-11 flex-col items-stretch gap-1 rounded-2xl p-0.5';
+    // Never narrower than its own name, nor than a circle. Stretched, the pill
+    // fills the button's width; otherwise it keeps its own size.
+    return cn(
+        'group/bubble flex min-w-11 flex-col gap-1 rounded-2xl p-0.5',
+        stretchBubbles ? 'items-stretch' : 'items-center',
+    );
 }
 
 /**
@@ -370,11 +391,12 @@ function SegmentOption({ name, now, was = null, selected }: OptionProps) {
  */
 function BubbleOption({
     index,
+    stretched,
     name,
     now,
     was = null,
     selected,
-}: OptionProps & { index: number }) {
+}: OptionProps & { index: number; stretched: boolean }) {
     return (
         <>
             <span
@@ -386,7 +408,10 @@ function BubbleOption({
                           }
                 }
                 className={cn(
-                    'flex h-11 items-center justify-center rounded-full px-3 text-xs font-semibold whitespace-nowrap',
+                    'flex h-11 min-w-11 items-center justify-center rounded-full text-xs font-semibold whitespace-nowrap',
+                    // Snugger at their own size, so six fit one line on the
+                    // narrowest phone.
+                    stretched ? 'px-3' : 'px-2',
                     'transition-[background-color,color,box-shadow] duration-200 ease-out',
                     // No growing when chosen: the pills sit edge to edge, and
                     // one swelling would run into its neighbours.
