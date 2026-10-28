@@ -4,8 +4,6 @@ import type { ComponentType } from 'react';
 
 import { ProductDialog } from '@/components/menu/product-dialog';
 import { ClassicBoard } from '@/components/screen/classic-board';
-import { GalleryBoard } from '@/components/screen/gallery-board';
-import { MenuBoard } from '@/components/screen/menu-board';
 import { PolaroidBoard } from '@/components/screen/polaroid-board';
 import {
     ScreenControls,
@@ -13,7 +11,9 @@ import {
     useWakeLock,
 } from '@/components/screen/screen-kit';
 import type { BoardProps } from '@/components/screen/screen-kit';
+import { ShowcaseBoard } from '@/components/screen/showcase-board';
 import { SpotlightBoard } from '@/components/screen/spotlight-board';
+import { StoriesBoard } from '@/components/screen/stories-board';
 import { CartProvider } from '@/contexts/cart-context';
 import { useUppercaseCategoryTitles } from '@/lib/title-case';
 import type {
@@ -40,13 +40,21 @@ const SHEET_IDLE_MS = 45_000;
 /** The least time between two touches counted as separate, for scrolling. */
 const TOUCH_THROTTLE_MS = 400;
 
-/** Each theme is its own way of drawing the board. */
-const BOARDS: Record<ScreenTheme, ComponentType<BoardProps>> = {
-    classic: ClassicBoard,
-    spotlight: SpotlightBoard,
-    board: MenuBoard,
-    gallery: GalleryBoard,
-    polaroid: PolaroidBoard,
+/**
+ * Each theme is its own way of drawing the board. Most leave the turning to
+ * this page, one category per stretch; a theme that `pacesItself` moves
+ * through its own dishes and asks for the next category when it is done, so
+ * the page's clock stays out of its way.
+ */
+const BOARDS: Record<
+    ScreenTheme,
+    { Board: ComponentType<BoardProps>; pacesItself: boolean }
+> = {
+    classic: { Board: ClassicBoard, pacesItself: false },
+    spotlight: { Board: SpotlightBoard, pacesItself: false },
+    stories: { Board: StoriesBoard, pacesItself: true },
+    showcase: { Board: ShowcaseBoard, pacesItself: false },
+    polaroid: { Board: PolaroidBoard, pacesItself: false },
 };
 
 /**
@@ -73,7 +81,7 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
     const uppercase = useUppercaseCategoryTitles();
     const rotateMs = screen.rotateSeconds * 1000;
     const resumeMs = screen.resumeSeconds * 1000;
-    const Board = BOARDS[screen.theme] ?? ClassicBoard;
+    const { Board, pacesItself } = BOARDS[screen.theme] ?? BOARDS.classic;
 
     const [activeIndex, setActiveIndex] = useState(0);
     const active = categories[activeIndex] ?? null;
@@ -135,7 +143,8 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
 
     // Turning on its own only when the shop wants it, nobody is using the
     // screen, and no dish is open on it.
-    const turning = screen.autoRotate && idle && categories.length > 1;
+    const turning =
+        screen.autoRotate && idle && !pacesItself && categories.length > 1;
 
     // The countdown: once a full stretch passes, the next category.
     useEffect(() => {
@@ -267,6 +276,7 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
                     uppercase={uppercase}
                     columns={screen.columns}
                     idle={idle}
+                    autoRotate={screen.autoRotate}
                     slides={slides}
                     showSlider={screen.showSlider}
                     onOpenSlide={openSlide}

@@ -23,8 +23,8 @@ export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 export type ScreenTheme =
     | 'classic'
     | 'spotlight'
-    | 'board'
-    | 'gallery'
+    | 'stories'
+    | 'showcase'
     | 'polaroid';
 
 /** The counter screen's settings, from the dashboard. */
