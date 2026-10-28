@@ -110,10 +110,8 @@ export function VariantSelector({
         const selected = index === selectedIndex;
         const effectivePrice = variant.discountPrice ?? variant.price;
         const was =
-            variant.discountPrice === null
-                ? null
-                : pricing.primary(variant.price);
-        const now = pricing.primary(effectivePrice);
+            variant.discountPrice === null ? null : pricing.usd(variant.price);
+        const now = pricing.usd(effectivePrice);
 
         return (
             <button

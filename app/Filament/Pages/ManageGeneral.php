@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Enums\BannerMode;
 use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
-use App\Enums\PriceDisplay;
 use App\Enums\ProductCardStyle;
 use App\Enums\ShopStatusMode;
 use App\Enums\VariantStyle;
@@ -23,7 +22,6 @@ use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
@@ -168,49 +166,6 @@ class ManageGeneral extends SettingsPage
                                     ->visibleJs(<<<'JS'
                                         $get('show_banner') && $get('banner_mode') === 'scheduled'
                                         JS),
-                            ]),
-
-                        Tab::make('Pricing')
-                            ->icon(Heroicon::OutlinedBanknotes)
-                            ->schema([
-                                Toggle::make('show_lbp_prices')
-                                    ->label('Enable LBP pricing')
-                                    ->helperText('Turn on to allow prices to be shown in Lebanese Pounds.')
-                                    ->default(false)
-                                    ->columnSpanFull()
-                                    ->live()
-                                    ->afterStateUpdated(function (bool $state, callable $set): void {
-                                        // Fall back to USD-only when LBP pricing is turned off.
-                                        if (! $state) {
-                                            $set('price_display', PriceDisplay::Usd->value);
-                                        }
-                                    }),
-
-                                TextInput::make('lbp_exchange_rate')
-                                    ->label('LBP exchange rate')
-                                    ->helperText('How many Lebanese Pounds one US Dollar is worth, e.g. 90000.')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->suffix('LBP')
-                                    ->live(onBlur: true)
-                                    ->requiredIf('show_lbp_prices', true)
-                                    ->columnSpanFull()
-                                    ->visibleJs(<<<'JS'
-                                        $get('show_lbp_prices')
-                                        JS),
-
-                                Radio::make('price_display')
-                                    ->label('Price display')
-                                    ->helperText('LBP and Both need LBP pricing enabled with a rate above zero.')
-                                    ->options(PriceDisplay::class)
-                                    ->default(PriceDisplay::Usd->value)
-                                    ->required()
-                                    ->columnSpanFull()
-                                    ->disableOptionWhen(function (string $value, Get $get): bool {
-                                        $lbpReady = $get('show_lbp_prices') && (float) $get('lbp_exchange_rate') > 0;
-
-                                        return $value !== PriceDisplay::Usd->value && ! $lbpReady;
-                                    }),
                             ]),
 
                         /**

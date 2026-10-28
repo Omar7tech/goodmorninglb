@@ -5,7 +5,6 @@ namespace App\Settings;
 use App\Enums\BannerMode;
 use App\Enums\CategoryFilterStyle;
 use App\Enums\CategoryLayout;
-use App\Enums\PriceDisplay;
 use App\Enums\ProductCardStyle;
 use App\Enums\ShopStatusMode;
 use App\Enums\VariantStyle;
@@ -77,22 +76,6 @@ class GeneralSettings extends Settings
      * @phpstan-var array<int, mixed>
      */
     public array $banner_schedule;
-
-    /**
-     * Whether prices may be displayed in Lebanese Pounds. When off, the
-     * storefront falls back to USD regardless of {@see self::$price_display}.
-     */
-    public bool $show_lbp_prices;
-
-    /**
-     * How many LBP one USD is worth, used to convert every menu price.
-     */
-    public ?float $lbp_exchange_rate;
-
-    /**
-     * Which currency the storefront menu prices are rendered in.
-     */
-    public PriceDisplay $price_display;
 
     /**
      * How the menu's landing view draws its categories. A look only — the same
@@ -208,7 +191,6 @@ class GeneralSettings extends Settings
         return [
             'banner_mode' => new EnumCast(BannerMode::class),
             'category_layout' => new EnumCast(CategoryLayout::class),
-            'price_display' => new EnumCast(PriceDisplay::class),
             'product_card_style' => new EnumCast(ProductCardStyle::class),
             'status_mode' => new EnumCast(ShopStatusMode::class),
             'variant_style' => new EnumCast(VariantStyle::class),
@@ -410,30 +392,6 @@ class GeneralSettings extends Settings
         }
 
         return $rows;
-    }
-
-    /**
-     * The LBP rate to actually convert with, or null when LBP pricing is off
-     * or no positive rate is configured.
-     */
-    public function usableLbpRate(): ?float
-    {
-        $rate = (float) $this->lbp_exchange_rate;
-
-        return $this->show_lbp_prices && $rate > 0 ? $rate : null;
-    }
-
-    /**
-     * The price display to actually render with, falling back to USD whenever
-     * the chosen mode needs an LBP rate that isn't available.
-     */
-    public function resolvedPriceDisplay(): PriceDisplay
-    {
-        if ($this->price_display->needsLbpRate() && $this->usableLbpRate() === null) {
-            return PriceDisplay::Usd;
-        }
-
-        return $this->price_display;
     }
 
     /**

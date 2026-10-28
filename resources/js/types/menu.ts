@@ -1,9 +1,6 @@
 /** Mirrors `App\Enums\OrderType` — which menu the page is rendering. */
 export type OrderType = 'dine_in' | 'delivery';
 
-/** Which currency the menu prices are rendered in. */
-export type PriceDisplay = 'usd' | 'lbp' | 'both';
-
 /** Mirrors `App\Enums\CategoryLayout` — how the landing view draws categories. */
 export type CategoryLayout =
     | 'grid'
@@ -23,9 +20,6 @@ export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 
 export type Pricing = {
-    display: PriceDisplay;
-    /** LBP per 1 USD, or null when LBP pricing is unavailable. */
-    lbpRate: number | null;
     /** Delivery charge in USD added to an order, or null when none applies. */
     deliveryFeeUsd: number | null;
 };
@@ -66,7 +60,7 @@ export type Product = {
     name: string;
     subtitle: string | null;
     description: string | null;
-    /** In USD. LBP is derived from it at the configured rate, never stored. */
+    /** In USD, the menu's only currency. */
     price: number;
     /** Set only while the product is on offer; `price` stays the full one. */
     discountPrice: number | null;

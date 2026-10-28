@@ -367,7 +367,7 @@ function CartLines({
                                 )}
 
                                 <span className="mt-1 text-sm font-semibold text-primary tabular-nums">
-                                    {pricing.primary(
+                                    {pricing.usd(
                                         cartItemUnitUsd(item) * item.quantity,
                                     )}
                                 </span>
@@ -767,32 +767,17 @@ function Totals({
         <dl className="flex flex-col gap-1 text-sm">
             {deliveryFeeUsd !== null && (
                 <>
-                    <Row
-                        label="Subtotal"
-                        value={pricing.primary(subtotalUsd)}
-                    />
-                    <Row
-                        label="Delivery"
-                        value={pricing.primary(deliveryFeeUsd)}
-                    />
+                    <Row label="Subtotal" value={pricing.usd(subtotalUsd)} />
+                    <Row label="Delivery" value={pricing.usd(deliveryFeeUsd)} />
                 </>
             )}
 
             <div className="flex items-baseline justify-between gap-3 font-semibold">
                 <dt className="uppercase">Total</dt>
                 <dd className="text-primary tabular-nums">
-                    {pricing.primary(totalUsd)}
+                    {pricing.usd(totalUsd)}
                 </dd>
             </div>
-
-            {pricing.showUsd && pricing.showLbp && (
-                <div className="flex items-baseline justify-between gap-3 text-xs text-muted-foreground">
-                    <dt className="sr-only">Total in Lebanese Pounds</dt>
-                    <dd className="ml-auto tabular-nums">
-                        {pricing.lbp(totalUsd)}
-                    </dd>
-                </div>
-            )}
         </dl>
     );
 }

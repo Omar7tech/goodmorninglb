@@ -38,23 +38,9 @@ type OrderSummary = {
     orderNote?: string | null;
 };
 
-/**
- * Format a USD amount in every currency the storefront displays, so the order
- * message matches what the customer saw on screen (e.g. "$6.00 / 540,000 LBP").
- */
+/** Format a USD amount the way the customer saw it on screen. */
 function money(pricing: PriceParts, usd: number): string {
-    const parts: string[] = [];
-
-    if (pricing.showUsd) {
-        parts.push(pricing.usd(usd));
-    }
-
-    if (pricing.showLbp) {
-        parts.push(pricing.lbp(usd));
-    }
-
-    // Always fall back to USD so a line never renders empty.
-    return parts.length > 0 ? parts.join(' / ') : pricing.usd(usd);
+    return pricing.usd(usd);
 }
 
 /**

@@ -139,20 +139,10 @@ export function CartStrip() {
                         <ArrowRight className="size-3.5" />
                     </button>
 
-                    {/* Both currencies stack when the shop shows both, the way
-                        the product cards set their prices. In a single-currency
-                        shop `primary` is already the one to lead with, so the
-                        second line only appears when there really is one. */}
                     <span className="flex flex-col items-end leading-tight">
                         <span className="text-base font-semibold text-primary tabular-nums">
-                            {pricing.primary(subtotalUsd)}
+                            {pricing.usd(subtotalUsd)}
                         </span>
-
-                        {pricing.showUsd && pricing.showLbp && (
-                            <span className="text-[0.7rem] text-primary/60 tabular-nums">
-                                {pricing.lbp(subtotalUsd)}
-                            </span>
-                        )}
                     </span>
                 </div>
             </div>

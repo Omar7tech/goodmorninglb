@@ -358,7 +358,7 @@ function SlidePrice({
                     onPhoto ? 'text-white' : 'text-primary',
                 )}
             >
-                {pricing.primary(price)}
+                {pricing.usd(price)}
             </span>
 
             {wasPrice !== null && (
@@ -368,7 +368,7 @@ function SlidePrice({
                         onPhoto ? 'text-white/60' : 'text-muted-foreground',
                     )}
                 >
-                    {pricing.primary(wasPrice)}
+                    {pricing.usd(wasPrice)}
                 </span>
             )}
         </span>

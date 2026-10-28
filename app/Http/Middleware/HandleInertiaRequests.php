@@ -59,8 +59,6 @@ class HandleInertiaRequests extends Middleware
                 'openingHours' => $settings->storefrontOpeningHours(),
             ],
             'pricing' => [
-                'display' => $settings->resolvedPriceDisplay()->value,
-                'lbpRate' => $settings->usableLbpRate(),
                 'deliveryFeeUsd' => $settings->deliveryFeeUsd(),
             ],
             // How the landing view draws its category boxes.

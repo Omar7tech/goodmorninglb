@@ -308,9 +308,7 @@ export function ProductDialog({
                                                     {addon.name}
                                                 </span>
                                                 <span className="text-xs text-primary">
-                                                    {pricing.primary(
-                                                        addon.price,
-                                                    )}
+                                                    {pricing.usd(addon.price)}
                                                 </span>
                                             </div>
 
@@ -354,13 +352,8 @@ export function ProductDialog({
 
                     {/* The dish's price and how many of it, on one line. The
                         button gets a line of its own below rather than standing
-                        beside them: a price in Lebanese Pounds is thirteen
-                        characters, and two of them abreast — one here, one on
-                        the button — do not fit across a phone. A button that
-                        only fits in one currency is a button that doesn't fit.
-
-                        It reads better for the full width anyway, being the one
-                        thing on the sheet you have come here to press. */}
+                        beside them: it reads better for the full width, being
+                        the one thing on the sheet you have come here to press. */}
                     <div className="flex items-center justify-between gap-3">
                         <ProductPrice
                             price={basePrice}
@@ -411,7 +404,7 @@ export function ProductDialog({
                                 className="h-4 w-px shrink-0 bg-primary-foreground/30"
                             />
                             <span className="truncate tabular-nums">
-                                {pricing.primary(lineTotalUsd)}
+                                {pricing.usd(lineTotalUsd)}
                             </span>
                         </button>
                     )}

@@ -2,7 +2,6 @@
 
 use App\Enums\BannerMode;
 use App\Enums\CategoryLayout;
-use App\Enums\PriceDisplay;
 use App\Enums\ProductCardStyle;
 use App\Enums\ShopStatusMode;
 use App\Enums\VariantStyle;
@@ -28,11 +27,6 @@ return new class extends SettingsMigration
         $this->migrator->add('general.banner_mode', BannerMode::Fixed->value);
         $this->migrator->add('general.banner_text', 'Welcome to Good Morning');
         $this->migrator->add('general.banner_schedule', GeneralSettings::defaultBannerSchedule());
-
-        // Pricing.
-        $this->migrator->add('general.show_lbp_prices', false);
-        $this->migrator->add('general.lbp_exchange_rate', null);
-        $this->migrator->add('general.price_display', PriceDisplay::Usd->value);
 
         // How the menu is drawn.
         $this->migrator->add('general.category_layout', CategoryLayout::Grid->value);
@@ -64,7 +58,6 @@ return new class extends SettingsMigration
         foreach ([
             'status_mode', 'is_open', 'opening_hours',
             'show_banner', 'banner_mode', 'banner_text', 'banner_schedule',
-            'show_lbp_prices', 'lbp_exchange_rate', 'price_display',
             'category_layout', 'product_card_style', 'variant_style',
             'uppercase_category_titles', 'uppercase_product_titles',
             'online_ordering_active', 'whatsapp_number', 'charge_delivery', 'delivery_fee',

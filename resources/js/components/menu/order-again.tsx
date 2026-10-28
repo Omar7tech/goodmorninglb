@@ -93,14 +93,14 @@ export function OrderAgain({
                         {count === 1 ? '1 item' : `${count} items`}
                         {' · '}
                         <span className="tabular-nums">
-                            {pricing.primary(totalUsd)}
+                            {pricing.usd(totalUsd)}
                         </span>
                     </span>
                 </div>
             </div>
 
-            {/* Its own row, so a long price in pounds has the width it needs
-                rather than fighting the summary beside it. */}
+            {/* Its own row, so the button has the full width rather than
+                fighting the summary beside it. */}
             <button
                 type="button"
                 onClick={onReorder}
