@@ -49,18 +49,31 @@ export function OrderAgain({
     const rest = items.length - faces.length;
 
     return (
+        // On the brand green rather than white, so it reads as a shortcut of
+        // the customer's own and not as one more dish in the list below it.
         <section
             aria-label="Order again"
-            className="flex flex-col gap-3 rounded-2xl bg-card p-3"
+            className="relative isolate flex flex-col gap-3 overflow-hidden rounded-2xl bg-primary p-3.5 text-primary-foreground"
         >
-            <div className="flex items-baseline justify-between gap-3">
+            {/* The logo's sun, rising out of the corner and faded right back:
+                the morning the shop is named for, without a word about it. */}
+            <img
+                src="/images/sun-light.svg"
+                alt=""
+                aria-hidden
+                loading="lazy"
+                decoding="async"
+                className="pointer-events-none absolute -top-10 -right-8 -z-10 size-32 opacity-25"
+            />
+
+            <div className="flex items-baseline gap-2">
                 {/* An order sent more than once is a habit, and calling it one
                     is the difference between a feature and a shortcut the
                     customer recognises as theirs. */}
-                <span className="text-[0.65rem] tracking-[0.18em] text-primary uppercase">
+                <span className="font-heading text-lg leading-none">
                     {usual ? 'Your usual' : 'Last order'}
                 </span>
-                <span className="shrink-0 text-[0.65rem] tracking-wide text-muted-foreground uppercase">
+                <span className="text-[0.7rem] text-primary-foreground/70">
                     {whenLabel(sentAt)}
                 </span>
             </div>
@@ -73,48 +86,52 @@ export function OrderAgain({
                         <ProductImage
                             key={item.key}
                             product={{ name: item.name, image: item.image }}
-                            className="size-11 rounded-full ring-2 ring-card"
+                            className="size-11 rounded-full bg-cream ring-2 ring-primary"
                             markClassName="w-8"
                         />
                     ))}
 
                     {rest > 0 && (
-                        <span className="flex size-11 items-center justify-center rounded-full bg-surface text-xs font-semibold text-muted-foreground tabular-nums ring-2 ring-card">
+                        <span className="flex size-11 items-center justify-center rounded-full bg-primary-foreground/20 text-xs font-semibold tabular-nums ring-2 ring-primary">
                             +{rest}
                         </span>
                     )}
                 </div>
 
-                <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-sm font-semibold uppercase">
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="truncate text-sm font-semibold">
                         {items.map((item) => item.name).join(', ')}
                     </span>
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="truncate text-xs text-primary-foreground/75">
                         {count === 1 ? '1 item' : `${count} items`}
                         {' · '}
-                        <span className="tabular-nums">
+                        <span className="font-semibold text-primary-foreground tabular-nums">
                             {pricing.usd(totalUsd)}
                         </span>
                     </span>
                 </div>
-            </div>
 
-            {/* Its own row, so the button has the full width rather than
-                fighting the summary beside it. */}
-            <button
-                type="button"
-                onClick={onReorder}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary/10 px-4 py-2.5 text-xs font-semibold tracking-wide text-primary uppercase transition-colors duration-200 ease-out hover:bg-primary/20 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-            >
-                <RotateCcw aria-hidden className="size-3.5" />
-                Order again
-            </button>
+                {/* Beside the order rather than under it: one row, one tap,
+                    and the card stays as short as the shortcut it is. */}
+                <button
+                    type="button"
+                    onClick={onReorder}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream px-3.5 py-2 text-xs font-bold text-primary shadow-sm transition-[scale,background-color] duration-200 ease-out hover:bg-white focus-visible:ring-3 focus-visible:ring-cream/60 focus-visible:outline-none active:scale-95 motion-reduce:scale-100"
+                >
+                    <RotateCcw
+                        aria-hidden
+                        className="size-3.5"
+                        strokeWidth={2.5}
+                    />
+                    Reorder
+                </button>
+            </div>
 
             {/* Said here rather than after the fact: the customer should know
                 what they are about to get before they press, not find a
                 shorter basket afterwards and wonder what happened. */}
             {dropped > 0 && (
-                <p className="text-center text-[0.7rem] text-muted-foreground">
+                <p className="text-[0.7rem] text-primary-foreground/75">
                     {dropped === 1
                         ? 'One item from that order is no longer on the menu.'
                         : `${dropped} items from that order are no longer on the menu.`}
