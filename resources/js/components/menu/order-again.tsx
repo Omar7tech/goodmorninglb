@@ -66,16 +66,34 @@ export function OrderAgain({
                 className="pointer-events-none absolute -top-10 -right-8 -z-10 size-32 opacity-25"
             />
 
-            <div className="flex items-baseline gap-2">
-                {/* An order sent more than once is a habit, and calling it one
-                    is the difference between a feature and a shortcut the
-                    customer recognises as theirs. */}
-                <span className="font-heading text-lg leading-none">
-                    {usual ? 'Your usual' : 'Last order'}
-                </span>
-                <span className="text-[0.7rem] text-primary-foreground/70">
-                    {whenLabel(sentAt)}
-                </span>
+            {/* The button heads the card beside its title, so the order
+                below has the card's full width to itself on a phone instead
+                of sharing a row with it. */}
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-baseline gap-2">
+                    {/* An order sent more than once is a habit, and calling it
+                        one is the difference between a feature and a shortcut
+                        the customer recognises as theirs. */}
+                    <span className="font-heading text-lg leading-none">
+                        {usual ? 'Your usual' : 'Last order'}
+                    </span>
+                    <span className="text-[0.7rem] whitespace-nowrap text-primary-foreground/70">
+                        {whenLabel(sentAt)}
+                    </span>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={onReorder}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream px-3.5 py-2 text-xs font-bold text-primary shadow-sm transition-[scale,background-color] duration-200 ease-out hover:bg-white focus-visible:ring-3 focus-visible:ring-cream/60 focus-visible:outline-none active:scale-95 motion-reduce:scale-100"
+                >
+                    <RotateCcw
+                        aria-hidden
+                        className="size-3.5"
+                        strokeWidth={2.5}
+                    />
+                    Reorder
+                </button>
             </div>
 
             <div className="flex items-center gap-3">
@@ -99,8 +117,10 @@ export function OrderAgain({
                 </div>
 
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    {/* Each dish named once with how many — "Turbo ×2" rather
+                        than "Turbo, Turbo" — so the one line holds more. */}
                     <span className="truncate text-sm font-semibold">
-                        {items.map((item) => item.name).join(', ')}
+                        {orderSummary(items)}
                     </span>
                     <span className="truncate text-xs text-primary-foreground/75">
                         {count === 1 ? '1 item' : `${count} items`}
@@ -110,21 +130,6 @@ export function OrderAgain({
                         </span>
                     </span>
                 </div>
-
-                {/* Beside the order rather than under it: one row, one tap,
-                    and the card stays as short as the shortcut it is. */}
-                <button
-                    type="button"
-                    onClick={onReorder}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-cream px-3.5 py-2 text-xs font-bold text-primary shadow-sm transition-[scale,background-color] duration-200 ease-out hover:bg-white focus-visible:ring-3 focus-visible:ring-cream/60 focus-visible:outline-none active:scale-95 motion-reduce:scale-100"
-                >
-                    <RotateCcw
-                        aria-hidden
-                        className="size-3.5"
-                        strokeWidth={2.5}
-                    />
-                    Reorder
-                </button>
             </div>
 
             {/* Said here rather than after the fact: the customer should know
@@ -139,6 +144,25 @@ export function OrderAgain({
             )}
         </section>
     );
+}
+
+/**
+ * The order in a few words: each dish once, in the order it was added, with
+ * how many when there was more than one — sizes and extras of the same dish
+ * counted together, since the name is all this line has room for.
+ */
+function orderSummary(items: readonly CartItem[]): string {
+    const counts = new Map<string, number>();
+
+    for (const item of items) {
+        counts.set(item.name, (counts.get(item.name) ?? 0) + item.quantity);
+    }
+
+    return [...counts]
+        .map(([name, quantity]) =>
+            quantity > 1 ? `${name} ×${quantity}` : name,
+        )
+        .join(', ');
 }
 
 /**
