@@ -49,6 +49,9 @@ export function ProductCard({
         selectedVariant?.discountPrice ??
         (hasVariants ? null : product.discountPrice);
 
+    const hasDescription =
+        product.description !== null && product.description.trim() !== '';
+
     return (
         // `lg:h-full` is for the grid the list becomes on a desktop: the row's
         // tallest card sets the height, and without it the shorter ones stop
@@ -96,7 +99,13 @@ export function ProductCard({
                             about 19.5px on a 430px one and stopping at 22px. */}
                         <h3
                             className={cn(
-                                'min-w-0 flex-1 truncate text-[length:clamp(1.0625rem,0.26rem+3.57vw,1.375rem)] leading-tight font-semibold',
+                                'min-w-0 flex-1 truncate leading-tight font-semibold',
+                                // A step bigger with no description under it,
+                                // so name and price fill the space beside the
+                                // photo instead of leaving a gap.
+                                hasDescription
+                                    ? 'text-[length:clamp(1.0625rem,0.26rem+3.57vw,1.375rem)]'
+                                    : 'text-[length:clamp(1.25rem,0.45rem+3.57vw,1.5625rem)]',
                                 uppercase && 'uppercase',
                             )}
                         >
@@ -123,13 +132,7 @@ export function ProductCard({
                         )}
                     </div>
 
-                    {product.description === null ? (
-                        /* Nothing written for this one yet. */
-                        <div aria-hidden className="mt-2 flex gap-1.5">
-                            <span className="h-2 w-20 rounded-full bg-muted" />
-                            <span className="h-2 w-14 rounded-full bg-muted" />
-                        </div>
-                    ) : (
+                    {hasDescription && (
                         <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
                             {product.description}
                         </p>
@@ -143,10 +146,16 @@ export function ProductCard({
                         Labelled rather than hidden — they carry the same
                         meaning the sheet's marks do, and the copy above may not
                         say it. */}
-                    <div className="mt-1.5 flex items-start justify-between gap-2">
+                    <div
+                        className={cn(
+                            'flex items-start justify-between gap-2',
+                            hasDescription ? 'mt-1.5' : 'mt-2.5',
+                        )}
+                    >
                         <ProductPrice
                             price={price}
                             discountPrice={discountPrice}
+                            large={!hasDescription}
                         />
 
                         {/* Pushed to the far end and pinned to the top of the

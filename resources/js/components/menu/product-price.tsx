@@ -9,10 +9,13 @@ import { cn } from '@/lib/utils';
 export function ProductPrice({
     price,
     discountPrice,
+    large = false,
     className,
 }: {
     price: number;
     discountPrice?: number | null;
+    /** A step bigger, for a card with no description to fill the space. */
+    large?: boolean;
     className?: string;
 }) {
     const pricing = usePricing();
@@ -29,10 +32,14 @@ export function ProductPrice({
             )}
         >
             {/* Grows with the screen alongside the card's name: 24px on a
-                360px phone, about 27px on a 430px one, stopping at 30px. */}
+                360px phone, about 27px on a 430px one, stopping at 30px.
+                Large is about 4px more at every width. */}
             <span
                 className={cn(
-                    'text-[length:clamp(1.5rem,0.7rem+3.6vw,1.875rem)] leading-none font-bold tracking-tight tabular-nums',
+                    'leading-none font-bold tracking-tight tabular-nums',
+                    large
+                        ? 'text-[length:clamp(1.75rem,0.95rem+3.6vw,2.125rem)]'
+                        : 'text-[length:clamp(1.5rem,0.7rem+3.6vw,1.875rem)]',
                     hasDiscount ? 'text-berry' : 'text-primary',
                 )}
             >
