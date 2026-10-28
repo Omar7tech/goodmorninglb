@@ -39,8 +39,6 @@ export type BoardProps = {
     columns: number;
     /** True while nobody is using the screen and no dish is open. */
     idle: boolean;
-    /** Whether the shop wants the screen to move on by itself at all. */
-    autoRotate: boolean;
     slides: readonly Slide[];
     showSlider: boolean;
     onOpenSlide: (slide: Slide) => void;
