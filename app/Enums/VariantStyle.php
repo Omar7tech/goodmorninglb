@@ -49,7 +49,7 @@ enum VariantStyle: string implements HasIcon, HasLabel
             self::Rows => 'A full-width row per size, name on the left and price hard right, ruled between. Best when the names are long or there are many of them.',
             self::Chips => 'Small pills on one line each, name and price together, the chosen one filled solid. Compact, and wraps to as many sizes as there are.',
             self::Segmented => 'One bar split into equal parts, the size over its price in each, the chosen part filled. The most compact, and reads like a switch.',
-            self::Bubbles => 'A round bubble per size with the price under it, like cup sizes at the counter. The chosen bubble fills and grows a little.',
+            self::Bubbles => 'Sizes growing like cups on a counter: the first a circle, each one after it a longer pill, filling the full width with the price under each. List the sizes from small to large.',
         };
     }
 }

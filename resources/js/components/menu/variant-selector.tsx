@@ -11,6 +11,13 @@ const NEXT_KEYS = ['ArrowRight', 'ArrowDown'];
 /** Arrow keys that move the selection backward through the option list. */
 const PREVIOUS_KEYS = ['ArrowLeft', 'ArrowUp'];
 
+/**
+ * The most bubbles on one line. Past four the pills grow too narrow to read on
+ * a phone, so the rest start a line of their own underneath, carrying on the
+ * growth from where the line above left off.
+ */
+const BUBBLES_PER_ROW = 4;
+
 /** Classes every option shares, whatever shape it is drawn in. */
 const OPTION_BASE =
     'relative focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none';
@@ -90,8 +97,74 @@ export function VariantSelector({
         // name like "1.5 Liter" into a sliver when a juice comes in six sizes.
         segmented:
             'grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-1 rounded-2xl bg-primary/10 p-1',
-        bubbles: 'flex flex-wrap gap-x-2.5 gap-y-2',
+        // Lines of up to four, stacked; see `BUBBLES_PER_ROW`.
+        bubbles: 'flex flex-col gap-2',
     }[style];
+
+    const options = variants.map((variant, index) => {
+        const selected = index === selectedIndex;
+        const effectivePrice = variant.discountPrice ?? variant.price;
+        const was =
+            variant.discountPrice === null
+                ? null
+                : pricing.primary(variant.price);
+        const now = pricing.primary(effectivePrice);
+
+        return (
+            <button
+                key={variant.name}
+                ref={(element) => {
+                    optionRefs.current[index] = element;
+                }}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                // Only the selected option stays in the tab order;
+                // arrow keys reach the rest.
+                tabIndex={selected ? 0 : -1}
+                onClick={() => onSelect(index)}
+                className={cn(
+                    OPTION_BASE,
+                    optionClasses(style, selected, index),
+                )}
+                style={style === 'bubbles' ? bubbleGrowth(index) : undefined}
+            >
+                {style === 'chips' && (
+                    <ChipOption
+                        name={variant.name}
+                        now={now}
+                        was={was}
+                        selected={selected}
+                    />
+                )}
+                {style === 'rows' && (
+                    <RowOption
+                        name={variant.name}
+                        now={now}
+                        was={was}
+                        selected={selected}
+                    />
+                )}
+                {style === 'segmented' && (
+                    <SegmentOption
+                        name={variant.name}
+                        now={now}
+                        was={was}
+                        selected={selected}
+                    />
+                )}
+                {style === 'bubbles' && (
+                    <BubbleOption
+                        index={index}
+                        name={variant.name}
+                        now={now}
+                        was={was}
+                        selected={selected}
+                    />
+                )}
+            </button>
+        );
+    });
 
     return (
         // Named for readers but not on screen: each option already carries its
@@ -103,68 +176,27 @@ export function VariantSelector({
             onKeyDown={handleKeyDown}
             className={group}
         >
-            {variants.map((variant, index) => {
-                const selected = index === selectedIndex;
-                const effectivePrice = variant.discountPrice ?? variant.price;
-                const was =
-                    variant.discountPrice === null
-                        ? null
-                        : pricing.primary(variant.price);
-                const now = pricing.primary(effectivePrice);
-
-                return (
-                    <button
-                        key={variant.name}
-                        ref={(element) => {
-                            optionRefs.current[index] = element;
-                        }}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        // Only the selected option stays in the tab order;
-                        // arrow keys reach the rest.
-                        tabIndex={selected ? 0 : -1}
-                        onClick={() => onSelect(index)}
-                        className={cn(
-                            OPTION_BASE,
-                            optionClasses(style, selected, index),
-                        )}
-                    >
-                        {style === 'chips' && (
-                            <ChipOption
-                                name={variant.name}
-                                now={now}
-                                was={was}
-                                selected={selected}
-                            />
-                        )}
-                        {style === 'rows' && (
-                            <RowOption
-                                name={variant.name}
-                                now={now}
-                                was={was}
-                                selected={selected}
-                            />
-                        )}
-                        {style === 'segmented' && (
-                            <SegmentOption
-                                name={variant.name}
-                                now={now}
-                                was={was}
-                                selected={selected}
-                            />
-                        )}
-                        {style === 'bubbles' && (
-                            <BubbleOption
-                                name={variant.name}
-                                now={now}
-                                was={was}
-                                selected={selected}
-                            />
-                        )}
-                    </button>
-                );
-            })}
+            {style === 'bubbles'
+                ? Array.from(
+                      {
+                          length: Math.ceil(options.length / BUBBLES_PER_ROW),
+                      },
+                      (_, line) => (
+                          // Each line runs the full width on its own. Should
+                          // the names not fit on a narrow phone it wraps, and
+                          // every line still fills edge to edge.
+                          <div
+                              key={line}
+                              className="flex flex-wrap gap-x-1.5 gap-y-2"
+                          >
+                              {options.slice(
+                                  line * BUBBLES_PER_ROW,
+                                  (line + 1) * BUBBLES_PER_ROW,
+                              )}
+                          </div>
+                      ),
+                  )
+                : options}
         </div>
     );
 }
@@ -205,7 +237,22 @@ function optionClasses(
 
     // Bubbles: the button is the bubble and its price together, so the ring
     // a keyboard draws goes round both rather than round the circle alone.
-    return 'group/bubble flex flex-col items-center gap-1 rounded-2xl p-0.5';
+    // Never narrower than its own name, nor than a circle.
+    return 'group/bubble flex min-w-11 flex-col items-stretch gap-1 rounded-2xl p-0.5';
+}
+
+/**
+ * How much of the row's spare width a bubble takes: a larger share for each
+ * size along, so the first is a circle and every one after it a longer pill,
+ * the way cups get bigger along a counter. The admin lists sizes from small
+ * to large, so the order alone says which is which.
+ *
+ * Measured from nothing (`0%`) rather than from the name, so the steps come
+ * from the order and not from how long each name happens to be; the name only
+ * sets a floor, through the item's own minimum width.
+ */
+function bubbleGrowth(index: number): React.CSSProperties {
+    return { flex: `${index + 2} 1 0%` };
 }
 
 /** The tick that marks the chosen option in the styles roomy enough for one. */
@@ -317,22 +364,35 @@ function SegmentOption({ name, now, was = null, selected }: OptionProps) {
 }
 
 /**
- * A round bubble with the size in it and the price under it, like the cup
- * sizes on a counter. A long name ("1.5 Liter") stretches the bubble into a
- * pill rather than spilling out of it.
+ * A bubble with the size in it and the price under it, like the cup sizes on
+ * a counter: the smallest a circle, each one after it a longer pill, and a
+ * shade deeper too, so the step up reads in colour as well as in width.
  */
-function BubbleOption({ name, now, was = null, selected }: OptionProps) {
+function BubbleOption({
+    index,
+    name,
+    now,
+    was = null,
+    selected,
+}: OptionProps & { index: number }) {
     return (
         <>
             <span
-                className={cn(
-                    'flex h-11 min-w-11 items-center justify-center rounded-full px-3 text-xs font-semibold whitespace-nowrap',
-                    // `scale` named on its own: Tailwind v4 sets it as its own
-                    // property, so a list naming `transform` animates nothing.
-                    'transition-[background-color,color,scale] duration-200 ease-out motion-reduce:transition-colors',
+                style={
                     selected
-                        ? 'scale-105 bg-primary text-primary-foreground shadow-sm motion-reduce:scale-100'
-                        : 'bg-primary/10 text-primary group-hover/bubble:bg-primary/20',
+                        ? undefined
+                        : {
+                              backgroundColor: `color-mix(in srgb, var(--primary) ${Math.min(8 + index * 4, 28)}%, transparent)`,
+                          }
+                }
+                className={cn(
+                    'flex h-11 items-center justify-center rounded-full px-3 text-xs font-semibold whitespace-nowrap',
+                    'transition-[background-color,color,box-shadow] duration-200 ease-out',
+                    // No growing when chosen: the pills sit edge to edge, and
+                    // one swelling would run into its neighbours.
+                    selected
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-primary group-hover/bubble:ring-2 group-hover/bubble:ring-primary/20 group-hover/bubble:ring-inset',
                 )}
             >
                 {name}
