@@ -93,9 +93,12 @@ export function FullMenuBoard({
             top:
                 activeIndex === 0
                     ? 0
-                    : section.offsetTop -
+                    : // Lands on the heading itself, past the room above
+                      // it, a little under the bar.
+                      (section.querySelector('header')?.offsetTop ??
+                          section.offsetTop) -
                       (barRef.current?.offsetHeight ?? 0) -
-                      12,
+                      20,
             behavior: 'smooth',
         });
     }, [activeIndex]);
@@ -180,7 +183,7 @@ export function FullMenuBoard({
                 </ul>
             </nav>
 
-            <div className="flex flex-col gap-14 px-8 pt-7 pb-24">
+            <div className="flex flex-col gap-12 px-8 pt-7 pb-24">
                 {categories.map((category, index) => (
                     <section
                         key={category.id}
@@ -188,7 +191,10 @@ export function FullMenuBoard({
                             sectionRefs.current[index] = element;
                         }}
                         aria-labelledby={`full-menu-${category.id}`}
-                        className="flex flex-col gap-6"
+                        // Ruled off from the dishes above with room either
+                        // side of the line, so each category opens as its
+                        // own page rather than running on from the last.
+                        className="flex flex-col gap-6 border-t border-border pt-12 first:border-t-0 first:pt-0"
                     >
                         <header className="flex items-center gap-5">
                             <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-sage shadow-md ring-4 ring-sage/15">
