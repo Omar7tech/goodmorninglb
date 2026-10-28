@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 
 import { ProductDialog } from '@/components/menu/product-dialog';
-import { CinematicBoard } from '@/components/screen/cinematic-board';
 import { ClassicBoard } from '@/components/screen/classic-board';
 import { FullMenuBoard } from '@/components/screen/full-menu-board';
 import { PolaroidBoard } from '@/components/screen/polaroid-board';
@@ -45,7 +44,6 @@ const TOUCH_THROTTLE_MS = 400;
 const BOARDS: Record<ScreenTheme, ComponentType<BoardProps>> = {
     classic: ClassicBoard,
     full: FullMenuBoard,
-    cinematic: CinematicBoard,
     spotlight: SpotlightBoard,
     showcase: ShowcaseBoard,
     polaroid: PolaroidBoard,

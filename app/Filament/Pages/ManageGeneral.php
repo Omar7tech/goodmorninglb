@@ -413,7 +413,7 @@ class ManageGeneral extends SettingsPage
 
                                         Radio::make('screen_columns')
                                             ->label('Dishes per row')
-                                            ->helperText('For Classic, Full menu, Cinematic and Polaroid wall. Fewer makes each photo bigger; more fits a whole category on screen. Held upright, Full menu and Polaroid wall show one fewer.')
+                                            ->helperText('For Classic, Full menu and Polaroid wall. Fewer makes each photo bigger; more fits a whole category on screen. Held upright, Full menu and Polaroid wall show one fewer.')
                                             ->options([
                                                 3 => '3',
                                                 4 => '4',
