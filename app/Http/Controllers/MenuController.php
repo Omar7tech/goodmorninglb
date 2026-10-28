@@ -43,7 +43,37 @@ class MenuController extends Controller
      */
     private function renderMenu(OrderType $orderType): Response
     {
-        $categories = Category::query()
+        return Inertia::render('menu', [
+            'orderType' => $orderType->value,
+            'categories' => CategoryResource::collection($this->categories($orderType))->resolve(),
+            'slides' => SlideResource::collection($this->slides($orderType))->resolve(),
+        ]);
+    }
+
+    /**
+     * The dine-in menu on a tablet at the counter: the same categories and
+     * slides as the dine-in page, drawn full screen, turning to the next
+     * category on its own every few seconds while nobody is using it.
+     */
+    public function screen(GeneralSettings $settings): Response
+    {
+        return Inertia::render('screen', [
+            'categories' => CategoryResource::collection($this->categories(OrderType::DineIn))->resolve(),
+            'slides' => SlideResource::collection($this->slides(OrderType::DineIn))->resolve(),
+            'rotateSeconds' => max(3, $settings->screen_rotate_seconds),
+        ]);
+    }
+
+    /**
+     * The active categories with the products offered for the order type.
+     * Categories with nothing in them for it are dropped, so a pill never
+     * opens onto an empty list.
+     *
+     * @return Collection<int, Category>
+     */
+    private function categories(OrderType $orderType): Collection
+    {
+        return Category::query()
             ->where('is_active', true)
             ->with([
                 'media',
@@ -53,12 +83,6 @@ class MenuController extends Controller
             ->get()
             ->filter(fn (Category $category): bool => $category->products->isNotEmpty())
             ->values();
-
-        return Inertia::render('menu', [
-            'orderType' => $orderType->value,
-            'categories' => CategoryResource::collection($categories)->resolve(),
-            'slides' => SlideResource::collection($this->slides($orderType))->resolve(),
-        ]);
     }
 
     /**

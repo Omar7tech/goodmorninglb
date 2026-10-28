@@ -30,12 +30,19 @@ export function MenuSlider({
     slides,
     onOpen,
     paused = false,
+    compact = false,
 }: {
     slides: readonly Slide[];
     /** Opens the dish behind a slide. Only called for slides that have one. */
     onOpen: (slide: Slide) => void;
     /** Held still while something else has the screen, e.g. an open sheet. */
     paused?: boolean;
+    /**
+     * Three to a row whatever the width, in a shorter, wider frame — for the
+     * counter screen, where the carousel heads the board and the dishes
+     * under it need the room.
+     */
+    compact?: boolean;
 }) {
     const [emblaRef, emblaApi] = useEmblaCarousel({
         loop: true,
@@ -144,9 +151,18 @@ export function MenuSlider({
                             key={slide.id}
                             aria-roledescription="slide"
                             aria-label={`${index + 1} of ${slides.length}`}
-                            className="min-w-0 flex-[0_0_100%] px-2 sm:flex-[0_0_66%] lg:flex-[0_0_50%] xl:flex-[0_0_33.333%]"
+                            className={cn(
+                                'min-w-0',
+                                compact
+                                    ? 'flex-[0_0_33.333%] px-1.5'
+                                    : 'flex-[0_0_100%] px-2 sm:flex-[0_0_66%] lg:flex-[0_0_50%] xl:flex-[0_0_33.333%]',
+                            )}
                         >
-                            <SlideCard slide={slide} onOpen={onOpen} />
+                            <SlideCard
+                                slide={slide}
+                                onOpen={onOpen}
+                                compact={compact}
+                            />
                         </li>
                     ))}
                 </ul>
@@ -187,9 +203,11 @@ export function MenuSlider({
 function SlideCard({
     slide,
     onOpen,
+    compact,
 }: {
     slide: Slide;
     onOpen: (slide: Slide) => void;
+    compact: boolean;
 }) {
     const uppercaseProducts = useUppercaseProductTitles();
 
@@ -201,12 +219,20 @@ function SlideCard({
             /* Nothing to show, so the card becomes the message: a plate of the
                brand green for the words to sit on, rather than a grey hole
                where a photograph was meant to be. */
-            <span className="block aspect-[16/9] w-full bg-primary/10" />
+            <span
+                className={cn(
+                    'block w-full bg-primary/10',
+                    compact ? 'aspect-[9/5]' : 'aspect-[16/9]',
+                )}
+            />
         ) : (
             <SmartImage
                 src={slide.image}
                 alt={slide.product?.name ?? slide.text ?? 'Featured'}
-                className="aspect-[16/9] w-full"
+                className={cn(
+                    'w-full',
+                    compact ? 'aspect-[9/5]' : 'aspect-[16/9]',
+                )}
                 imgClassName="object-cover transition-[scale] duration-500 ease-out group-hover:scale-[1.03] motion-reduce:scale-100"
                 draggable={false}
             />

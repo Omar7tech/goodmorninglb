@@ -24,6 +24,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class ManageGeneral extends SettingsPage
@@ -350,6 +351,24 @@ class ManageGeneral extends SettingsPage
                                     ->label('Ask for their location')
                                     ->helperText('Attaches a map pin to the order. The customer is asked by their browser and can decline, in which case they are told to share it in the chat.')
                                     ->default(false)
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make('Counter screen')
+                            ->icon(Heroicon::OutlinedDeviceTablet)
+                            ->schema([
+                                TextInput::make('screen_rotate_seconds')
+                                    ->label('Seconds per category')
+                                    ->helperText(new HtmlString(
+                                        'The dine-in menu, full screen, for a tablet at the counter: <a href="'.e(route('menu.screen')).'" target="_blank" class="underline">'.e(route('menu.screen')).'</a>. While nobody is touching it, the screen turns to the next category after this many seconds.',
+                                    ))
+                                    ->numeric()
+                                    ->integer()
+                                    ->minValue(3)
+                                    ->maxValue(300)
+                                    ->suffix('seconds')
+                                    ->default(10)
+                                    ->required()
                                     ->columnSpanFull(),
                             ]),
 

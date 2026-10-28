@@ -116,6 +116,12 @@ class GeneralSettings extends Settings
     public bool $colourful_categories;
 
     /**
+     * How many seconds the counter screen stays on one category before
+     * turning to the next, while nobody is using it.
+     */
+    public int $screen_rotate_seconds;
+
+    /**
      * Whether product names are shouted wherever a dish is named as a title:
      * the cards, the carousel and the heading of the product sheet.
      */
