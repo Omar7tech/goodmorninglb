@@ -1,11 +1,5 @@
-import {
-    Maximize,
-    Minimize,
-    MonitorSmartphone,
-    RectangleHorizontal,
-    RectangleVertical,
-} from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Maximize, Minimize } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode, RefObject } from 'react';
 
 import { GoodMorningLogo } from '@/components/good-morning-logo';
@@ -42,17 +36,9 @@ export type BoardProps = {
     slides: readonly Slide[];
     showSlider: boolean;
     onOpenSlide: (slide: Slide) => void;
-    /** The layout and full-screen buttons, for the theme to place. */
+    /** The full-screen button, for the theme to place. */
     controls: (tone: 'dark' | 'light') => ReactNode;
 };
-
-/** How the board is laid out: following the tablet, or held one way. */
-export type LayoutMode = 'auto' | 'landscape' | 'portrait';
-
-const LAYOUT_MODES: readonly LayoutMode[] = ['auto', 'landscape', 'portrait'];
-
-/** Where the chosen layout is remembered, on this tablet only. */
-const LAYOUT_STORAGE_KEY = 'good-morning:screen-layout';
 
 /** The logo as a cream silhouette, for a dark ground its colours vanish on. */
 const LIGHT_LOGO = {
@@ -161,117 +147,61 @@ export function cheapestVariantIndex(product: Product): number | null {
     );
 }
 
-/** The layout switch and the full-screen button, quiet in a corner. */
+/** The full-screen button, quiet in a corner. */
 export function ScreenControls({
-    layout,
     tone = 'dark',
 }: {
-    layout: ReturnType<typeof useLayoutMode>;
     /** Light for a dark ground, where the usual grey would be lost. */
     tone?: 'dark' | 'light';
 }) {
     const fullscreen = useFullscreen();
 
-    const LayoutIcon = {
-        auto: MonitorSmartphone,
-        landscape: RectangleHorizontal,
-        portrait: RectangleVertical,
-    }[layout.mode];
-
-    const button = cn(
-        'flex size-9 items-center justify-center rounded-full transition-colors focus-visible:ring-3 focus-visible:outline-none',
-        tone === 'light'
-            ? 'text-cream/70 hover:bg-cream/15 hover:text-cream focus-visible:ring-cream/50'
-            : 'text-muted-foreground hover:bg-primary/10 hover:text-primary focus-visible:ring-ring/50',
-    );
+    if (!fullscreen.supported) {
+        return null;
+    }
 
     return (
-        <div className="flex shrink-0 items-center gap-1">
-            <button
-                type="button"
-                onClick={layout.next}
-                aria-label={`Layout: ${layout.mode}. Change layout`}
-                title={`Layout: ${layout.mode}`}
-                className={button}
-            >
-                <LayoutIcon className="size-4.5" />
-            </button>
-
-            {fullscreen.supported && (
-                <button
-                    type="button"
-                    onClick={fullscreen.toggle}
-                    aria-label={
-                        fullscreen.active ? 'Leave full screen' : 'Full screen'
-                    }
-                    title={
-                        fullscreen.active ? 'Leave full screen' : 'Full screen'
-                    }
-                    className={button}
-                >
-                    {fullscreen.active ? (
-                        <Minimize className="size-4.5" />
-                    ) : (
-                        <Maximize className="size-4.5" />
-                    )}
-                </button>
+        <button
+            type="button"
+            onClick={fullscreen.toggle}
+            aria-label={fullscreen.active ? 'Leave full screen' : 'Full screen'}
+            title={fullscreen.active ? 'Leave full screen' : 'Full screen'}
+            className={cn(
+                'flex size-9 shrink-0 items-center justify-center rounded-full transition-colors focus-visible:ring-3 focus-visible:outline-none',
+                tone === 'light'
+                    ? 'text-cream/70 hover:bg-cream/15 hover:text-cream focus-visible:ring-cream/50'
+                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary focus-visible:ring-ring/50',
             )}
-        </div>
+        >
+            {fullscreen.active ? (
+                <Minimize className="size-4.5" />
+            ) : (
+                <Maximize className="size-4.5" />
+            )}
+        </button>
     );
 }
 
 /**
- * The board's layout. Auto follows the way the tablet is held; the other two
- * hold it one way, for a tablet in a stand that reports its orientation
- * wrongly. The choice is remembered on the tablet.
+ * Whether the tablet is held upright, kept current as it turns. Every theme
+ * simply follows the tablet: there is nothing for anyone at the counter to
+ * set.
  */
-export function useLayoutMode() {
-    const [mode, setMode] = useState<LayoutMode>(() => {
-        try {
-            const stored = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
-
-            return LAYOUT_MODES.includes(stored as LayoutMode)
-                ? (stored as LayoutMode)
-                : 'auto';
-        } catch {
-            return 'auto';
-        }
-    });
-
-    const [deviceIsPortrait, setDeviceIsPortrait] = useState(
+export function usePortrait(): boolean {
+    const [portrait, setPortrait] = useState(
         () => window.matchMedia('(orientation: portrait)').matches,
     );
 
     useEffect(() => {
         const query = window.matchMedia('(orientation: portrait)');
-        const update = (): void => setDeviceIsPortrait(query.matches);
+        const update = (): void => setPortrait(query.matches);
 
         query.addEventListener('change', update);
 
         return () => query.removeEventListener('change', update);
     }, []);
 
-    const next = useCallback((): void => {
-        setMode((current) => {
-            const following =
-                LAYOUT_MODES[
-                    (LAYOUT_MODES.indexOf(current) + 1) % LAYOUT_MODES.length
-                ];
-
-            try {
-                window.localStorage.setItem(LAYOUT_STORAGE_KEY, following);
-            } catch {
-                // Private browsing: the choice lasts until the page reloads.
-            }
-
-            return following;
-        });
-    }, []);
-
-    const resolved: Exclude<LayoutMode, 'auto'> =
-        mode === 'auto' ? (deviceIsPortrait ? 'portrait' : 'landscape') : mode;
-
-    return useMemo(() => ({ mode, resolved, next }), [mode, resolved, next]);
+    return portrait;
 }
 
 /** Whether the board fills the screen, and a way to make it. */

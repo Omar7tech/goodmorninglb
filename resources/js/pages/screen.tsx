@@ -7,7 +7,7 @@ import { ClassicBoard } from '@/components/screen/classic-board';
 import { PolaroidBoard } from '@/components/screen/polaroid-board';
 import {
     ScreenControls,
-    useLayoutMode,
+    usePortrait,
     useWakeLock,
 } from '@/components/screen/screen-kit';
 import type { BoardProps } from '@/components/screen/screen-kit';
@@ -118,8 +118,7 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
     const [openAddons, setOpenAddons] = useState<Addon[]>([]);
     const [productOpen, setProductOpen] = useState(false);
 
-    const layout = useLayoutMode();
-    const portrait = layout.resolved === 'portrait';
+    const portrait = usePortrait();
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef<HTMLSpanElement>(null);
@@ -232,10 +231,8 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
     );
 
     const controls = useCallback(
-        (tone: 'dark' | 'light') => (
-            <ScreenControls layout={layout} tone={tone} />
-        ),
-        [layout],
+        (tone: 'dark' | 'light') => <ScreenControls tone={tone} />,
+        [],
     );
 
     return (
