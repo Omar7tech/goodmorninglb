@@ -55,27 +55,39 @@ it('ships an image for a real product with every file', function (): void {
 
 it('attaches each image to the product with the same slug and keeps the seed file', function (): void {
     $product = Product::factory()->create(['title' => 'Orange Juice']);
-    writeWebp("{$this->directory}/orange-juice.webp");
+    writeWebp("{$this->directory}/products/orange-juice.webp");
 
     menuImageSeederFor($this->directory)->run();
 
     expect($product->refresh()->getFirstMedia('image')?->hasGeneratedConversion('webp'))->toBeTrue()
         ->and($product->getFirstMedia('image')?->hasGeneratedConversion('thumb'))->toBeTrue()
-        ->and(File::exists("{$this->directory}/orange-juice.webp"))->toBeTrue();
+        ->and(File::exists("{$this->directory}/products/orange-juice.webp"))->toBeTrue();
 });
 
-it('gives categories no image', function (): void {
+it('ships an icon for a real category with every file', function (): void {
+    $this->seed(CategorySeeder::class);
+
+    $slugs = collect(File::files(database_path('seeders/images/categories')))
+        ->map(fn (SplFileInfo $file): string => $file->getFilenameWithoutExtension());
+
+    expect($slugs)->toHaveCount(13)
+        ->and($slugs->diff(Category::pluck('slug')))->toBeEmpty();
+});
+
+it('attaches each icon to the category with the same slug', function (): void {
     $category = Category::factory()->create(['title' => 'Fresh Juice']);
-    writeWebp("{$this->directory}/fresh-juice.webp");
+    $product = Product::factory()->create(['title' => 'Fresh Juice']);
+    writeWebp("{$this->directory}/categories/fresh-juice.webp");
 
     menuImageSeederFor($this->directory)->run();
 
-    expect($category->refresh()->hasMedia('image'))->toBeFalse();
+    expect($category->refresh()->getFirstMedia('image')?->hasGeneratedConversion('thumb'))->toBeTrue()
+        ->and($product->refresh()->hasMedia('image'))->toBeFalse();
 });
 
 it('can be rerun without duplicating or replacing an image', function (): void {
     $product = Product::factory()->create(['title' => 'Orange Juice']);
-    writeWebp("{$this->directory}/orange-juice.webp");
+    writeWebp("{$this->directory}/products/orange-juice.webp");
 
     $seeder = menuImageSeederFor($this->directory);
     $seeder->run();
