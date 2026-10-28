@@ -23,6 +23,7 @@ export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 export type ScreenTheme =
     | 'classic'
     | 'full'
+    | 'cinematic'
     | 'spotlight'
     | 'showcase'
     | 'polaroid';
