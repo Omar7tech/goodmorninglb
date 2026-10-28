@@ -49,102 +49,109 @@ export function CartStrip() {
     if (items.length === 0) {
         return (
             <Sheet>
-                <p className="relative flex items-center justify-center gap-2 px-6 py-7 text-center text-[0.7rem] tracking-wide text-muted-foreground uppercase">
-                    {/* Decorative: the line beside it already says this. */}
-                    <ShoppingBag
+                <div className="relative flex items-center gap-3 px-5 py-5">
+                    {/* Decorative: the lines beside it already say this. */}
+                    <span
                         aria-hidden
-                        className="size-4 shrink-0 text-primary/50"
-                    />
-                    Your order will show up here
-                </p>
+                        className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
+                    >
+                        <ShoppingBag className="size-5" />
+                    </span>
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                        <p className="text-base leading-none font-bold text-primary">
+                            Your order
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                            Tap + on any dish and it shows up here.
+                        </p>
+                    </div>
+                </div>
             </Sheet>
         );
     }
 
     return (
         <Sheet>
-            {/* The top padding is what keeps the corner badges out of the
-                carousel's clipping; the foot only has to clear the rule below. */}
+            {/* Named and totalled up top, so the row underneath is nothing
+                but the dishes themselves. The whole line is the way in. */}
+            <button
+                type="button"
+                onClick={() => setOpen(true)}
+                aria-label={`View your order: ${count === 1 ? '1 item' : `${count} items`}, ${pricing.usd(subtotalUsd)}`}
+                className="group relative flex w-full items-center justify-between gap-3 px-5 pt-4 text-left focus-visible:outline-none"
+            >
+                <span className="flex items-baseline gap-2">
+                    <span className="text-lg leading-none font-bold text-primary">
+                        Your order
+                    </span>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                        {count === 1 ? '1 item' : `${count} items`}
+                    </span>
+                </span>
+
+                <span className="flex items-center gap-2">
+                    <span className="text-lg leading-none font-bold text-primary tabular-nums">
+                        {pricing.usd(subtotalUsd)}
+                    </span>
+                    <span
+                        aria-hidden
+                        className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[translate] duration-200 ease-out group-hover:translate-x-0.5 group-focus-visible:ring-3 group-focus-visible:ring-ring/50 motion-reduce:translate-none"
+                    >
+                        <ArrowRight className="size-4" strokeWidth={2.5} />
+                    </span>
+                </span>
+            </button>
+
+            {/* The dishes as round plates on a counter, newest at the head.
+                The padding is what keeps each plate's shadow and count out of
+                the carousel's clipping. */}
             <div
                 ref={emblaRef}
-                className="relative overflow-hidden pt-4 pb-3 select-none"
+                className="relative overflow-hidden pt-3 pb-4 select-none"
             >
-                <ul className="flex pl-4">
+                <ul className="flex pl-5">
                     {newestFirst.map((item, index) => (
                         <li
                             key={item.key}
                             className={cn(
                                 'shrink-0 pr-3',
                                 // The trailing gutter has to sit inside the
-                                // last tile: Embla measures its scroll limit
+                                // last plate: Embla measures its scroll limit
                                 // from the slides, so padding on the track
                                 // would never be reachable.
-                                index === newestFirst.length - 1 && 'pr-4',
+                                index === newestFirst.length - 1 && 'pr-5',
                             )}
                         >
                             <button
                                 type="button"
                                 onClick={() => setOpen(true)}
                                 aria-label={`${item.name}, ${item.quantity} in your order. Open checkout.`}
-                                className="relative w-24 rounded-lg bg-card px-2 pt-3 pb-2 text-left transition-[translate] duration-200 ease-out hover:-translate-y-0.5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-reduce:translate-none"
+                                className="group flex w-[4.5rem] flex-col items-center gap-1.5 rounded-2xl focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                             >
-                                {/* Centred on the corner itself — half on the
-                                    tile, half off it — not tucked inside. */}
-                                <span
-                                    aria-hidden
-                                    className="absolute top-0 left-0 flex size-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-[0.6rem] font-semibold text-primary-foreground tabular-nums"
-                                >
-                                    {item.quantity}
+                                <span className="relative">
+                                    <ProductImage
+                                        product={item}
+                                        className="size-16 rounded-full bg-cream shadow-md ring-3 ring-white transition-[translate] duration-200 ease-out group-hover:-translate-y-0.5 motion-reduce:translate-none"
+                                        markClassName="w-11"
+                                    />
+
+                                    {/* How many, tucked on the plate's rim. */}
+                                    <span
+                                        aria-hidden
+                                        className="absolute -right-1 -bottom-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-berry px-1.5 text-[0.65rem] font-bold text-white tabular-nums ring-2 ring-cart-surface"
+                                    >
+                                        ×{item.quantity}
+                                    </span>
                                 </span>
 
-                                <ProductImage
-                                    product={item}
-                                    className="mx-auto aspect-square w-full"
-                                />
-
                                 {/* Body face, as on the product cards. */}
-                                <p className="mt-1.5 truncate text-center text-[0.7rem] font-medium uppercase">
+                                <span className="w-full truncate text-center text-[0.7rem] leading-tight font-medium text-foreground/80">
                                     {item.name}
-                                </p>
+                                </span>
                             </button>
                         </li>
                     ))}
                 </ul>
-            </div>
-
-            {/* What the tiles come to, ruled off from them. The rule is inset
-                by the same gutter the tiles start at, so it reads as the foot
-                of this card rather than as a line drawn across the page.
-
-                It sits above the panel's overlap, in the band of the card that
-                is actually on show — anything lower would be hidden behind the
-                menu. */}
-            <div className="relative mx-4 border-t border-foreground/10 pt-2.5 pb-4">
-                <div className="flex items-center justify-between gap-3">
-                    {/* The count is the way in, rather than a label with a
-                        button under it — the row already says how much is in
-                        there, so it only needed somewhere to go. The arrow is
-                        what makes it read as a way through.
-
-                        Held back to a tint: it goes to the same place as the
-                        checkout button below, and two solid green calls to
-                        action on one screen would both be shouting. */}
-                    <button
-                        type="button"
-                        onClick={() => setOpen(true)}
-                        aria-label="View your order"
-                        className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[0.7rem] font-semibold tracking-wide text-primary uppercase transition-colors duration-200 ease-out hover:bg-primary/20 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-                    >
-                        {count === 1 ? '1 item' : `${count} items`}
-                        <ArrowRight className="size-3.5" />
-                    </button>
-
-                    <span className="flex flex-col items-end leading-tight">
-                        <span className="text-base font-semibold text-primary tabular-nums">
-                            {pricing.usd(subtotalUsd)}
-                        </span>
-                    </span>
-                </div>
             </div>
         </Sheet>
     );
