@@ -85,10 +85,14 @@ export function ProductCard({
                         starts cleanly under it. */}
                     <div className="flex items-center gap-2">
                         {/* `min-w-0`, or the flex item refuses to shrink and
-                            `truncate` never gets a narrower box to clip in. */}
+                            `truncate` never gets a narrower box to clip in.
+
+                            Sized with the screen rather than in one jump at
+                            `sm`: 17px on a 360px phone, growing smoothly to
+                            about 19.5px on a 430px one and stopping at 22px. */}
                         <h3
                             className={cn(
-                                'min-w-0 flex-1 truncate text-base leading-tight font-semibold sm:text-lg',
+                                'min-w-0 flex-1 truncate text-[length:clamp(1.0625rem,0.26rem+3.57vw,1.375rem)] leading-tight font-semibold',
                                 uppercase && 'uppercase',
                             )}
                         >
