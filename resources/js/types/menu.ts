@@ -20,7 +20,12 @@ export type VariantStyle = 'rows' | 'chips' | 'segmented' | 'bubbles';
 export type CategoryFilterStyle = 'pills' | 'circles' | 'words';
 
 /** Mirrors `App\Enums\ScreenTheme` — how the counter screen is coloured. */
-export type ScreenTheme = 'classic' | 'spotlight' | 'showcase' | 'polaroid';
+export type ScreenTheme =
+    | 'classic'
+    | 'full'
+    | 'spotlight'
+    | 'showcase'
+    | 'polaroid';
 
 /** The counter screen's settings, from the dashboard. */
 export type CounterScreen = {

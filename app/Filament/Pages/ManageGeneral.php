@@ -413,7 +413,7 @@ class ManageGeneral extends SettingsPage
 
                                         Radio::make('screen_columns')
                                             ->label('Dishes per row')
-                                            ->helperText('For Classic and Polaroid wall. Fewer makes each photo bigger; more fits a whole category on screen. Held upright, Polaroid wall shows one fewer.')
+                                            ->helperText('For Classic, Full menu and Polaroid wall. Fewer makes each photo bigger; more fits a whole category on screen. Held upright, Full menu and Polaroid wall show one fewer.')
                                             ->options([
                                                 3 => '3',
                                                 4 => '4',
@@ -427,7 +427,7 @@ class ManageGeneral extends SettingsPage
 
                                         Toggle::make('screen_show_slider')
                                             ->label('Show the slider')
-                                            ->helperText('For Classic: the carousel of featured dishes above the menu. Off gives the dishes the whole screen.')
+                                            ->helperText('For Classic and Full menu: the carousel of featured dishes above the menu. Off gives the dishes the whole screen.')
                                             ->default(true),
                                     ])
                                     ->columns(1),

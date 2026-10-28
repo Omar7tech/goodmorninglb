@@ -4,6 +4,7 @@ import type { ComponentType } from 'react';
 
 import { ProductDialog } from '@/components/menu/product-dialog';
 import { ClassicBoard } from '@/components/screen/classic-board';
+import { FullMenuBoard } from '@/components/screen/full-menu-board';
 import { PolaroidBoard } from '@/components/screen/polaroid-board';
 import {
     ScreenControls,
@@ -42,6 +43,7 @@ const TOUCH_THROTTLE_MS = 400;
 /** Each theme is its own way of drawing the board. */
 const BOARDS: Record<ScreenTheme, ComponentType<BoardProps>> = {
     classic: ClassicBoard,
+    full: FullMenuBoard,
     spotlight: SpotlightBoard,
     showcase: ShowcaseBoard,
     polaroid: PolaroidBoard,
