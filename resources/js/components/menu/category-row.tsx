@@ -60,7 +60,7 @@ export function CategoryRow({
             type="button"
             onClick={() => onSelect(category.id)}
             className={cn(
-                'group relative flex h-20 w-full items-center overflow-hidden rounded-2xl bg-primary pr-3 pl-4 text-left text-primary-foreground sm:h-24 sm:pr-4 sm:pl-6',
+                'group relative flex h-20 w-full items-center overflow-hidden rounded-2xl bg-slab pr-3 pl-4 text-left text-primary-foreground sm:h-24 sm:pr-4 sm:pl-6',
                 'shadow-[0_2px_8px_rgb(113_144_103/0.3)] hover:shadow-[0_12px_24px_rgb(113_144_103/0.42)]',
                 // Slides toward the reader rather than lifting: a wide band that
                 // rises reads as peeling off the page, where a short one reads

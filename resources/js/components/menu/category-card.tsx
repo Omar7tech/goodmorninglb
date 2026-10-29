@@ -30,7 +30,7 @@ export function CategoryCard({
             type="button"
             onClick={() => onSelect(category.id)}
             className={cn(
-                'group relative flex aspect-square flex-col overflow-hidden rounded-3xl bg-primary p-3 text-primary-foreground sm:p-3.5',
+                'group relative flex aspect-square flex-col overflow-hidden rounded-3xl bg-slab p-3 text-primary-foreground sm:p-3.5',
                 // Tinted with the slab's own green rather than black: a grey
                 // shadow under a warm colour on a near-white panel reads as
                 // grime, where the colour's own shadow reads as light.

@@ -53,7 +53,7 @@ export function SiteBanner() {
         // Full width of the window, like the footer's slab: it is the top edge
         // of the page rather than something sitting inside the menu's column.
         // Raised so the drips hang over the header below instead of under it.
-        <div className="relative z-10 mb-8 bg-primary text-primary">
+        <div className="relative z-10 mb-8 bg-slab text-slab">
             <p className="mx-auto max-w-2xl px-5 pt-2 pb-1 text-center font-heading text-lg leading-tight text-primary-foreground sm:text-xl lg:max-w-5xl xl:max-w-6xl">
                 {banner}
             </p>

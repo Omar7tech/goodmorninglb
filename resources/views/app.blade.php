@@ -14,6 +14,32 @@
         <meta name="format-detection" content="telephone=no" />
         <link rel="manifest" href="/site.webmanifest?v=20261026" />
 
+        {{-- The visitor's theme, put on the document before anything is drawn:
+             their own choice if they made one, otherwise their device's.
+             Inline and ahead of the stylesheet on purpose, or a dark phone gets
+             a cream page flashed at it first. @see resources/js/lib/theme.ts --}}
+        <script>
+            (function () {
+                var theme = null;
+
+                try {
+                    theme = localStorage.getItem('good-morning-theme');
+                } catch (error) {
+                    // Storage can be off; the device decides instead.
+                }
+
+                if (theme !== 'light' && theme !== 'dark') {
+                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#181512');
+                }
+            })();
+        </script>
+
         @fonts
 
         @viteReactRefresh

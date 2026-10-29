@@ -53,7 +53,7 @@ export function OrderAgain({
         // the customer's own and not as one more dish in the list below it.
         <section
             aria-label="Order again"
-            className="relative isolate flex flex-col gap-3 overflow-hidden rounded-2xl bg-primary p-3.5 text-primary-foreground"
+            className="relative isolate flex flex-col gap-3 overflow-hidden rounded-2xl bg-slab p-3.5 text-primary-foreground"
         >
             {/* The logo's sun, rising out of the corner and faded right back:
                 the morning the shop is named for, without a word about it. */}

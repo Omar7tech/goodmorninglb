@@ -333,7 +333,7 @@ export function SiteMenu({
             <div
                 // Hidden until the burst draws it.
                 style={{ visibility: 'hidden' }}
-                className="sm-panel fixed inset-0 isolate flex flex-col overflow-hidden bg-primary text-cream"
+                className="sm-panel fixed inset-0 isolate flex flex-col overflow-hidden bg-slab text-cream"
             >
                 {/* The logo's sun, swelling up out of the corner. */}
                 <img

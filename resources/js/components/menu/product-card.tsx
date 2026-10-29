@@ -58,7 +58,7 @@ export function ProductCard({
         // where their copy does and leave the row's bottom edge ragged. In the
         // phone's single column there is no row to level against, so it does
         // nothing there.
-        <article className="relative flex flex-col rounded-2xl bg-card p-2.5 transition-[translate] duration-200 ease-out hover:-translate-y-0.5 motion-reduce:translate-none lg:h-full">
+        <article className="relative flex flex-col rounded-2xl bg-card p-2.5 transition-[translate] duration-200 ease-out hover:-translate-y-0.5 motion-reduce:translate-none lg:h-full dark:ring-1 dark:ring-white/[0.06]">
             {/* Covers the card, under everything else, so the heading and copy
                 stay real block elements outside a button. */}
             <button

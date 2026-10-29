@@ -15,7 +15,7 @@ import type { Category } from '@/types';
 const COLOURS = [
     'bg-sage text-cream shadow-[0_8px_18px_-10px_rgb(113_144_103/0.9)]',
     'bg-berry text-cream shadow-[0_8px_18px_-10px_rgb(182_73_69/0.9)]',
-    'bg-[#F4C338] text-foreground shadow-[0_8px_18px_-10px_rgb(244_195_56/0.9)]',
+    'bg-[#F4C338] text-ink shadow-[0_8px_18px_-10px_rgb(244_195_56/0.9)]',
 ] as const;
 
 /**

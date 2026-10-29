@@ -27,7 +27,7 @@ const COLOURS = [
     {
         disc: 'bg-[#F4C338] ring-[#F4C338]/25',
         chevron:
-            'bg-[#F4C338]/20 text-[#a07a0a] group-hover:bg-[#F4C338] group-hover:text-foreground',
+            'bg-[#F4C338]/20 text-[#a07a0a] group-hover:bg-[#F4C338] group-hover:text-ink',
     },
 ] as const;
 

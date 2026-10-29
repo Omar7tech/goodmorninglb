@@ -90,7 +90,7 @@ export function SiteFooter() {
                         height={WAVE_HEIGHT + 30}
                         patternUnits="userSpaceOnUse"
                     >
-                        <path className="fill-primary" d={WAVE.path} />
+                        <path className="fill-slab" d={WAVE.path} />
                     </pattern>
                 </defs>
 
@@ -101,7 +101,7 @@ export function SiteFooter() {
                 />
             </svg>
 
-            <div className="bg-primary">
+            <div className="bg-slab">
                 {/* One centred column on a phone. From `lg` it becomes a grid
                     with the sun rising over it: the shop's line and its links
                     on the left, the week's hours in the middle when there are
