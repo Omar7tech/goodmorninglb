@@ -2,6 +2,7 @@
 
 namespace App\Support\Seo;
 
+use App\Support\ErrorPage;
 use Illuminate\Http\Request;
 
 /**
@@ -31,6 +32,24 @@ final class Seo
     public function page(): SeoPage
     {
         return $this->page ??= $this->resolver->resolve($this->request);
+    }
+
+    /**
+     * Describe this request as an error page instead of whatever its route
+     * would have been: titled by what went wrong and never indexable. A 404
+     * that describes itself as the menu is a 404 that gets indexed as one.
+     */
+    public function describeError(int $status): void
+    {
+        $copy = ErrorPage::copy($status);
+
+        $this->page = new SeoPage(
+            title: Shop::title($copy['heading']),
+            description: $copy['message'],
+            canonical: url()->to($this->request->path()),
+            heading: $copy['heading'],
+            indexable: false,
+        );
     }
 
     /**
