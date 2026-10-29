@@ -12,24 +12,20 @@ export type Theme = 'light' | 'dark';
 const STORAGE_KEY = 'good-morning-theme';
 
 /**
- * The theme the visitor chose, or — until they choose — the one their phone
- * or computer is set to. Read by the inline script in the root template too,
- * which is why the rule lives in one place there and here.
+ * The theme the visitor chose, or light until they choose. The device's own
+ * setting is not consulted: the shop's sheet is the cream one, and it is what
+ * everyone sees first. Read by the inline script in the root template too.
  */
 export function preferredTheme(): Theme {
     try {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
-
-        if (stored === 'light' || stored === 'dark') {
-            return stored;
+        if (window.localStorage.getItem(STORAGE_KEY) === 'dark') {
+            return 'dark';
         }
     } catch {
-        // Storage can be off or walled up; fall through to the device.
+        // Storage can be off or walled up: light, then.
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
+    return 'light';
 }
 
 /**
@@ -45,7 +41,7 @@ export function applyTheme(theme: Theme): void {
     root.style.colorScheme = theme;
     document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', theme === 'dark' ? '#181512' : '#faf3de');
+        ?.setAttribute('content', theme === 'dark' ? '#0d0b09' : '#faf3de');
 }
 
 /**
@@ -54,9 +50,6 @@ export function applyTheme(theme: Theme): void {
  * The first value is read off the document, which the inline script in the
  * root template has already settled before React runs — reading storage again
  * would be a second answer that could disagree and flash.
- *
- * Until the visitor picks one, the site keeps following the device, so a
- * phone that turns dark at sunset takes the menu with it.
  */
 export function useTheme(): {
     theme: Theme;
@@ -72,25 +65,6 @@ export function useTheme(): {
     useEffect(() => {
         applyTheme(theme);
     }, [theme]);
-
-    useEffect(() => {
-        const query = window.matchMedia('(prefers-color-scheme: dark)');
-        const follow = (): void => {
-            try {
-                if (window.localStorage.getItem(STORAGE_KEY) !== null) {
-                    return;
-                }
-            } catch {
-                // No storage: there is no choice to respect.
-            }
-
-            setTheme(query.matches ? 'dark' : 'light');
-        };
-
-        query.addEventListener('change', follow);
-
-        return () => query.removeEventListener('change', follow);
-    }, []);
 
     /**
      * Switch theme. Given the point it was pressed from, the new theme spreads

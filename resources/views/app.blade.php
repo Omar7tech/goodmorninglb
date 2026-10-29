@@ -14,30 +14,21 @@
         <meta name="format-detection" content="telephone=no" />
         <link rel="manifest" href="/site.webmanifest?v=20261026" />
 
-        {{-- The visitor's theme, put on the document before anything is drawn:
-             their own choice if they made one, otherwise their device's.
-             Inline and ahead of the stylesheet on purpose, or a dark phone gets
-             a cream page flashed at it first. @see resources/js/lib/theme.ts --}}
+        {{-- The visitor's theme, put on the document before anything is drawn.
+             Light unless they switched to dark; the device's setting is not
+             asked. Inline and ahead of the stylesheet on purpose, or someone
+             who chose dark gets a cream page flashed at them first.
+             @see resources/js/lib/theme.ts --}}
         <script>
-            (function () {
-                var theme = null;
-
-                try {
-                    theme = localStorage.getItem('good-morning-theme');
-                } catch (error) {
-                    // Storage can be off; the device decides instead.
-                }
-
-                if (theme !== 'light' && theme !== 'dark') {
-                    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
-
-                if (theme === 'dark') {
+            try {
+                if (localStorage.getItem('good-morning-theme') === 'dark') {
                     document.documentElement.classList.add('dark');
                     document.documentElement.style.colorScheme = 'dark';
-                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#181512');
+                    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0b09');
                 }
-            })();
+            } catch (error) {
+                // Storage can be off; the light sheet is the default anyway.
+            }
         </script>
 
         @fonts
