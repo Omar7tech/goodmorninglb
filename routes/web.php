@@ -1,7 +1,13 @@
 <?php
 
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
+
+// Crawl rules and sitemap, served by the app so their URLs follow the live
+// domain and the sitemap lists exactly what is on the menu.
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 
 Route::inertia('/', 'welcome')->name('home');
 

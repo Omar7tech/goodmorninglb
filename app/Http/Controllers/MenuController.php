@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\OrderType;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\SlideResource;
-use App\Models\Category;
 use App\Models\Slide;
 use App\Settings\GeneralSettings;
+use App\Support\MenuCatalog;
 use Closure;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -17,6 +17,8 @@ use Inertia\Response;
 
 class MenuController extends Controller
 {
+    public function __construct(private readonly MenuCatalog $catalog) {}
+
     public function dineIn(): Response
     {
         return $this->renderMenu(OrderType::DineIn);
@@ -37,15 +39,12 @@ class MenuController extends Controller
      * Both menus are the same page. The order type is the seam the differences
      * hang off — the delivery menu carries the cart, dine-in only shows prices,
      * and each gets the products offered for it.
-     *
-     * Categories with nothing in them for this order type are dropped, so a
-     * pill never opens onto an empty list.
      */
     private function renderMenu(OrderType $orderType): Response
     {
         return Inertia::render('menu', [
             'orderType' => $orderType->value,
-            'categories' => CategoryResource::collection($this->categories($orderType))->resolve(),
+            'categories' => CategoryResource::collection($this->catalog->categories($orderType))->resolve(),
             'slides' => SlideResource::collection($this->slides($orderType))->resolve(),
         ]);
     }
@@ -58,7 +57,7 @@ class MenuController extends Controller
     public function screen(GeneralSettings $settings): Response
     {
         return Inertia::render('screen', [
-            'categories' => CategoryResource::collection($this->categories(OrderType::DineIn))->resolve(),
+            'categories' => CategoryResource::collection($this->catalog->categories(OrderType::DineIn))->resolve(),
             'slides' => SlideResource::collection($this->slides(OrderType::DineIn))->resolve(),
             'screen' => [
                 'autoRotate' => $settings->screen_auto_rotate,
@@ -69,27 +68,6 @@ class MenuController extends Controller
                 'showSlider' => $settings->screen_show_slider,
             ],
         ]);
-    }
-
-    /**
-     * The active categories with the products offered for the order type.
-     * Categories with nothing in them for it are dropped, so a pill never
-     * opens onto an empty list.
-     *
-     * @return Collection<int, Category>
-     */
-    private function categories(OrderType $orderType): Collection
-    {
-        return Category::query()
-            ->where('is_active', true)
-            ->with([
-                'media',
-                'products' => $this->productsConstraint($orderType),
-            ])
-            ->orderBy('sort_order')
-            ->get()
-            ->filter(fn (Category $category): bool => $category->products->isNotEmpty())
-            ->values();
     }
 
     /**

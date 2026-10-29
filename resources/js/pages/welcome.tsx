@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRight, Bike, UtensilsCrossed } from 'lucide-react';
 
@@ -52,8 +52,6 @@ function ChoiceButton({
 export default function Welcome() {
     return (
         <>
-            <Head title="Fresh Desserts & Drinks in Aley" />
-
             <main className="relative isolate flex min-h-svh flex-col items-center justify-center gap-10 overflow-hidden px-6 py-12 sm:gap-12">
                 <DessertPattern />
 

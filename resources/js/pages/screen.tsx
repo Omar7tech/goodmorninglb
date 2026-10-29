@@ -1,4 +1,3 @@
-import { Head } from '@inertiajs/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 
@@ -239,8 +238,6 @@ function ScreenEngine({ categories, slides, screen }: ScreenProps) {
 
     return (
         <>
-            <Head title="Counter Screen" />
-
             {/* Every way a hand can tell the board someone is there. Captured,
                 so a touch anywhere counts before whatever it lands on acts.
                 Not scrolling itself: the board scrolls its own lists as it

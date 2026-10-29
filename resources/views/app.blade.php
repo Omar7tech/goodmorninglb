@@ -11,17 +11,28 @@
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261026" />
         <meta name="apple-mobile-web-app-title" content="Good Morning" />
         <meta name="theme-color" content="#faf3de" />
+        <meta name="format-detection" content="telephone=no" />
         <link rel="manifest" href="/site.webmanifest?v=20261026" />
 
         @fonts
 
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
+
+        {{-- The page's whole head, written on the server because the site renders
+             without SSR: title, meta, Open Graph, canonical and the schema.org
+             graph. The same tags ride along as the `head` prop, and Inertia's
+             `serverHead` swaps them for the next page's on every visit.
+             @see App\Support\Seo\Seo::headTags() --}}
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            @foreach ($page['props']['head'] ?? [] as $tag)
+                {!! $tag !!}
+            @endforeach
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
+        @include('partials.crawlable')
+
         <x-inertia::app />
     </body>
 </html>

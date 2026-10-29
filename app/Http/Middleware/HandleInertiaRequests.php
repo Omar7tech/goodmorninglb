@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Settings\GeneralSettings;
+use App\Support\Seo\Seo;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -41,6 +43,10 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            // The page's whole head (title, meta, Open Graph, canonical and the
+            // schema.org graph), written on the server because the site runs
+            // without SSR. Always sent, so a partial reload keeps it too.
+            'head' => Inertia::always(fn (): array => app(Seo::class)->headTags()),
             'auth' => [
                 'user' => $request->user(),
             ],

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\MenuCatalog;
+use App\Support\Seo\Seo;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // One answer per request: the menu page and its SEO share one query,
+        // and the page's head is resolved once however often it is printed.
+        $this->app->scoped(MenuCatalog::class);
+        $this->app->scoped(Seo::class);
     }
 
     /**

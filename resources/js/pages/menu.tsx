@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CartSheet } from '@/components/menu/cart-sheet';
@@ -552,8 +552,6 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
 
     return (
         <>
-            <Head title={canOrder ? 'Delivery Menu' : 'Dine-In Menu'} />
-
             {/* The footer is what lets the checkout button let go: sticky only
                 releases once its panel's bottom edge has travelled up past the
                 foot of the screen, which cannot happen while that panel is the
