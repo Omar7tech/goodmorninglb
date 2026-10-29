@@ -193,7 +193,9 @@ export function SiteMenu({
                 {
                     scale: 1,
                     yPercent: 0,
-                    autoAlpha: 1,
+                    // Faint: a glow in the corner, never competing with
+                    // the names and buttons drawn over it.
+                    autoAlpha: 0.12,
                     duration: 1.5,
                     ease: 'expo.out',
                 },
@@ -339,7 +341,7 @@ export function SiteMenu({
                     alt=""
                     aria-hidden
                     draggable={false}
-                    className="sm-sun pointer-events-none absolute -right-28 -bottom-28 -z-10 size-[22rem] origin-bottom-right opacity-30 select-none sm:size-[30rem] lg:-right-16 lg:-bottom-40 lg:size-[40rem]"
+                    className="sm-sun pointer-events-none absolute -right-36 -bottom-36 -z-10 size-[22rem] origin-bottom-right opacity-12 select-none sm:size-[28rem] lg:-right-24 lg:-bottom-48 lg:size-[36rem]"
                 />
 
                 <div className="sm-top flex shrink-0 items-center justify-between gap-4 px-5 pt-[max(1rem,env(safe-area-inset-top))]">
