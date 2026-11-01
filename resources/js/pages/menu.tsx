@@ -699,13 +699,13 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                         {/* The way into the picker, on the landing view where
                             the choosing starts, when the shop has it on. Worded
                             for the moment it helps, not for how it works, and
-                            drawn in the sun's yellow in the heading face so it
+                            drawn in the brand green in the heading face so it
                             belongs with the category boxes under it. */}
                         {budgetPicker && activeCategory === null && (
                             <button
                                 type="button"
                                 onClick={() => setBudgetOpen(true)}
-                                className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-[#F4C338] px-4 py-2.5 text-left font-heading text-xl leading-none text-ink shadow-[0_2px_8px_rgb(244_195_56/0.35)] transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgb(244_195_56/0.4)] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0 sm:text-2xl"
+                                className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-slab px-4 py-2.5 text-left font-heading text-xl leading-none text-primary-foreground transition-[translate] duration-300 ease-out hover:-translate-y-0.5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0 sm:text-2xl"
                             >
                                 Can&apos;t decide? Let us pick
                                 <ArrowUpRight
