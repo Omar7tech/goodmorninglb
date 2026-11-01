@@ -361,7 +361,7 @@ class ManageGeneral extends SettingsPage
                                 Toggle::make('budget_picker_enabled')
                                     ->label('Show the budget picker')
                                     ->helperText('On: a green "Let us pick" button sits under the menu heading. The customer sets an amount, how many people and a mood, and gets combos that fit.')
-                                    ->default(true)
+                                    ->default(false)
                                     ->columnSpanFull(),
                             ]),
 

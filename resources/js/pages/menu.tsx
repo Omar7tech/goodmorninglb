@@ -150,7 +150,7 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
         setOpen,
         lastAdded,
     } = useCart();
-    const budgetPicker = usePage().props.budgetPicker ?? true;
+    const budgetPicker = usePage().props.budgetPicker ?? false;
     const cardStyle: ProductCardStyle =
         usePage().props.productCardStyle ?? ('row' as const);
 
