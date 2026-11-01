@@ -152,18 +152,25 @@ export function CategoryPills({
                 </button>
             )}
 
-            {/* Pulled out through the panel's padding on the trailing side, so
-                the pills run to the panel's edge and fade out there instead of
-                stopping short inside it. The padding puts that distance back,
-                so the last pill is still reachable at the end of the scroll.
-                The leading edge stays put — the button is already standing
-                there. */}
+            {/* Pulled out through the panel's padding, so the row runs to the
+                panel's edge and fades out there instead of stopping short
+                inside it. The padding puts that distance back, so the last item
+                is still reachable at the end of the scroll.
+
+                Both sides when the row stands alone under its header. Beside
+                the "All" pill only the trailing side moves: the pill is already
+                standing at the leading edge. */}
             <div
                 ref={ref}
                 {...dragHandlers}
                 // `scroll-fade-4` pins the fade to 16px. Left alone it is 12% of
                 // the row's width, which on a phone eats most of a pill.
-                className="-mr-3 no-scrollbar min-w-0 flex-1 scroll-fade-x cursor-grab overflow-x-auto py-2 pr-3 select-none scroll-fade-4 active:cursor-grabbing"
+                className={cn(
+                    'no-scrollbar min-w-0 flex-1 scroll-fade-x cursor-grab overflow-x-auto py-2 select-none scroll-fade-4 active:cursor-grabbing',
+                    headed
+                        ? '-mx-3 px-3 lg:-mx-8 lg:px-8'
+                        : '-mr-3 pr-3 lg:-mr-8 lg:pr-8',
+                )}
             >
                 {/* `w-max` so the row is as wide as its pills, which is what
                     makes the trailing padding reachable at the end of the
