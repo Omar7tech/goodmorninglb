@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import { ChevronRight, WalletCards } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CartSheet } from '@/components/menu/cart-sheet';
@@ -696,21 +696,23 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                             </h1>
                         </div>
 
-                        {/* The way into the budget picker, on the landing view
-                            where the choosing starts, when the shop has it on.
-                            A quiet pill under the heading rather than a card:
-                            it is a shortcut, not a feature to look at. */}
+                        {/* The way into the picker, on the landing view where
+                            the choosing starts, when the shop has it on. Worded
+                            for the moment it helps, not for how it works, and
+                            drawn in the sun's yellow in the heading face so it
+                            belongs with the category boxes under it. */}
                         {budgetPicker && activeCategory === null && (
                             <button
                                 type="button"
                                 onClick={() => setBudgetOpen(true)}
-                                className="group mx-auto -mt-1 inline-flex items-center gap-2 rounded-full bg-card py-1.5 pr-3 pl-1.5 text-sm font-semibold text-foreground shadow-sm ring-1 ring-border transition-[box-shadow,color] duration-200 hover:text-primary hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none dark:ring-white/[0.08]"
+                                className="group flex w-full items-center justify-between gap-3 rounded-2xl bg-[#F4C338] px-4 py-2.5 text-left font-heading text-xl leading-none text-ink shadow-[0_2px_8px_rgb(244_195_56/0.35)] transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgb(244_195_56/0.4)] focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none active:translate-y-0 motion-reduce:hover:translate-y-0 sm:text-2xl"
                             >
-                                <span className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                    <WalletCards className="size-4" />
-                                </span>
-                                Shop by budget
-                                <ChevronRight className="size-4 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none" />
+                                Can&apos;t decide? Let us pick
+                                <ArrowUpRight
+                                    aria-hidden
+                                    strokeWidth={2.5}
+                                    className="size-5 shrink-0 transition-[translate] duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:translate-none"
+                                />
                             </button>
                         )}
 

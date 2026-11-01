@@ -1,11 +1,4 @@
-import {
-    Loader2,
-    Minus,
-    Plus,
-    RefreshCw,
-    ShoppingBag,
-    WalletCards,
-} from 'lucide-react';
+import { Loader2, Minus, Plus, RefreshCw, ShoppingBag } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ProductImage } from '@/components/menu/product-image';
@@ -140,13 +133,12 @@ export function BudgetPicker({
                 <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
                     <div className="flex flex-col gap-5 px-5 pt-5 pb-4">
                         <div className="flex flex-col gap-1 pr-10">
-                            <DialogTitle className="flex items-center gap-2 text-sm font-semibold tracking-wide text-primary uppercase">
-                                <WalletCards className="size-4" />
-                                Shop by budget
+                            <DialogTitle className="font-heading text-2xl leading-none text-primary">
+                                Let us pick for you
                             </DialogTitle>
                             <DialogDescription className="text-sm text-muted-foreground">
-                                Tell us what you want to spend and we will build
-                                the order for you.
+                                Tell us what you want to spend and we will put
+                                the order together.
                             </DialogDescription>
                         </div>
 
