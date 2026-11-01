@@ -217,19 +217,6 @@ class ManageGeneral extends SettingsPage
                                                 JS),
                                     ]),
 
-                                Section::make('Budget picker')
-                                    ->description('A button on the menu that builds ready orders to fit an amount the customer picks.')
-                                    ->icon(Heroicon::OutlinedWallet)
-                                    ->collapsible()
-                                    ->collapsed()
-                                    ->persistCollapsed()
-                                    ->schema([
-                                        Toggle::make('budget_picker_enabled')
-                                            ->label('Show the budget picker')
-                                            ->helperText('On: a "Shop by budget" button sits under the menu heading. The customer sets an amount, how many people and a mood, and gets combos that fit.')
-                                            ->default(true),
-                                    ]),
-
                                 Section::make('Category filter')
                                     ->description('The row of categories above the products once a category is open.')
                                     ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
@@ -365,6 +352,16 @@ class ManageGeneral extends SettingsPage
                                     ->label('Ask for their location')
                                     ->helperText('Attaches a map pin to the order. The customer is asked by their browser and can decline, in which case they are told to share it in the chat.')
                                     ->default(false)
+                                    ->columnSpanFull(),
+                            ]),
+
+                        Tab::make('Budget picker')
+                            ->icon(Heroicon::OutlinedWallet)
+                            ->schema([
+                                Toggle::make('budget_picker_enabled')
+                                    ->label('Show the budget picker')
+                                    ->helperText('On: a "Shop by budget" button sits under the menu heading. The customer sets an amount, how many people and a mood, and gets combos that fit.')
+                                    ->default(true)
                                     ->columnSpanFull(),
                             ]),
 
