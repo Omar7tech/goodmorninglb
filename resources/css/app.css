@@ -99,7 +99,9 @@
     --cart-surface: #fffdf6;
     /* The green of "Morning", kept as shadcn's `primary` so every component
        inherits it. The red of "Good" is the accent, used by name (`berry`). */
-    --primary: var(--color-sage);
+    /* A shade under the logo's sage: small green text on the cream has to stay
+       readable. The big green surfaces are `--slab`, which keeps the true sage. */
+    --primary: #587350;
     --primary-foreground: #fffdf6;
     /* The brand green as a big surface — the footer, the banner, the green
        boxes — set apart from `primary`, which is the green of buttons and

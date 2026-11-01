@@ -21,7 +21,13 @@ import { SiteFooter } from '@/components/menu/site-footer';
 import { SiteHeader } from '@/components/menu/site-header';
 import { CartProvider, useCart } from '@/contexts/cart-context';
 import type { CartAddon, CartItem } from '@/contexts/cart-context';
-import { isUsualOrder, readOrders, rebuildOrder } from '@/lib/order-history';
+import {
+    basketNotice,
+    checkBasket,
+    isUsualOrder,
+    readOrders,
+    rebuildOrder,
+} from '@/lib/order-history';
 import { forgetSharedOrder, readSharedOrder } from '@/lib/share-order';
 import { cn } from '@/lib/utils';
 import type {
@@ -134,8 +140,16 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
     // Delivery is the menu you order from; dine-in is the same menu to read.
     const canOrder = orderType === 'delivery';
 
-    const { items, count, addItem, replaceItem, restore, setOpen, lastAdded } =
-        useCart();
+    const {
+        items,
+        count,
+        addItem,
+        replaceItem,
+        restore,
+        resync,
+        setOpen,
+        lastAdded,
+    } = useCart();
     const budgetPicker = usePage().props.budgetPicker ?? true;
     const cardStyle: ProductCardStyle =
         usePage().props.productCardStyle ?? ('row' as const);
@@ -203,6 +217,27 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
 
         return lookup;
     }, [categories]);
+
+    /**
+     * The basket as it was left, read against today's menu, once, as the page
+     * opens. Only on the delivery menu: that is where the basket is ordered
+     * from, and a dish sold for delivery alone is not missing from it just
+     * because the customer is looking at the dine-in menu.
+     */
+    const [basketCheck] = useState(() =>
+        canOrder ? checkBasket(items, productsById) : null,
+    );
+    const basketChecked = useRef(false);
+
+    // Ahead of the shared order below, which adds to the basket this settles.
+    useEffect(() => {
+        if (basketCheck === null || basketChecked.current) {
+            return;
+        }
+
+        basketChecked.current = true;
+        resync(basketCheck.items);
+    }, [basketCheck, resync]);
 
     /**
      * The orders this browser has sent. Read once and never again: sending
@@ -833,7 +868,18 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                 />
             )}
             {canOrder && (
-                <CartSheet onEditItem={editCartItem} notice={sharedNotice} />
+                <CartSheet
+                    onEditItem={editCartItem}
+                    notice={
+                        sharedNotice ??
+                        (basketCheck === null
+                            ? null
+                            : basketNotice(
+                                  basketCheck.dropped,
+                                  basketCheck.repriced,
+                              ))
+                    }
+                />
             )}
         </>
     );

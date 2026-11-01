@@ -13,7 +13,7 @@
     <meta name="robots" content="noindex, follow">
     <meta name="theme-color" content="#faf3de">
     <title>{{ $copy['heading'] }} | Good Morning Aley</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body {

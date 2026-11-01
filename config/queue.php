@@ -11,9 +11,13 @@ return [
     | API, giving you convenient access to each backend using identical
     | syntax for each. The default queue connection is defined below.
     |
+    | Fixed to "sync" rather than read from the environment. The shop runs on
+    | shared hosting with no queue worker and no cron, so a job left on any
+    | other connection would wait forever. On "sync" it runs there and then.
+    |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'database'),
+    'default' => 'sync',
 
     /*
     |--------------------------------------------------------------------------

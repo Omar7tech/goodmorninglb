@@ -1,4 +1,4 @@
-import { toCartItem } from '@/contexts/cart-context';
+import { cartItemUnitUsd, toCartItem } from '@/contexts/cart-context';
 import type { CartAddon, CartItem } from '@/contexts/cart-context';
 import type { Addon, Product } from '@/types';
 
@@ -216,4 +216,50 @@ export function rebuildOrder(
     });
 
     return { items: rebuilt, dropped };
+}
+
+/**
+ * A saved basket read against the menu as it stands today, with a count of what
+ * moved. The basket is kept on the phone, so one left for a week still holds
+ * that week's prices and any dish taken off the menu since. Without this, the
+ * old price is what goes to the shop on WhatsApp.
+ */
+export function checkBasket(
+    items: readonly CartItem[],
+    menu: ReadonlyMap<number, { product: Product; addons: Addon[] }>,
+): { items: CartItem[]; dropped: number; repriced: number } {
+    const { items: fresh, dropped } = rebuildOrder(items, menu);
+
+    const repriced = fresh.filter((line) => {
+        const before = items.find((item) => item.key === line.key);
+
+        return (
+            before !== undefined &&
+            Math.abs(cartItemUnitUsd(before) - cartItemUnitUsd(line)) > 0.001
+        );
+    }).length;
+
+    return { items: fresh, dropped, repriced };
+}
+
+/** What to tell the customer about a basket that moved, or null if none did. */
+export function basketNotice(dropped: number, repriced: number): string | null {
+    const gone =
+        dropped === 1
+            ? 'One item in your order is no longer on the menu.'
+            : `${dropped} items in your order are no longer on the menu.`;
+    const moved =
+        repriced === 1
+            ? 'One price has changed since you added it.'
+            : `${repriced} prices have changed since you added them.`;
+
+    if (dropped > 0 && repriced > 0) {
+        return `${gone} ${moved}`;
+    }
+
+    if (dropped > 0) {
+        return gone;
+    }
+
+    return repriced > 0 ? moved : null;
 }

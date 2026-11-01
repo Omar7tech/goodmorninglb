@@ -144,6 +144,8 @@ type CartActions = {
      * what separates this from adding.
      */
     restore: (items: CartItem[]) => void;
+    /** Swap the whole basket for the same lines, brought up to date. */
+    resync: (items: CartItem[]) => void;
 };
 
 // State and actions live in separate contexts, so components that only fire
@@ -323,6 +325,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const clear = useCallback((): void => setItems([]), []);
 
+    const resync = useCallback((fresh: CartItem[]): void => {
+        setItems(fresh);
+    }, []);
+
     /**
      * Bring a set of lines into the basket without adding to it.
      *
@@ -372,6 +378,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             setNote,
             clear,
             restore,
+            resync,
         }),
         [
             addItem,
@@ -382,6 +389,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             setNote,
             clear,
             restore,
+            resync,
         ],
     );
 

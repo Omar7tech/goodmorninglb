@@ -72,7 +72,6 @@ class ProductForm
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                     ->maxSize(5120)
                                     ->conversion('webp')
-                                    ->responsiveImages()
                                     ->imageEditor()
                                     ->columnSpanFull(),
                             ]),

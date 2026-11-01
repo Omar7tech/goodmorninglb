@@ -62,8 +62,9 @@ final class Seo
     public function headTags(): array
     {
         $page = $this->page();
-        $image = $page->images[0] ?? asset(Shop::IMAGE);
-        $ownImage = $image === asset(Shop::IMAGE);
+        // The house JPEG on every page rather than a dish photo: those are
+        // WebP, which WhatsApp and others can leave out of a link's preview.
+        $image = asset(Shop::IMAGE);
 
         return array_values(array_filter([
             $this->element('title', 'title', [], $page->title),
@@ -78,8 +79,8 @@ final class Seo
             $this->meta('geo.placename', ['name' => 'geo.placename', 'content' => Shop::LOCALITY.', '.Shop::COUNTRY_NAME]),
 
             // Open Graph: what WhatsApp, Instagram and Facebook show when a link
-            // is shared. The house image is declared with its size, so the card
-            // is laid out before the picture has finished downloading.
+            // is shared. The image is declared with its size, so the card is laid
+            // out before the picture has finished downloading.
             $this->meta('og:type', ['property' => 'og:type', 'content' => 'website']),
             $this->meta('og:site_name', ['property' => 'og:site_name', 'content' => Shop::FULL_NAME]),
             $this->meta('og:title', ['property' => 'og:title', 'content' => $page->title]),
@@ -87,10 +88,10 @@ final class Seo
             $this->meta('og:url', ['property' => 'og:url', 'content' => $page->canonical]),
             $this->meta('og:image', ['property' => 'og:image', 'content' => $image]),
             $this->meta('og:image:secure_url', ['property' => 'og:image:secure_url', 'content' => $image]),
-            $ownImage ? $this->meta('og:image:type', ['property' => 'og:image:type', 'content' => 'image/jpeg']) : null,
-            $ownImage ? $this->meta('og:image:width', ['property' => 'og:image:width', 'content' => (string) Shop::IMAGE_WIDTH]) : null,
-            $ownImage ? $this->meta('og:image:height', ['property' => 'og:image:height', 'content' => (string) Shop::IMAGE_HEIGHT]) : null,
-            $this->meta('og:image:alt', ['property' => 'og:image:alt', 'content' => $ownImage ? Shop::IMAGE_ALT : $page->heading]),
+            $this->meta('og:image:type', ['property' => 'og:image:type', 'content' => 'image/jpeg']),
+            $this->meta('og:image:width', ['property' => 'og:image:width', 'content' => (string) Shop::IMAGE_WIDTH]),
+            $this->meta('og:image:height', ['property' => 'og:image:height', 'content' => (string) Shop::IMAGE_HEIGHT]),
+            $this->meta('og:image:alt', ['property' => 'og:image:alt', 'content' => Shop::IMAGE_ALT]),
             $this->meta('og:locale', ['property' => 'og:locale', 'content' => 'en_US']),
 
             // X / Twitter
