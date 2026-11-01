@@ -81,6 +81,8 @@ class HandleInertiaRequests extends Middleware
             // Whether the colourful category layouts use the logo's colours
             // or stay green.
             'colourfulCategories' => $settings->colourful_categories,
+            // Whether the menu offers to build an order for a budget.
+            'budgetPicker' => $settings->budget_picker_enabled,
             'uppercaseProductTitles' => $settings->uppercase_product_titles,
             // Null closes checkout: an order with nowhere to go is worse than
             // no checkout button at all.

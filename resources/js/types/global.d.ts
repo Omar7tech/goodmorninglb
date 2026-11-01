@@ -37,6 +37,8 @@ declare module '@inertiajs/core' {
             productCardStyle: ProductCardStyle;
             /** Whether the pop-out, bubble and block layouts use the logo's colours. */
             colourfulCategories: boolean;
+            /** Whether the menu offers the budget picker. */
+            budgetPicker: boolean;
             /** Whether category names are drawn in capitals. */
             uppercaseCategoryTitles: boolean;
             /** Whether product names are drawn in capitals. */

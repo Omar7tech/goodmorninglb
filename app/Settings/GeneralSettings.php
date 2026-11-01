@@ -117,6 +117,12 @@ class GeneralSettings extends Settings
     public bool $colourful_categories;
 
     /**
+     * Whether the menu offers the budget picker: a button that builds ready
+     * orders to fit an amount the customer chooses.
+     */
+    public bool $budget_picker_enabled;
+
+    /**
      * How many seconds the counter screen stays on one category before
      * turning to the next, while nobody is using it.
      */

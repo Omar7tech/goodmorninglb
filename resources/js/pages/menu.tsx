@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import { ChevronRight, WalletCards } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CartSheet } from '@/components/menu/cart-sheet';
@@ -7,6 +8,7 @@ import { CartToast } from '@/components/menu/cart-toast';
 import { CategoryGrid } from '@/components/menu/category-grid';
 import { CategoryPills } from '@/components/menu/category-pills';
 import { CheckoutBar } from '@/components/menu/checkout-bar';
+import { BudgetPicker } from '@/components/menu/budget-picker';
 import { MenuSlider } from '@/components/menu/menu-slider';
 import { OrderAgain } from '@/components/menu/order-again';
 import { OrderTypeSwitch } from '@/components/menu/order-type-switch';
@@ -134,6 +136,7 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
 
     const { items, count, addItem, replaceItem, restore, setOpen, lastAdded } =
         useCart();
+    const budgetPicker = usePage().props.budgetPicker ?? true;
     const cardStyle: ProductCardStyle =
         usePage().props.productCardStyle ?? ('row' as const);
 
@@ -149,6 +152,8 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
         null,
     );
     const [productOpen, setProductOpen] = useState(false);
+    // The budget picker, opened from the card under the heading.
+    const [budgetOpen, setBudgetOpen] = useState(false);
     /**
      * The basket line the sheet is currently editing, and the choices it was
      * opened on. Null means the sheet is adding rather than changing, which is
@@ -691,6 +696,24 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                             </h1>
                         </div>
 
+                        {/* The way into the budget picker, on the landing view
+                            where the choosing starts, when the shop has it on.
+                            A quiet pill under the heading rather than a card:
+                            it is a shortcut, not a feature to look at. */}
+                        {budgetPicker && activeCategory === null && (
+                            <button
+                                type="button"
+                                onClick={() => setBudgetOpen(true)}
+                                className="group mx-auto -mt-1 inline-flex items-center gap-2 rounded-full bg-card py-1.5 pr-3 pl-1.5 text-sm font-semibold text-foreground shadow-sm ring-1 ring-border transition-[box-shadow,color] duration-200 hover:text-primary hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none dark:ring-white/[0.08]"
+                            >
+                                <span className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                    <WalletCards className="size-4" />
+                                </span>
+                                Shop by budget
+                                <ChevronRight className="size-4 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none" />
+                            </button>
+                        )}
+
                         {/* On the front page only, and only on the menu you
                             can order from. It is a way past the whole menu, so
                             it belongs where the menu starts — offered again
@@ -765,6 +788,14 @@ function MenuView({ orderType, categories, slides }: MenuProps) {
                     <SiteFooter />
                 </div>
             </div>
+
+            <BudgetPicker
+                open={budgetOpen}
+                onOpenChange={setBudgetOpen}
+                categories={categories}
+                canOrder={canOrder}
+                onOpenDish={openDialog}
+            />
 
             <ProductDialog
                 product={openProduct}
