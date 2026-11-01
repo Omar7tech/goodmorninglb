@@ -1,5 +1,5 @@
 import { Loader2, Minus, Plus, RefreshCw, ShoppingBag } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ProductImage } from '@/components/menu/product-image';
 import {
@@ -9,8 +9,16 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { useCart } from '@/contexts/cart-context';
-import { findCombos } from '@/lib/budget-combos';
+import { findCombos, swapDish } from '@/lib/budget-combos';
 import type { Combo, Mood, Pick } from '@/lib/budget-combos';
+import {
+    readLastAsk,
+    readTaste,
+    rememberAsk,
+    rememberPicked,
+    rememberRefused,
+    rememberShown,
+} from '@/lib/pick-memory';
 import { usePricing } from '@/lib/use-pricing';
 import { cn } from '@/lib/utils';
 import type { Category, Product } from '@/types';
@@ -26,8 +34,8 @@ const MOODS: { value: Mood; label: string }[] = [
 
 /** What it says while it works, one line after another. */
 const THINKING = [
-    'Counting your budget…',
     'Looking through the whole menu…',
+    'Setting aside what you saw last time…',
     'Pairing bites with drinks…',
     'Picking the best fits…',
 ];
@@ -38,17 +46,22 @@ const THINK_MS = 900;
 /** How long the slider rests before it works out the new budget. */
 const SETTLE_MS = 350;
 
+/** A fresh start for the search, so no two questions are answered alike. */
+function freshSeed(): number {
+    return Math.floor(Math.random() * 4294967296);
+}
+
 /**
  * "What can I get for $10?" — a budget, how many people, and a mood, and it
- * comes back with a handful of ready-made orders that fit: a bite and a drink
- * each, all sweet, all fresh, one big treat. Each one says what is in it,
- * what it comes to and the change left over, and on the delivery menu goes
- * into the basket in one tap.
+ * comes back with a handful of ready-made orders that fit. Each one says why it
+ * was chosen and the change left over, any dish in it can be swapped on its
+ * own, and on the delivery menu it goes into the basket in one tap.
  *
  * Worked out on the phone itself from the menu on screen — no server, no
- * waiting on anyone — by a small search that fills the budget as closely as
- * it can and leans towards the shop's top sellers. It takes a moment over it
- * on purpose, saying what it is doing, so the answer reads as considered.
+ * waiting on anyone. It remembers what it has shown, so opening it again gives
+ * new ideas, and it learns from what is swapped, taken and ordered. It takes a
+ * moment over it on purpose, saying what it is doing, so the answer reads as
+ * considered.
  */
 export function BudgetPicker({
     open,
@@ -65,15 +78,27 @@ export function BudgetPicker({
     onOpenDish: (product: Product, variantIndex: number | null) => void;
 }) {
     const pricing = usePricing();
-    const { addItem } = useCart();
+    const { addItem, items } = useCart();
 
-    const [draft, setDraft] = useState(10);
-    const [budget, setBudget] = useState(10);
-    const [people, setPeople] = useState(1);
-    const [mood, setMood] = useState<Mood>('mix');
-    const [seed, setSeed] = useState(1);
+    // Opens on the last question asked, so a regular doesn't start from scratch.
+    const [lastAsk] = useState(readLastAsk);
+    const [draft, setDraft] = useState(lastAsk.budget ?? 10);
+    const [budget, setBudget] = useState(lastAsk.budget ?? 10);
+    const [people, setPeople] = useState(lastAsk.people ?? 1);
+    const [mood, setMood] = useState<Mood>(lastAsk.mood ?? 'mix');
+    /** Pressing "Other ideas" asks the same question again. */
+    const [round, setRound] = useState(0);
+    const [combos, setCombos] = useState<Combo[]>([]);
+    const [note, setNote] = useState('');
     const [thinking, setThinking] = useState(true);
     const [line, setLine] = useState(0);
+
+    /** What is in the basket now, read when an answer is worked out. */
+    const basketRef = useRef<number[]>([]);
+
+    useEffect(() => {
+        basketRef.current = items.map((item) => item.productId);
+    }, [items]);
 
     // The slider settles before anything is worked out, so dragging it is
     // not a stream of answers to budgets nobody chose.
@@ -83,19 +108,16 @@ export function BudgetPicker({
         return () => window.clearTimeout(timer);
     }, [draft]);
 
-    const combos = useMemo(
-        () => findCombos({ categories, budget, people, mood, seed }),
-        [categories, budget, people, mood, seed],
-    );
-
-    // Each new question gets its moment of thought.
+    // Each new question gets its moment of thought, and opening the sheet is a
+    // new question: what was shown last time is remembered, so it won't repeat.
     useEffect(() => {
+        // Set on the way out, so the last answer never flashes on the way in.
+        setThinking(true);
+        setLine(0);
+
         if (!open) {
             return;
         }
-
-        setThinking(true);
-        setLine(0);
 
         const lines = window.setInterval(
             () =>
@@ -104,15 +126,64 @@ export function BudgetPicker({
                 ),
             THINK_MS / THINKING.length,
         );
-        const done = window.setTimeout(() => setThinking(false), THINK_MS);
+        const done = window.setTimeout(() => {
+            const answer = findCombos({
+                categories,
+                budget,
+                people,
+                mood,
+                seed: freshSeed(),
+                taste: readTaste(categories, basketRef.current),
+            });
+
+            setCombos(answer.combos);
+            setNote(answer.note);
+            setThinking(false);
+            rememberAsk(budget, people, mood);
+            rememberShown(
+                answer.combos.flatMap((combo) =>
+                    combo.picks.map((pick) => pick.product.id),
+                ),
+            );
+        }, THINK_MS);
 
         return () => {
             window.clearInterval(lines);
             window.clearTimeout(done);
         };
-    }, [open, budget, people, mood, seed]);
+    }, [open, categories, budget, people, mood, round]);
+
+    /** Change one dish in one idea, and remember that this one was a no. */
+    const swapPick = (combo: Combo, index: number): void => {
+        const outgoing = combo.picks[index];
+
+        rememberRefused(outgoing.product.id);
+
+        const swapped = swapDish({
+            combo,
+            index,
+            categories,
+            budget,
+            people,
+            seed: freshSeed(),
+            taste: readTaste(categories, basketRef.current),
+        });
+
+        if (swapped === null) {
+            return;
+        }
+
+        rememberShown(swapped.picks.map((pick) => pick.product.id));
+        setCombos((current) =>
+            current.map((candidate) =>
+                candidate.id === combo.id ? swapped : candidate,
+            ),
+        );
+    };
 
     const addCombo = (combo: Combo): void => {
+        rememberPicked(combo.picks.map((pick) => pick.categoryName));
+
         for (const pick of combo.picks) {
             addItem({
                 productId: pick.product.id,
@@ -247,7 +318,7 @@ export function BudgetPicker({
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setSeed((current) => current + 1)
+                                        setRound((current) => current + 1)
                                     }
                                     className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                                 >
@@ -256,6 +327,12 @@ export function BudgetPicker({
                                 </button>
                             )}
                         </div>
+
+                        {!thinking && combos.length > 0 && (
+                            <p className="-mt-1 text-xs leading-snug text-muted-foreground">
+                                {note}
+                            </p>
+                        )}
 
                         {thinking ? (
                             <Thinking line={THINKING[line]} />
@@ -283,6 +360,9 @@ export function BudgetPicker({
                                             canOrder={canOrder}
                                             usd={pricing.usd}
                                             onAdd={() => addCombo(combo)}
+                                            onSwap={(position) =>
+                                                swapPick(combo, position)
+                                            }
                                             onOpenDish={(pick) => {
                                                 onOpenChange(false);
                                                 onOpenDish(
@@ -363,6 +443,7 @@ function ComboCard({
     canOrder,
     usd,
     onAdd,
+    onSwap,
     onOpenDish,
 }: {
     combo: Combo;
@@ -370,6 +451,7 @@ function ComboCard({
     canOrder: boolean;
     usd: (amount: number) => string;
     onAdd: () => void;
+    onSwap: (index: number) => void;
     onOpenDish: (pick: Pick) => void;
 }) {
     const used = Math.min(100, Math.round((combo.total / budget) * 100));
@@ -406,11 +488,12 @@ function ComboCard({
                 {combo.picks.map((pick, index) => (
                     <li
                         key={`${pick.product.id}-${pick.variantIndex}-${index}`}
+                        className="flex animate-in items-center gap-1 duration-300 fade-in motion-reduce:animate-none"
                     >
                         <button
                             type="button"
                             onClick={() => onOpenDish(pick)}
-                            className="flex w-full items-center gap-3 rounded-xl p-1 text-left transition-colors hover:bg-primary/5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                            className="flex min-w-0 flex-1 items-center gap-3 rounded-xl p-1 text-left transition-colors hover:bg-primary/5 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
                         >
                             <ProductImage
                                 product={pick.product}
@@ -429,6 +512,14 @@ function ComboCard({
                             <span className="shrink-0 text-sm font-bold text-primary tabular-nums">
                                 {usd(pick.price)}
                             </span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => onSwap(index)}
+                            aria-label={`Swap ${pick.product.name} for something else`}
+                            className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                        >
+                            <RefreshCw className="size-3.5" />
                         </button>
                     </li>
                 ))}
